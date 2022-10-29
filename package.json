@@ -1,0 +1,18 @@
+{
+  "name": "falconvis",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite serve src",
+    "build": "vite build src",
+    "preview": "vite preview src"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.1.8",
+    "vite": "^3.2.1"
+  },
+  "dependencies": {
+    "apexcharts": "^3.35.5"
+  }
+}
