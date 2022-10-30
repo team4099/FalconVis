@@ -29,12 +29,11 @@ import { Modal } from './components/Modal';
       selectedOptions: [4099, 118, 180],
       allOptions: Selections.TEAMS
     },
-    modal,
-    false 
+    modal
   )
 
   var shooterOverTime = new LineGraph(
-    "plt2",
+    "graphContainer",
     "Shooter over matches",
     {},
     {
@@ -46,7 +45,7 @@ import { Modal } from './components/Modal';
   )
 
   var goodShooters = new ScatterGraph(
-    "plt3",
+    "graphContainer",
     "Shooting by match by team",
     {},
     {
@@ -59,7 +58,7 @@ import { Modal } from './components/Modal';
   )
 
   var gameContribution = new PieGraph(
-    "plt4",
+    "graphContainer",
     "shooting contrib by match",
     {},
     {
