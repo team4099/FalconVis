@@ -7,9 +7,7 @@ class PieGraph {
         this.modal = modal
 
         this.companionDiv = document.createElement("div")
-        for (const style of ["p-4", "border-2", "border-gray-200", "rounded-lg"]){
-            this.companionDiv.classList.add(style)
-        }
+        this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg")
         this.companionDiv.style.width = "400px"
         this.companionDiv.id = this.uuid
 
