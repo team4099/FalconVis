@@ -1,18 +1,25 @@
 import { Graph } from "./Graph"
 
 class PieGraph {
-    constructor(id, title, plotOptions, dataOptions, modal, editable = true) {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
 
-        this.container = document.getElementById(id)
-        this.container.setAttribute("type", "button")
-        this.container.setAttribute("data-modal-toggle", this.uuid)
+        this.companionDiv = document.createElement("div")
+        this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg")
+        this.companionDiv.style.width = "400px"
+        this.companionDiv.id = this.uuid
+
+        document.getElementById(parent_id).appendChild(this.companionDiv)
+
+        this.companionDiv = document.getElementById(this.uuid)
+        this.companionDiv.setAttribute("type", "button")
+        this.companionDiv.setAttribute("data-modal-toggle", this.uuid)
 
         var self = this
         if (editable) {
-            this.container.addEventListener("click", function () {
+            document.getElementById(this.uuid).addEventListener("click", function () {
                 self.setupEdit()
                 document.getElementById('fakeToggle').click()
             })
@@ -27,7 +34,7 @@ class PieGraph {
         this.generateData()
 
         this.graph = new Graph(
-            id,
+            this.uuid,
             {
                 chart: {
                     type: 'pie',

@@ -6,7 +6,7 @@ class Graph {
         this.state = state
 
         this.graph = new ApexCharts(
-            document.querySelector("#" + id),
+            document.getElementById(id),
             this.state
         );
 
