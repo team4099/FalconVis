@@ -7,7 +7,7 @@ class CalculatedStats {
         return 2;
     }
 
-    getAvrStat(team, stat){
+    getAvgStat(team, stat){
         try {
             var values = 0
             var count = 0
