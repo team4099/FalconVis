@@ -41,7 +41,7 @@ import { Modal } from './components/Modal';
     {},
     {
       formula: function(team) {return stats.getScoreData(team, Queries.TELEOP_UPPER_HUB)},
-      selectedOption: 2056,
+      selectedOptions: [2056],
       allOptions: Selections.TEAMS
     },
     modal
