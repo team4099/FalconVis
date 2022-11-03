@@ -18,14 +18,17 @@ import { Modal } from './components/Modal';
 
   var driverRating = new BarGraph(
     "graphContainer",
-    "Avr Driver Rating by Team",
+    "Avg Driver Rating by Team",
     {
       bar: {
-        horizontal: true
+        horizontal: false
       }
     },
     {
-      formula: function(team) {return stats.getAvrStat(team, Queries.DRIVER_RATING)},
+      formulas: {
+        "Auto Upper": function(team) {return stats.getAvgStat(team, Queries.AUTO_UPPER_HUB)},
+        "Teleop Upper": function(team) {return stats.getAvgStat(team, Queries.TELEOP_UPPER_HUB)}
+      },
       selectedOptions: [4099, 118, 180],
       allOptions: Selections.TEAMS
     },
@@ -38,7 +41,7 @@ import { Modal } from './components/Modal';
     {},
     {
       formula: function(team) {return stats.getScoreData(team, Queries.TELEOP_UPPER_HUB)},
-      selectedOption: 2056,
+      selectedOptions: [2056],
       allOptions: Selections.TEAMS
     },
     modal

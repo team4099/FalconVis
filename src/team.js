@@ -21,7 +21,7 @@ import { Queries } from './data/Constants'
         "macrosContainer", 
         {
             name: "Uptime",
-            formula: function (team) { return stats.getAvrStat(team, Queries.UPTIME) }
+            formula: function (team) { return stats.getAvgStat(team, Queries.UPTIME) }
         }, 
         0.5
     )
@@ -29,8 +29,8 @@ import { Queries } from './data/Constants'
         4099, 
         "macrosContainer", 
         {
-            name: "Avr. Teleop Upper",
-            formula: function (team) { return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
+            name: "Avg. Teleop Upper",
+            formula: function (team) { return stats.getAvgStat(team, Queries.TELEOP_UPPER_HUB)}
         }, 
         15
     )
@@ -38,8 +38,8 @@ import { Queries } from './data/Constants'
         4099, 
         "macrosContainer", 
         {
-            name: "Avr. Auto Upper",
-            formula: function (team) { return stats.getAvrStat(team, Queries.AUTO_UPPER_HUB)} 
+            name: "Avg. Auto Upper",
+            formula: function (team) { return stats.getAvgStat(team, Queries.AUTO_UPPER_HUB)} 
         }, 
         2
     )
@@ -48,7 +48,7 @@ import { Queries } from './data/Constants'
         "macrosContainer", 
         {
             name: "Driver Rating",
-            formula: function (team) { return stats.getAvrStat(team, Queries.DRIVER_RATING) } 
+            formula: function (team) { return stats.getAvgStat(team, Queries.DRIVER_RATING) } 
         }, 
         2
     )
@@ -57,7 +57,7 @@ import { Queries } from './data/Constants'
         "macrosContainer", 
         {
             name: "Defense Rating",
-            formula: function (team) { return stats.getAvrStat(team, Queries.DEFENSE_RATING) }
+            formula: function (team) { return stats.getAvgStat(team, Queries.DEFENSE_RATING) }
         }, 
         2
     )

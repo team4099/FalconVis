@@ -25,7 +25,7 @@ class BarGraph {
             })
         }
 
-        this.formula = dataOptions.formula
+        this.formulas = dataOptions.formulas
 
         this.selectedColumnOptions = dataOptions.selectedOptions
         this.allColumnOptions = dataOptions.allOptions
@@ -45,12 +45,13 @@ class BarGraph {
                     }
                 },
                 plotOptions: plotOptions,
-                series: [{
-                    data: this.seriesOptions
-                }],
+                series: this.seriesOptions,
                 title: {
                     text: title,
                     align: 'left'
+                },
+                xaxis: {
+                    categories: this.selectionOptionsToString(),
                 }
             }
         )
@@ -59,15 +60,30 @@ class BarGraph {
 
     generateData() {
         this.seriesOptions = []
+        var definiteSeries = []
 
-        for (const selected of this.selectedColumnOptions) {
+
+        for (const seriesTypes of Object.keys(this.formulas)){
+            definiteSeries = []
+            for (const selected of this.selectedColumnOptions) {
+                console.log(this.formulas[seriesTypes](selected), selected)
+                definiteSeries.push(this.formulas[seriesTypes](selected))
+            }
             this.seriesOptions.push(
                 {
-                    x: selected.toString(),
-                    y: this.formula(selected)
+                    name: seriesTypes,
+                    data: definiteSeries
                 }
             )
         }
+    }
+
+    selectionOptionsToString(){
+        var stringed = []
+        for (const team of this.selectedColumnOptions){
+            stringed.push(team.toString());
+        }
+        return stringed
     }
 
     setupEdit() {
@@ -111,9 +127,8 @@ class BarGraph {
 
         this.generateData()
 
-        this.graph.state.series = [{
-            data: this.seriesOptions
-        }]
+        this.graph.state.series = this.seriesOptions
+        this.graph.state.xaxis.categories = this.selectionOptionsToString()
 
         this.graph.update()
 
