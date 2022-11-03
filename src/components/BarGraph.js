@@ -127,9 +127,7 @@ class BarGraph {
 
         this.generateData()
 
-        this.graph.state.series = [{
-            data: this.seriesOptions
-        }]
+        this.graph.state.series = this.seriesOptions
         this.graph.state.xaxis.categories = this.selectionOptionsToString()
 
         this.graph.update()
