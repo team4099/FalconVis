@@ -93,12 +93,17 @@ class PieGraph {
         this.modal.formHTML = formString
     }
 
-    pushEdit() {
-        this.selectedOption = 0
-        for (const i of this.allOptions) {
-            if (document.getElementById(i.toString() + this.uuid.toString()).checked) {
-                this.selectedOption = i
+    pushEdit(modal = true, x = 0) {
+        if (modal){
+            this.selectedOption = 0
+            for (const i of this.allOptions) {
+                if (document.getElementById(i.toString() + this.uuid.toString()).checked) {
+                    this.selectedOption = i
+                }
             }
+        }
+        else {
+            this.selectedOption = x
         }
 
         this.generateData()
