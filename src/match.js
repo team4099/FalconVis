@@ -29,7 +29,8 @@ import { Modal } from './components/Modal';
             selectedOptions: blue,
             allOptions: Selections.TEAMS
         },
-        modal
+        modal,
+        false
     )
 
     var teleopPOTBlue = new LineGraph(
@@ -41,7 +42,8 @@ import { Modal } from './components/Modal';
           selectedOptions: blue,
           allOptions: Selections.TEAMS
         },
-        modal
+        modal,
+        false
     )
 
     var defenseBlue = new BarGraph(
@@ -61,7 +63,8 @@ import { Modal } from './components/Modal';
             selectedOptions: blue,
             allOptions: Selections.TEAMS
         },
-        modal
+        modal,
+        false
     )
 
     var teleopCargoRed = new BarGraph(
@@ -80,7 +83,8 @@ import { Modal } from './components/Modal';
             selectedOptions: red,
             allOptions: Selections.TEAMS
         },
-        modal
+        modal,
+        false
     )
 
     var teleopPOTRed = new LineGraph(
@@ -92,7 +96,8 @@ import { Modal } from './components/Modal';
           selectedOptions: red,
           allOptions: Selections.TEAMS
         },
-        modal
+        modal,
+        false
     )
 
     var defenseRed = new BarGraph(
@@ -112,7 +117,8 @@ import { Modal } from './components/Modal';
             selectedOptions: red,
             allOptions: Selections.TEAMS
         },
-        modal
+        modal,
+        false
     )
 
     var setTeams = () => {
