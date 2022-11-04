@@ -7,7 +7,16 @@ const Queries =  {
     AUTO_MISSES: "Auto Misses",
     UPTIME: "Uptime",
     DRIVER_RATING: "Driver Rating",
-    DEFENSE_RATING: "Defense Rating"
+    DEFENSE_RATING: "Defense Rating",
+    COUNTER_DEFENSE_RATING: "Counter Defense Rating",
+    TELEOP_TOTAL: {
+        "Teleop Lower Hub": 1, 
+        "Teleop Upper Hub": 2
+    },
+    AUTO_TOTAL: {
+        "Auto Lower Hub": 2, 
+        "Auto Upper Hub": 4
+    }
 }
 
 const Selections =  {
