@@ -10,7 +10,7 @@
 
  > 💡 More wrappers, the better
 
-The core of every graph is three things. The Human Layer, Editing Processing Layer, and Drawing Layer
+The core of every graph is three things. The Human Layer, Editing Processing Layer, and Drawing Layer.
 
 ### Drawing Layer
  - `Graph` Class
