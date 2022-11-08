@@ -1,4 +1,4 @@
-import { Graph } from "./Graph"
+import { Graph } from "./Graph.js"
 
 class LineGraph {
     constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true) {

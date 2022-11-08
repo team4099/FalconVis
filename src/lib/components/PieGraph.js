@@ -1,6 +1,6 @@
-import { Graph } from "./Graph"
+import { Graph } from "./Graph.js"
 
-class ScatterGraph {
+class PieGraph {
     constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
@@ -26,11 +26,10 @@ class ScatterGraph {
         }
 
 
-        this.formulaX = dataOptions.formulaX
-        this.formulaY = dataOptions.formulaY
+        this.formula = dataOptions.formula
 
-        this.selectedColumnOptions = dataOptions.selectedOptions
-        this.allColumnOptions = dataOptions.allOptions
+        this.selectedOption = dataOptions.selectedOption
+        this.allOptions = dataOptions.allOptions
 
         this.generateData()
 
@@ -38,9 +37,8 @@ class ScatterGraph {
             this.uuid,
             {
                 chart: {
-                    type: 'scatter',
+                    type: 'pie',
                     zoom: {
-                        type: 'xy',
                         enabled: false
                     },
                     animations: {
@@ -48,45 +46,34 @@ class ScatterGraph {
                     }
                 },
                 plotOptions: plotOptions,
-                series: this.generatedData,
+                series: this.series,
+                labels: this.labels,
                 title: {
                     text: title,
                     align: 'left'
-                }
+                },
             }
         )
 
     }
 
     generateData() {
-        this.generatedData = []
-
-        const zip = (a, b) => a.map((k, i) => [k, b[i]]);
-
-        for (const i of this.selectedColumnOptions){
-            this.xAxis = this.formulaX(i)[1]
-            this.yAxis = this.formulaY(i)[1]
-
-            this.generatedData.push({
-                name: i.toString(),
-                data: zip(this.xAxis, this.yAxis)
-            })
-        }
+        [this.labels, this.series] = this.formula(this.selectedOption)
     }
 
     setupEdit() {
-        var formString = ``
+        var formString = `<fieldset class="space-y-6">`
 
         var self = this
         this.modal.setCallBackClose(function () {
             self.pushEdit()
         })
 
-        for (const i of this.allColumnOptions) {
-            if (this.selectedColumnOptions.includes(i)) {
+        for (const i of this.allOptions) {
+            if (this.selectedOption == i) {
                 formString += `
                 <div class="flex items-center">
-                    <input checked id="${i}${this.uuid}" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <input checked id="${i}${this.uuid}" type="radio" value="" name="team" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                     <label id="for="${i}${this.uuid}" class="ml-2 text-sm font-medium text-gray-300">${i}</label>
                 </div>
                 `
@@ -94,37 +81,48 @@ class ScatterGraph {
             else {
                 formString += `
                 <div class="flex items-center">
-                    <input id="${i}${this.uuid}" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <input id="${i}${this.uuid}" type="radio" value="" name="team" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                     <label for="${i}${this.uuid}" class="ml-2 text-sm font-medium text-gray-300">${i}</label>
                 </div>
                 `
             }
         }
 
-        this.modal.formHTML = formString
+        formString += `</fieldset>`
 
+        this.modal.formHTML = formString
     }
 
-    pushEdit(modal = true, x = []) {
+    pushEdit(modal = true, x = 0) {
         if (modal){
-            this.selectedColumnOptions = []
-            for (const i of this.allColumnOptions) {
+            this.selectedOption = 0
+            for (const i of this.allOptions) {
                 if (document.getElementById(i.toString() + this.uuid.toString()).checked) {
-                    this.selectedColumnOptions.push(i)
+                    this.selectedOption = i
                 }
             }
         }
         else {
-            this.selectedColumnOptions = x
+            this.selectedOption = x
         }
 
         this.generateData()
 
-        this.graph.state.series = this.generatedData
+        this.graph.state.series = this.series
+        this.graph.state.labels = this.labels
 
         this.graph.update()
     }
 }
 
 
-export { ScatterGraph }
+export { PieGraph }
+
+var options = {
+    series: [44, 55, 13, 43, 22],
+    chart: {
+        width: 380,
+        type: 'pie',
+    },
+    labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+};
