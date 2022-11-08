@@ -6,7 +6,7 @@
 **Solution**: We decided to develop a web app where scouts can generate and display graphs online to see and potentially develop strategies on their own.
 
 
-## Understanding Graphing Structure
+## Understanding Graphing Structure 📊
 
  > 💡 More wrappers, the better
 
