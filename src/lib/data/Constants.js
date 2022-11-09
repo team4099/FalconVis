@@ -26,4 +26,6 @@ const Selections =  {
     BLUE: "Blue"
 }
 
-export { Queries, Selections }
+const JSONData = "https://raw.githubusercontent.com/team4099/FalconVis/main/src/data/iri_data.json"
+
+export { Queries, Selections, JSONData }

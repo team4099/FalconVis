@@ -1,12 +1,12 @@
 import { CalculatedStats } from '../lib/data/CalculatedStats.js';
-import { Queries, Selections } from '../lib/data/Constants.js'
+import { Queries, Selections, JSONData } from '../lib/data/Constants.js'
 import { BarGraph } from '../lib/components/BarGraph.js';
 import { LineGraph } from '../lib/components/LineGraph.js';
 import { Modal } from '../lib/components/Modal.js';
 
 
 (async () => {
-    var data = await fetch('https://raw.githubusercontent.com/team4099/FalconVis/main/src/data/iri_data.json').then(res => res.json())
+    var data = await fetch(JSONData).then(res => res.json())
     var stats = new CalculatedStats(data)
     var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
 

@@ -1,9 +1,9 @@
 import { CalculatedStats } from '../lib/data/CalculatedStats.js';
 import { StatMacro } from '../lib/components/StatMacro.js';
-import { Queries } from '../lib/data/Constants.js'
+import { Queries, JSONData } from '../lib/data/Constants.js'
 
 (async () => {
-    var data = await fetch('https://raw.githubusercontent.com/team4099/FalconVis/main/src/data/iri_data.json').then(res => res.json())
+    var data = await fetch(JSONData).then(res => res.json())
 
     var stats = new CalculatedStats(data)
 

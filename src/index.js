@@ -3,13 +3,13 @@ import { LineGraph } from './lib/components/LineGraph.js';
 import { ScatterGraph } from './lib/components/ScatterGraph.js';
 import { PieGraph } from './lib/components/PieGraph.js';
 import { CalculatedStats } from './lib/data/CalculatedStats.js';
-import { Selections, Queries } from './lib/data/Constants.js';
+import { Selections, Queries, JSONData } from './lib/data/Constants.js';
 import { Modal } from './lib/components/Modal.js';
 
 //var data = await fetch('data/iri_data.json').then(response => response.json())
 
 (async () => {
-  var data = await fetch('https://raw.githubusercontent.com/team4099/FalconVis/main/src/data/iri_data.json').then(res => res.json())
+  var data = await fetch(JSONData).then(res => res.json())
 
   var stats = new CalculatedStats(data)
 
