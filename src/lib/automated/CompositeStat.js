@@ -1,0 +1,5 @@
+class CompositeStat{
+    constructor(){
+        
+    }
+}
