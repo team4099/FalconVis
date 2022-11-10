@@ -1,10 +1,11 @@
 class Factor{
-    constructor(formula, type){
+    constructor(formula, type, bias){
         this.formula = formula
         this.type = type
+        this.bias = bias
     }
 
     get(){
-        return this.formula()
+        return this.formula() * bias
     }
 }
