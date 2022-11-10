@@ -27,6 +27,28 @@ class CalculatedStats {
         }
     }
 
+    getTotalPoints(team, stat){
+        try {
+            var match = []
+            var scored = []
+            var temp = 0
+        
+            for (const x of this.data[team]) { 
+                temp = 0
+                for (const component of Object.keys(stat)){
+                    temp += x[component]*stat[component]
+                }
+                match.push(x["Match Key"])
+                scored.push(temp)
+            }
+    
+            return [match, scored]
+        }
+        catch (e) {
+            return [[0], [0]]
+        }
+    }
+
     getScoreData(team, stat){
         try {
             var match = []

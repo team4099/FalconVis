@@ -1,13 +1,13 @@
-import { CalculatedStats } from './data/CalculatedStats';
-import { StatNumber } from './components/StatNumber';
-import { Queries } from './data/Constants'
+import { CalculatedStats } from '../lib/data/CalculatedStats.js';
+import { StatMacro } from '../lib/components/StatMacro.js';
+import { Queries, JSONData } from '../lib/data/Constants.js'
 
 (async () => {
-    var data = await fetch('data/iri_data.json').then(res => res.json())
+    var data = await fetch(JSONData).then(res => res.json())
 
     var stats = new CalculatedStats(data)
 
-    var falconRank = new StatNumber(
+    var falconRank = new StatMacro(
         4099, 
         "macrosContainer", 
         {
@@ -16,7 +16,7 @@ import { Queries } from './data/Constants'
         }, 
         2
     )
-    var uptime = new StatNumber(
+    var uptime = new StatMacro(
         4099, 
         "macrosContainer", 
         {
@@ -25,7 +25,7 @@ import { Queries } from './data/Constants'
         }, 
         0.5
     )
-    var teleop_upper = new StatNumber(
+    var teleop_upper = new StatMacro(
         4099, 
         "macrosContainer", 
         {
@@ -34,7 +34,7 @@ import { Queries } from './data/Constants'
         }, 
         15
     )
-    var auto_upper = new StatNumber(
+    var auto_upper = new StatMacro(
         4099, 
         "macrosContainer", 
         {
@@ -43,7 +43,7 @@ import { Queries } from './data/Constants'
         }, 
         2
     )
-    var driver_rating = new StatNumber(
+    var driver_rating = new StatMacro(
         4099, 
         "macrosContainer", 
         {
@@ -52,7 +52,7 @@ import { Queries } from './data/Constants'
         }, 
         2
     )
-    var defense_rating = new StatNumber(
+    var defense_rating = new StatMacro(
         4099, 
         "macrosContainer", 
         {

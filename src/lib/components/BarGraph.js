@@ -1,4 +1,4 @@
-import { Graph } from "./Graph"
+import { Graph } from "./Graph.js"
 
 class BarGraph {
     constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true) {
@@ -117,12 +117,17 @@ class BarGraph {
 
     }
 
-    pushEdit() {
-        this.selectedColumnOptions = []
-        for (const i of this.allColumnOptions) {
-            if (document.getElementById(i.toString() + this.uuid.toString()).checked) {
-                this.selectedColumnOptions.push(i)
+    pushEdit(modal = true, x = []) {
+        if (modal){
+            this.selectedColumnOptions = []
+            for (const i of this.allColumnOptions) {
+                if (document.getElementById(i.toString() + this.uuid.toString()).checked) {
+                    this.selectedColumnOptions.push(i)
+                }
             }
+        }
+        else {
+            this.selectedColumnOptions = x
         }
 
         this.generateData()

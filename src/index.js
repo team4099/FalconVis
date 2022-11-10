@@ -1,16 +1,15 @@
-import ApexCharts from 'apexcharts'
-import { BarGraph } from './components/BarGraph';
-import { LineGraph } from './components/LineGraph';
-import { ScatterGraph } from './components/ScatterGraph';
-import { PieGraph } from './components/PieGraph';
-import { CalculatedStats } from './data/CalculatedStats';
-import { Selections, Queries } from './data/Constants';
-import { Modal } from './components/Modal';
+import { BarGraph } from './lib/components/BarGraph.js';
+import { LineGraph } from './lib/components/LineGraph.js';
+import { ScatterGraph } from './lib/components/ScatterGraph.js';
+import { PieGraph } from './lib/components/PieGraph.js';
+import { CalculatedStats } from './lib/data/CalculatedStats.js';
+import { Selections, Queries, JSONData } from './lib/data/Constants.js';
+import { Modal } from './lib/components/Modal.js';
 
 //var data = await fetch('data/iri_data.json').then(response => response.json())
 
 (async () => {
-  var data = await fetch('data/iri_data.json').then(res => res.json())
+  var data = await fetch(JSONData).then(res => res.json())
 
   var stats = new CalculatedStats(data)
 

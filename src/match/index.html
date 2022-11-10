@@ -2,7 +2,7 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<link rel="icon" type="image/svg+xml" href="/public/logo.svg" />
+	<link rel="icon" type="image/svg+xml" href="../public/logo.svg" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<script src="https://cdn.tailwindcss.com"></script>
 	<link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.css" />
@@ -14,7 +14,7 @@
 	<nav class="bg-white border-gray-300 px-2 sm:px-4 py-2.5 border-b-2 mb-4">
 		<div class="container flex flex-wrap justify-between items-center mx-auto">
 		  <a href="/" class="flex items-center">
-			  <img src="public/logo.svg" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
+			  <img src="../public/logo.svg" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
 			  <span class="self-center text-2xl font-semibold whitespace-nowrap">FalconVis</span>
 		  </a>
 		  <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
@@ -42,15 +42,51 @@
 
 	<div class="md:mx-12 mt-8">
         <h1 class="text-3xl font-bold mb-8 ml-4">
-            Event
+            Match Stats
         </h1>
-    
 
-		<div class="flex flex-wrap gap-4 px-4 mx-auto mb-10" id="graphContainer">
-			
+		<div class="flex flex-wrap gap-4 mb-8 ml-4">
+			<div class="flex flex-wrap gap-4 w-[400px]">
+				<div class="">
+					<h1 class="text-lg font-medium text-blue-700">Blue 1</h1>
+					<input id="blue1" class="h-8 border w-28 border-gray-400 rounded-md pl-1" placeholder="1577" type="number"/>
+				</div>
+				<div class="">
+					<h1 class="text-lg font-medium text-blue-700">Blue 2</h1>
+					<input id="blue2" class="h-8 border w-28 border-gray-400 rounded-md pl-1" placeholder="4414" type="number"/>
+				</div>
+				<div class="">
+					<h1 class="text-lg font-medium text-blue-700">Blue 3</h1>
+					<input id="blue3" class="h-8 border w-28 border-gray-400 rounded-md pl-1" placeholder="4099" type="number"/>
+				</div>
+			</div>
+			<div class="flex flex-wrap gap-4 w-[400px]">
+				<div class="">
+					<h1 class="text-lg font-medium text-red-500">Red 1</h1>
+					<input id="red1" class="h-8 border w-28 border-gray-400 rounded-md pl-1" placeholder="1577" type="number"/>
+				</div>
+				<div class="">
+					<h1 class="text-lg font-medium text-red-500">Red 2</h1>
+					<input id="red2" class="h-8 border w-28 border-gray-400 rounded-md pl-1" placeholder="4414" type="number"/>
+				</div>
+				<div class="">
+					<h1 class="text-lg font-medium text-red-500">Red 3</h1>
+					<input id="red3" class="block h-8 border w-28 border-gray-400 rounded-md pl-1" placeholder="4099" type="number"/>
+					<button id="setTeams" class="h-10 w-28 rounded-md bg-[#efae04] text-white font-semibold mt-2">Submit</button>
+				</div>
+			</div>
 		</div>
 
-	</div>
+        <h1 class="text-4xl font-bold mb-4 ml-4"> <span class="text-blue-700">Blue</span> alliance </h1>
+        <div class="flex flex-wrap gap-4 px-4 mx-auto mb-10" id="blueAllianceContainer"></div>
+
+		<h1 class="text-4xl font-bold mb-4 ml-4"> <span class="text-red-500">Red</span> alliance </h1>
+        <div class="flex flex-wrap gap-4 px-4 mx-auto mb-10" id="redAllianceContainer"></div>
+
+
+    </div>
+
+
 
 	<!-- Modal toggle -->
 	<button id="fakeToggle"
@@ -59,9 +95,7 @@
 		Toggle modal
 	</button>
 
-
-	<div id="editModal"
-		class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full justify-center items-center">
+	<div id="editModal" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-modal md:h-full justify-center items-center">
 		<div class="relative p-4 w-full max-w-md h-full md:h-auto">
 			<div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 				<button type="button"
@@ -88,8 +122,9 @@
 			</div>
 		</div>
 	</div>
+	
 	<script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
 </body>
-<script type="module" src="index.js"></script>
+<script type="module" src="match.js"></script>
 
 </html>

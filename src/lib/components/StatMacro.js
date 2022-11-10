@@ -1,4 +1,4 @@
-class StatNumber {
+class StatMacro {
     constructor(team, parent_id, stat, threshold){
         this.id = Math.random().toString(36).substr(2, 9)
 
@@ -36,4 +36,4 @@ class StatNumber {
     }
 }
 
-export { StatNumber }
+export { StatMacro }
