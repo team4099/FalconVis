@@ -17,7 +17,7 @@ import { Modal } from './lib/components/Modal.js';
 
   var driverRating = new BarGraph(
     "graphContainer",
-    "Avg Driver Rating by Team",
+    "Avr Driver Rating by Team",
     {
       bar: {
         horizontal: false
@@ -25,8 +25,8 @@ import { Modal } from './lib/components/Modal.js';
     },
     {
       formulas: {
-        "Auto Upper": function(team) {return stats.getAvgStat(team, Queries.AUTO_UPPER_HUB)},
-        "Teleop Upper": function(team) {return stats.getAvgStat(team, Queries.TELEOP_UPPER_HUB)}
+        "Auto Upper": function(team) {return stats.getAvrStat(team, Queries.AUTO_UPPER_HUB)},
+        "Teleop Upper": function(team) {return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
       },
       selectedOptions: [4099, 118, 180],
       allOptions: Selections.TEAMS

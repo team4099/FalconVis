@@ -1,6 +1,8 @@
 import { CalculatedStats } from '../lib/data/CalculatedStats.js';
 import { StatMacro } from '../lib/components/StatMacro.js';
 import { Queries, JSONData } from '../lib/data/Constants.js'
+import { WeightedStat } from '../lib/automated/WeightedStat.js'
+import { Factor } from '../lib/automated/Factor.js'
 
 (async () => {
     var data = await fetch(JSONData).then(res => res.json())
@@ -21,7 +23,7 @@ import { Queries, JSONData } from '../lib/data/Constants.js'
         "macrosContainer", 
         {
             name: "Uptime",
-            formula: function (team) { return stats.getAvgStat(team, Queries.UPTIME) }
+            formula: function (team) { return stats.getAvrStat(team, Queries.UPTIME) }
         }, 
         0.5
     )
@@ -29,8 +31,8 @@ import { Queries, JSONData } from '../lib/data/Constants.js'
         4099, 
         "macrosContainer", 
         {
-            name: "Avg. Teleop Upper",
-            formula: function (team) { return stats.getAvgStat(team, Queries.TELEOP_UPPER_HUB)}
+            name: "Avr. Teleop Upper",
+            formula: function (team) { return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
         }, 
         15
     )
@@ -38,8 +40,8 @@ import { Queries, JSONData } from '../lib/data/Constants.js'
         4099, 
         "macrosContainer", 
         {
-            name: "Avg. Auto Upper",
-            formula: function (team) { return stats.getAvgStat(team, Queries.AUTO_UPPER_HUB)} 
+            name: "Avr. Auto Upper",
+            formula: function (team) { return stats.getAvrStat(team, Queries.AUTO_UPPER_HUB)} 
         }, 
         2
     )
@@ -48,7 +50,7 @@ import { Queries, JSONData } from '../lib/data/Constants.js'
         "macrosContainer", 
         {
             name: "Driver Rating",
-            formula: function (team) { return stats.getAvgStat(team, Queries.DRIVER_RATING) } 
+            formula: function (team) { return stats.getAvrStat(team, Queries.DRIVER_RATING) } 
         }, 
         2
     )
@@ -57,7 +59,7 @@ import { Queries, JSONData } from '../lib/data/Constants.js'
         "macrosContainer", 
         {
             name: "Defense Rating",
-            formula: function (team) { return stats.getAvgStat(team, Queries.DEFENSE_RATING) }
+            formula: function (team) { return stats.getAvrStat(team, Queries.DEFENSE_RATING) }
         }, 
         2
     )
@@ -71,6 +73,8 @@ import { Queries, JSONData } from '../lib/data/Constants.js'
         driver_rating.team = team
         defense_rating.team = team
     }
+
+    
 
     setTeams()
 
