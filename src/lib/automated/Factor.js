@@ -1,11 +1,12 @@
 class Factor{
-    constructor(formula, type, bias){
+    constructor(formula, bias){
         this.formula = formula
-        this.type = type
         this.bias = bias
     }
 
-    get(){
-        return this.formula() * bias
+    getValue(team){
+        return this.formula(team) * this.bias
     }
 }
+
+export { Factor }
