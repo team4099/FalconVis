@@ -3,13 +3,23 @@ class WeightedStat{
         this.factors = factors
         this.threshold = threshold
     }
-    getValues(){
-        sum = 0
-        values = 0
-        for (const factor in this.factors){
-            sum += factor[0].get() * factor[1]
+    getValue(team){
+        var sum = 0
+        var values = 0
+        for (const factor of this.factors){
+            sum += (factor.formula).getValue(team) * factor.weight
+            values += factor.weight
+            console.log(sum)
         }
 
-        return sum >= this.threshold
+        try {
+            console.log(sum, values)
+            return [(sum/values).toFixed(2), (sum/values).toFixed(2) >= this.threshold]
+        }
+        catch {
+            return [-1, false]
+        }
     }
 }
+
+export { WeightedStat }
