@@ -124,22 +124,6 @@ import { Factor } from '../lib/automated/Factor.js'
         false
     )
 
-    var subDefenseStat = new WeightedStat(
-        [{
-            formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.DEFENSE_RATING)}, 1),
-            weight: 10
-        },
-        {
-            formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.DRIVER_RATING)}, 1),
-            weight: 10
-        },
-        {
-            formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.COUNTER_DEFENSE_RATING)}, 1),
-            weight: 10
-        }],
-        4
-    )
-
     var defenseStat = new WeightedStat(
         [{
             formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.DEFENSE_RATING)}, 1),
