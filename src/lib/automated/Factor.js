@@ -11,7 +11,7 @@ class Factor{
     }
 
     /**
-     * Get the dot's width.
+     * Get the f(team)*bias.
      * @param {number} team - Team number to be passed into formula (callback)
      * @return {number} Return f(team) value with modification by bias
      */
