@@ -7,7 +7,7 @@ class CalculatedStats {
         return 2;
     }
 
-    getAvgStat(team, stat){
+    getAvrStat(team, stat){
         try {
             var values = 0
             var count = 0
@@ -17,13 +17,10 @@ class CalculatedStats {
                 count += 1
             }
 
-            console.log((values/count).toFixed(2))
-
             return (values/count).toFixed(2)
         }
         catch (e) {
-            console.log(e)
-            return (0).toFixed(2)
+            return 0
         }
     }
 

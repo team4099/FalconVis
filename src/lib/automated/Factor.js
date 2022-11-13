@@ -1,10 +1,23 @@
+/** Class representing an individual point of a statistical criteria. */
 class Factor{
-    constructor(formula, type){
+    /**
+     * Create a point.
+     * @callback formula - Anonymous function to get statistical data based on team
+     * @param {number} bias - Multiplier on a factor internally to possible modify data to convert to score or other metric
+     */
+    constructor(formula, bias){
         this.formula = formula
-        this.type = type
+        this.bias = bias
     }
 
-    get(){
-        return this.formula()
+    /**
+     * Get the dot's width.
+     * @param {number} team - Team number to be passed into formula (callback)
+     * @return {number} Return f(team) value with modification by bias
+     */
+    getValue(team){
+        return this.formula(team) * this.bias
     }
 }
+
+export { Factor }
