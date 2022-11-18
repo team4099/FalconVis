@@ -4,7 +4,8 @@ class CalculatedStats {
     }
 
     getFalconRank(team){
-        return 2;
+        // just so they're diff numbers instead of just 2 :(
+        return parseInt(team/2);
     }
 
     getAvrStat(team, stat){
