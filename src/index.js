@@ -10,10 +10,10 @@ import { Modal } from './lib/components/Modal.js';
 
 (async () => {
   var data = await fetch(JSONData).then(res => res.json())
-
   var stats = new CalculatedStats(data)
-
   var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
+
+  // Add Graphs Below
 
   var driverRating = new BarGraph(
     "graphContainer",
@@ -29,7 +29,7 @@ import { Modal } from './lib/components/Modal.js';
         "Teleop Upper": function(team) {return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
       },
       selectedOptions: [4099, 118, 180],
-      allOptions: Selections.TEAMS
+      allOptions: [33, 2056, 4499, 2468, 4099, 118, 180, 340, 5406]
     },
     modal
   )
@@ -41,9 +41,9 @@ import { Modal } from './lib/components/Modal.js';
     {
       formula: function(team) {return stats.getScoreData(team, Queries.TELEOP_UPPER_HUB)},
       selectedOptions: [2056],
-      allOptions: Selections.TEAMS
+      allOptions: [33, 2056, 4499, 2468, 4099, 118, 180, 340]
     },
-    modal
+    modal,
   )
 
   var goodShooters = new ScatterGraph(

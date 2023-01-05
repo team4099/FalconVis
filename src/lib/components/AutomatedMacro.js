@@ -4,7 +4,7 @@ class AutomatedMacro {
 
         document.getElementById(parent_id).innerHTML += `
         <div id="${this.id}" class="p-4 border-2 border-gray-200 rounded-lg" style="width: 400px;">
-            <h1 class="mt-1 inline float-left ml-2 font-semibold text-2xl">
+            <h1 class="h-4 w-full mb-4 mt-1 inline float-left ml-2 font-semibold text-2xl">
                 ${title}
             </h1>
             <div id="${this.id+"_value"}">
@@ -15,17 +15,18 @@ class AutomatedMacro {
         this.stat = stat
         
         this.selectedOptions = selectedOptions
-        this.pushEdit(this.selectedOptions)
+        this.pushEdit(false, this.selectedOptions)
     }
 
-    pushEdit(newTeams){
+    pushEdit(modal, newTeams){
         this.selectedOptions = newTeams
-        console.log(this.selectedOptions)
 
         document.getElementById(this.id+"_value").innerHTML = "";
 
+        console.log(this.selectedOptions)
         for (const team of this.selectedOptions){
             var result = this.stat.getValue(team)
+            console.log(result)
 
             if (result[1]){
                 var color = "#248e24"

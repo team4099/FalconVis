@@ -5,7 +5,7 @@ class Factor{
      * @callback formula - Anonymous function to get statistical data based on team
      * @param {number} bias - Multiplier on a factor internally to possible modify data to convert to score or other metric
      */
-    constructor(formula, bias){
+    constructor(formula, bias = 1){
         this.formula = formula
         this.bias = bias
     }

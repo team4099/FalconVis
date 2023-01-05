@@ -1,83 +1,76 @@
 import { CalculatedStats } from '../lib/data/CalculatedStats.js';
-import { StatMacro } from '../lib/components/StatMacro.js';
 import { Queries, JSONData } from '../lib/data/Constants.js'
-import { WeightedStat } from '../lib/automated/WeightedStat.js'
 import { Factor } from '../lib/automated/Factor.js'
+import { GraphManager } from '../lib/components/GraphManager.js';
+import { AutomatedMacro } from '../lib/components/AutomatedMacro.js';
+import { CompositeStat } from '../lib/automated/CompositeStat.js'
 
 (async () => {
     var data = await fetch(JSONData).then(res => res.json())
-
     var stats = new CalculatedStats(data)
+    var statManager = new GraphManager()
 
-    var falconRank = new StatMacro(
-        4099, 
-        "macrosContainer", 
-        {
-            name: "FalconRank",
-            formula: function (team) { return stats.getFalconRank(team) }
-        }, 
-        2
+    var team = [9999]
+
+    statManager.addGraph(
+        "teleop_upper",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Avr. Teleop Upper", 
+            new CompositeStat(
+                [new Factor(function (team) { return stats.getAvrStat(team,Queries.TELEOP_UPPER_HUB)})],
+                2
+            ),
+            team
+        )
     )
-    var uptime = new StatMacro(
-        4099, 
-        "macrosContainer", 
-        {
-            name: "Uptime",
-            formula: function (team) { return stats.getAvrStat(team, Queries.UPTIME) }
-        }, 
-        0.5
+
+    statManager.addGraph(
+        "auto_upper",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Avr. Auto Upper", 
+            new CompositeStat(
+                [new Factor(function (team) { return stats.getAvrStat(team, Queries.AUTO_UPPER_HUB)})],
+                2
+            ),
+            team
+        )
     )
-    var teleop_upper = new StatMacro(
-        4099, 
-        "macrosContainer", 
-        {
-            name: "Avr. Teleop Upper",
-            formula: function (team) { return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
-        }, 
-        15
+
+    statManager.addGraph(
+        "driver_rating",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Driver Rating", 
+            new CompositeStat(
+                [new Factor(function (team) { return stats.getAvrStat(team, Queries.DRIVER_RATING) })],
+                2
+            ),
+            team
+        )
     )
-    var auto_upper = new StatMacro(
-        4099, 
-        "macrosContainer", 
-        {
-            name: "Avr. Auto Upper",
-            formula: function (team) { return stats.getAvrStat(team, Queries.AUTO_UPPER_HUB)} 
-        }, 
-        2
-    )
-    var driver_rating = new StatMacro(
-        4099, 
-        "macrosContainer", 
-        {
-            name: "Driver Rating",
-            formula: function (team) { return stats.getAvrStat(team, Queries.DRIVER_RATING) } 
-        }, 
-        2
-    )
-    var defense_rating = new StatMacro(
-        4099, 
-        "macrosContainer", 
-        {
-            name: "Defense Rating",
-            formula: function (team) { return stats.getAvrStat(team, Queries.DEFENSE_RATING) }
-        }, 
-        2
+
+    statManager.addGraph(
+        "defense_rating",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Defense Rating", 
+            new CompositeStat(
+                [new Factor(function (team) { return stats.getAvrStat(team, Queries.DEFENSE_RATING) })],
+                2
+            ),
+            team
+        )
     )
 
     var setTeams = function () {
-        var team = document.getElementById("teams").value
-        falconRank.team = team
-        uptime.team = team
-        teleop_upper.team = team
-        auto_upper.team = team
-        driver_rating.team = team
-        defense_rating.team = team
+        team = [document.getElementById("teams").value]
+        statManager.pushEditAll(team)
     }
 
     
-
     setTeams()
-
     document.getElementById("teams").addEventListener("change", setTeams)
 
 })()

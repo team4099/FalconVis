@@ -8,7 +8,6 @@ class CompositeStat{
     constructor(factors, threshold){
         this.factors = factors
         this.threshold = threshold
-        this.bias = bias
     }
 
     /**
@@ -18,11 +17,16 @@ class CompositeStat{
      */
     getValue(team){
         var sum = 0
-        for (const factor in this.factors){
+        for (const factor of this.factors){
             sum += factor.getValue(team)
         }
 
-        return sum >= this.threshold
+        try {
+            return [sum.toFixed(2), sum.toFixed(2) >= this.threshold]
+        }
+        catch {
+            return [-1, false]
+        }
     }
 }
 
