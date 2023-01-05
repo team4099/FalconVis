@@ -1,9 +1,10 @@
 import { CalculatedStats } from '../lib/data/CalculatedStats.js';
-import { Queries, JSONData } from '../lib/data/Constants.js'
+import { Queries, JSONData, Selections } from '../lib/data/Constants.js'
 import { Factor } from '../lib/automated/Factor.js'
 import { GraphManager } from '../lib/components/GraphManager.js';
 import { AutomatedMacro } from '../lib/components/AutomatedMacro.js';
 import { CompositeStat } from '../lib/automated/CompositeStat.js'
+import { setTeams, setupTeams } from './teamParent.js'
 
 (async () => {
     var data = await fetch(JSONData).then(res => res.json())
@@ -64,13 +65,8 @@ import { CompositeStat } from '../lib/automated/CompositeStat.js'
         )
     )
 
-    var setTeams = function () {
-        team = [document.getElementById("teams").value]
-        statManager.pushEditAll(team)
-    }
-
-    
-    setTeams()
-    document.getElementById("teams").addEventListener("change", setTeams)
+    setupTeams(Selections.TEAMS, "teams")
+    setTeams(statManager, "teams")
+    document.getElementById("teams").addEventListener("change", function () {setTeams(statManager, "teams")})
 
 })()
