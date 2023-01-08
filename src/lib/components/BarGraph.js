@@ -25,7 +25,7 @@ class BarGraph {
             })
         }
 
-        this.formulas = dataOptions.formulas
+        this.formulas = dataOptions.formula
 
         this.selectedColumnOptions = dataOptions.selectedOptions
         this.allColumnOptions = dataOptions.allOptions
@@ -66,7 +66,6 @@ class BarGraph {
         for (const seriesTypes of Object.keys(this.formulas)){
             definiteSeries = []
             for (const selected of this.selectedColumnOptions) {
-                console.log(this.formulas[seriesTypes](selected), selected)
                 definiteSeries.push(this.formulas[seriesTypes](selected))
             }
             this.seriesOptions.push(

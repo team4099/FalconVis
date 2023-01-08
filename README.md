@@ -4,8 +4,9 @@ FalconVis is a powerful data visualization and strategy generation platform buil
 
 ### Developing with FalconVis
  - [Graph Structure](/docs/GRAPH_STRUCTURE.md)
- - [Automated Strategy Structure](/docs/AUTOMATED_STRATEGY.md)
- - [How to FalconVis](/docs/DEVELOPING_FALCONVIS.md)
+ - [FalconVis Component Strucutre](/docs/FALCONVIS_COMPONENTS.md)
+ - [Setting Constants](/docs/SETTING_CONSTANTS.md)
+ - [Developing FalconVis Pages](/docs/DEVELOPING_FALCONVIS_PAGES.md)
 
 ![Example screenshot](/docs/screenshot.png)
 

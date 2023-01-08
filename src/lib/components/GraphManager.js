@@ -14,7 +14,6 @@ export class GraphManager{
     pushEditAll(values){
         var graphKeys = Object.values(this.graphs);
         for (const graph of graphKeys){
-            console.log(graph)
             graph.pushEdit(false, values)
         }
     }

@@ -1,11 +1,5 @@
 # Understanding Graph Structures 📊
 
-## Problem and Solution
-**Problem**: During competitions, we have always felt there was a disconnect between scouts and the data they collect. Scouts would spend hours (or days) generating match and pit scouting data without seeing how the team uses this data during match strategy or alliance selection.
-
-**Solution**: We decided to develop a web app where scouts can generate and display graphs online to see and potentially develop strategies on their own.
-
-
 ## Breakdown of Graphing Structure 
 
  > 💡 More wrappers, the better

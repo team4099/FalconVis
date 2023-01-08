@@ -71,9 +71,6 @@ class LineGraph {
                   }, [])
             })
         }
-
-
-        console.log(this.generatedData)
     }
 
     setupEdit() {

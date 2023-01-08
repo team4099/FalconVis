@@ -1,3 +1,5 @@
+import { GraphManager } from "../lib/components/GraphManager.js"
+
 var setTeams = function (statManager, id) {
     var team = [document.getElementById(id).value]
     console.log(statManager)
@@ -12,4 +14,6 @@ var setupTeams = function (teams, id) {
     }
 }
 
-export { setTeams, setupTeams}
+var statManager = new GraphManager()
+
+export { setTeams, setupTeams, statManager}

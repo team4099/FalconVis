@@ -2,20 +2,28 @@ class AutomatedMacro {
     constructor(parent_id, title, stat, selectedOptions){
         this.id = Math.random().toString(36).substr(2, 9)
 
-        document.getElementById(parent_id).innerHTML += `
-        <div id="${this.id}" class="p-4 border-2 border-gray-200 rounded-lg" style="width: 400px;">
-            <h1 class="h-4 w-full mb-4 mt-1 inline float-left ml-2 font-semibold text-2xl">
+        const temp = document.createElement('div');
+        temp.setAttribute("id", parent_id);
+        temp.setAttribute("class", "p-4 border-2 border-gray-200 rounded-lg")
+        temp.setAttribute("style", "width: 400px;")
+        temp.innerHTML = `
+        <div class="h-8 w-full mt-1 ml-2 mb-4">
+            <h1 class="inline float-left font-semibold text-2xl">
                 ${title}
             </h1>
-            <div id="${this.id+"_value"}">
-            </div>
+        </div>
+        <div class="w-full" id="${this.id+"_value"}">
         </div>
         `
 
+        document.getElementById(parent_id).appendChild(temp)
+        
+        
         this.stat = stat
         
         this.selectedOptions = selectedOptions
         this.pushEdit(false, this.selectedOptions)
+        
     }
 
     pushEdit(modal, newTeams){
@@ -23,11 +31,9 @@ class AutomatedMacro {
 
         document.getElementById(this.id+"_value").innerHTML = "";
 
-        console.log(this.selectedOptions)
+        
         for (const team of this.selectedOptions){
             var result = this.stat.getValue(team)
-            console.log(result)
-
             if (result[1]){
                 var color = "#248e24"
             }
@@ -36,7 +42,7 @@ class AutomatedMacro {
             }
 
             document.getElementById(this.id+"_value").innerHTML += `
-                <div id="${this.id+team.toString()}" class="w-full h-10 mt-4">
+                <div id="${this.id+team.toString()}" class="w-full h-10 mt-2">
                     <h1 class="mt-1 inline float-left ml-2 font-semibold text-2xl">
                         ${team}
                     </h1>

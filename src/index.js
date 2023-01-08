@@ -6,8 +6,6 @@ import { CalculatedStats } from './lib/data/CalculatedStats.js';
 import { Selections, Queries, JSONData } from './lib/data/Constants.js';
 import { Modal } from './lib/components/Modal.js';
 
-//var data = await fetch('data/iri_data.json').then(response => response.json())
-
 (async () => {
   var data = await fetch(JSONData).then(res => res.json())
   var stats = new CalculatedStats(data)
@@ -24,7 +22,7 @@ import { Modal } from './lib/components/Modal.js';
       }
     },
     {
-      formulas: {
+      formula: {
         "Auto Upper": function(team) {return stats.getAvrStat(team, Queries.AUTO_UPPER_HUB)},
         "Teleop Upper": function(team) {return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
       },

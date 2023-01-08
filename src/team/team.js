@@ -4,12 +4,12 @@ import { Factor } from '../lib/automated/Factor.js'
 import { GraphManager } from '../lib/components/GraphManager.js';
 import { AutomatedMacro } from '../lib/components/AutomatedMacro.js';
 import { CompositeStat } from '../lib/automated/CompositeStat.js'
-import { setTeams, setupTeams } from './teamParent.js'
+import { setTeams, setupTeams, statManager } from './teamParent.js'
 
 (async () => {
     var data = await fetch(JSONData).then(res => res.json())
     var stats = new CalculatedStats(data)
-    var statManager = new GraphManager()
+    
 
     var team = [9999]
 

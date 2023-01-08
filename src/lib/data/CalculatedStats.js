@@ -1,10 +1,25 @@
+import { mandatoryMatchData } from "../data/Constants.js"
+
 class CalculatedStats {
     constructor(data){
-        this.data = data
-    }
+        this.old_data = data
+        this.data = {}
 
-    getFalconRank(team){
-        return 2;
+        for (const entry of this.old_data){
+            if (Object.keys(this.data).includes(entry[mandatoryMatchData.TEAM_NUMBER].toString())){
+                this.data[entry[mandatoryMatchData.TEAM_NUMBER]].push(entry)
+            }
+            else {
+                this.data[entry[mandatoryMatchData.TEAM_NUMBER]] = [entry]
+            }
+        }
+
+        for (const team of Object.keys(this.data)){
+            this.data[team].sort(function(a,b){
+                return parseInt(a[mandatoryMatchData.MATCH_KEY].slice(2)) -
+                parseInt(b[mandatoryMatchData.MATCH_KEY].slice(2))
+            });
+        }
     }
 
     getAvrStat(team, stat){
@@ -35,7 +50,7 @@ class CalculatedStats {
                 for (const component of Object.keys(stat)){
                     temp += x[component]*stat[component]
                 }
-                match.push(x["Match Key"])
+                match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored.push(temp)
             }
     
@@ -52,7 +67,7 @@ class CalculatedStats {
             var scored = []
         
             for (const x of this.data[team]) { 
-                match.push(x["Match Key"])
+                match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored.push(x[stat])
             }
     
@@ -68,10 +83,10 @@ class CalculatedStats {
             var teams = []
             var scored = []
         
-            for (const x of Object.values(this.data)) { 
+            for (const x of Object.values(this.data)) {
                 for (const l of x){
-                    if (l["Match Key"] == match && l["Alliance"] == alliance){
-                        teams.push(l["Team Number"].toString())
+                    if (l[mandatoryMatchData.MATCH_KEY] == match && l[mandatoryMatchData.ALLIANCE] == alliance){
+                        teams.push(l[mandatoryMatchData.TEAM_NUMBER].toString())
                         scored.push(l[stat])
                         break
                     }
@@ -81,6 +96,7 @@ class CalculatedStats {
             return [teams, scored]
         }
         catch (e) {
+            console.log(e)
             return [[0], [0]]
         }
     }
