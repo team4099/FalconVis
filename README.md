@@ -9,5 +9,3 @@ FalconVis is a powerful data visualization and strategy generation platform buil
  - [Developing FalconVis Pages](/docs/DEVELOPING_FALCONVIS_PAGES.md)
 
 ![Example screenshot](/docs/screenshot.png)
-
-(Credit to Team 6328: Mechanical Advantage for README format)
