@@ -60,17 +60,35 @@ class LineGraph {
     }
 
     generateData() {
+        this.oldGeneratedData = []
         this.generatedData = []
         for (const teams of this.selectedColumnOptions){
             
             [this.xAxis, this.yAxis] = this.formula(teams)
-            this.generatedData.push({
+            this.oldGeneratedData.push({
                 name: teams.toString(),
                 data: this.xAxis.reduce((acc, current, index) => {
                     return [...acc, {x: current, y: this.yAxis[index]}]
                   }, [])
             })
         }
+
+        var minLength = 100
+        for (const teams of this.oldGeneratedData){
+            if (teams.data.length < minLength){
+                minLength = teams.data.length
+            }
+        }
+
+        console.log(this.oldGeneratedData)
+
+        for (const teams of this.oldGeneratedData){
+            this.generatedData.push({
+                name:teams.name,
+                data: teams.data.slice(0, minLength)
+            })
+        }
+        console.log(this.generatedData)
     }
 
     setupEdit() {

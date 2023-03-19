@@ -46,7 +46,7 @@ import {
             "teleopCargoRed",
             new BarGraph(
                 "redAllianceContainer",
-                "Avr. Teleop Cargo - Red",
+                "Avr. Cycles Cargo - Red",
                 {
                     bar: {
                         horizontal: false
@@ -54,9 +54,25 @@ import {
                 },
                 {
                     formula: {
-                    "Teleop Lower": function(team) {return stats.getAvrStat(team, Queries.TELEOP_LOWER_HUB)},
-                    "Teleop Upper": function(team) {return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
+                    "Cycles": function(team) {return stats.getAvrStat(team, Queries.TELEOP_GRID)}
                     },
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        
+        graphContainerRed.addGraph(
+            "autoPOTRed",
+            new LineGraph(
+                "redAllianceContainer",
+                "Auto POT - Red",
+                {},
+                {
+                    formula: function(team) {return stats.getAvrGridScore(team, Queries.AUTONOMOUS)},
                     selectedOptions: red,
                     allOptions: Selections.TEAMS
                 },
@@ -73,61 +89,12 @@ import {
                 "Teleop POT - Red",
                 {},
                 {
-                formula: function(team) {return stats.getTotalPoints(team, Queries.TELEOP_TOTAL)},
-                selectedOptions: red,
-                allOptions: Selections.TEAMS
-                },
-                modal,
-                false
-            )
-        )
-
-        
-        graphContainerRed.addGraph(
-            "defenseRed",
-            new BarGraph(
-                "redAllianceContainer",
-                "Defense - Red",
-                {
-                    bar: {
-                        horizontal: false
-                    }
-                },
-                {
-                    formula: {
-                    "Defense Rating": function(team) {return stats.getAvrStat(team, Queries.DEFENSE_RATING)},
-                    "Counter Def Rating": function(team) {return stats.getAvrStat(team, Queries.COUNTER_DEFENSE_RATING)},
-                    "Driver Rating": function(team) {return stats.getAvrStat(team, Queries.DRIVER_RATING)}
-                    },
-                    selectedOptions: red,
+                    formula: function(team) {return stats.getAvrGridScore(team, Queries.TELEOP)},
+                    selectedOptions: blue,
                     allOptions: Selections.TEAMS
                 },
                 modal,
                 false
-            )
-        )
-        
-        graphContainerRed.addGraph(
-            "defenseAutomatedRed",
-            new AutomatedMacro(
-                "redAllianceContainer",
-                "Defense Options Auto",
-                new WeightedStat(
-                    [{
-                        formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.DEFENSE_RATING)}),
-                        weight: 10
-                    },
-                    {
-                        formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.DRIVER_RATING)}),
-                        weight: 10
-                    },
-                    {
-                        formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.COUNTER_DEFENSE_RATING)}),
-                        weight: 10
-                    }],
-                    4
-                ),
-                red
             )
         )
     }
@@ -135,10 +102,10 @@ import {
 // Blue Graphs Generated Here
     function generateBlueGraphs(){
         graphContainerBlue.addGraph(
-            "teleopCargoBlue", 
+            "teleopCargoBlue",
             new BarGraph(
                 "blueAllianceContainer",
-                "Avr. Teleop Cargo - Blue",
+                "Avr. Cycles Cargo - Blue",
                 {
                     bar: {
                         horizontal: false
@@ -146,8 +113,7 @@ import {
                 },
                 {
                     formula: {
-                        "Teleop Lower": function(team) {return stats.getAvrStat(team, Queries.TELEOP_LOWER_HUB)},
-                        "Teleop Upper": function(team) {return stats.getAvrStat(team, Queries.TELEOP_UPPER_HUB)}
+                    "Cycles": function(team) {return stats.getAvrStat(team, Queries.TELEOP_GRID)}
                     },
                     selectedOptions: blue,
                     allOptions: Selections.TEAMS
@@ -158,66 +124,34 @@ import {
         )
 
         graphContainerBlue.addGraph(
-            "teleopPOTBlue",
+            "autoPOTBlue",
+            new LineGraph(
+                "blueAllianceContainer",
+                "Auto POT - Blue",
+                {},
+                {
+                    formula: function(team) {return stats.getAvrGridScore(team, Queries.AUTONOMOUS)},
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "teleopPOTRed",
             new LineGraph(
                 "blueAllianceContainer",
                 "Teleop POT - Blue",
                 {},
                 {
-                    formula: function(team) {return stats.getTotalPoints(team, Queries.TELEOP_TOTAL)},
+                    formula: function(team) {return stats.getAvrGridScore(team, Queries.TELEOP)},
                     selectedOptions: blue,
                     allOptions: Selections.TEAMS
                 },
                 modal,
                 false
-            )
-        )
-
-        graphContainerBlue.addGraph(
-            "defenseBlue",
-            new BarGraph(
-                "blueAllianceContainer",
-                "Defense - Blue",
-                {
-                    bar: {
-                        horizontal: false
-                    }
-                },
-                {
-                    formula: {
-                        "Defense Rating": function(team) {return stats.getAvrStat(team, Queries.DEFENSE_RATING)},
-                        "Counter Def Rating": function(team) {return stats.getAvrStat(team, Queries.COUNTER_DEFENSE_RATING)},
-                        "Driver Rating": function(team) {return stats.getAvrStat(team, Queries.DRIVER_RATING)}
-                    },
-                    selectedOptions: blue,
-                    allOptions: Selections.TEAMS
-                },
-                modal,
-                false
-            )
-        )
-
-        graphContainerBlue.addGraph(
-            "defenseAutomatedBlue",
-            new AutomatedMacro(
-                "blueAllianceContainer",
-                "Defense Options Auto",
-                new WeightedStat(
-                    [{
-                        formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.DEFENSE_RATING)}),
-                        weight: 10
-                    },
-                    {
-                        formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.DRIVER_RATING)}),
-                        weight: 10
-                    },
-                    {
-                        formula: new Factor(function(team) {return stats.getAvrStat(team, Queries.COUNTER_DEFENSE_RATING)}),
-                        weight: 10
-                    }],
-                    4
-                ),
-                blue
             )
         )
     }
