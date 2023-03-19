@@ -19,10 +19,23 @@ import { LineGraph } from '../lib/components/LineGraph.js';
 
     
     statManager.addGraph(
-        "avr_cycles",
+        "avr_teleop_cycles",
         new AutomatedMacro(
             "macrosContainer", 
-            "Avr. Cycles Count", 
+            "Avr. Teleop Cycles Count", 
+            new CompositeStat(
+                [new Factor(function (team) { return stats.getAvrStat(team,mandatoryMatchData.TELEOP_GRID)})],
+                5
+            ),
+            team
+        )
+    )
+
+    statManager.addGraph(
+        "avr_auto_cycles",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Avr. auto cycle count", 
             new CompositeStat(
                 [new Factor(function (team) { return stats.getAvrStat(team,mandatoryMatchData.AUTO_GRID)})],
                 5
@@ -45,7 +58,7 @@ import { LineGraph } from '../lib/components/LineGraph.js';
     )
 
     statManager.addGraph(
-        "avr_cycles",
+        "avr_auto_accuracy",
         new AutomatedMacro(
             "macrosContainer", 
             "Avr. Auto Accuracy (Pcnt)", 
@@ -58,7 +71,7 @@ import { LineGraph } from '../lib/components/LineGraph.js';
     )
 
     statManager.addGraph(
-        "avr_cycles",
+        "avr_teleop_accuracy",
         new AutomatedMacro(
             "macrosContainer", 
             "Avr. Teleop Accuracy (Pcnt)", 
@@ -71,7 +84,7 @@ import { LineGraph } from '../lib/components/LineGraph.js';
     )
 
     statManager.addGraph(
-        "avr_cycles",
+        "avr_driver_rating",
         new AutomatedMacro(
             "macrosContainer", 
             "Avr. Driver Rating", 
@@ -167,7 +180,7 @@ import { LineGraph } from '../lib/components/LineGraph.js';
     )
 
     statManager.addGraph(
-        "auto grid score over time",
+        "teleop grid score over time",
         new LineGraph(
             "graphContainer",
             "Teleop POT",
