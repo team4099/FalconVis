@@ -13,7 +13,7 @@ const Queries =  {
     ENDGAME_CRIT: {
         "None": 0,  //TODO: Edit scores
         "Docked": 2,
-        "Engaged": 7
+        "Engaged": 10
     },
     TOTAL_ENDGAME: "EndgameFinalCharge",
     AUTO_TOTAL: {

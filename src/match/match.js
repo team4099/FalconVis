@@ -10,6 +10,7 @@ import { Factor } from '../lib/automated/Factor.js'
 import { CalculatedStats } from '../lib/data/CalculatedStats.js';
 import { Modal } from "../lib/components/Modal.js"
 import { GraphManager } from "../lib/components/GraphManager.js"
+import { CombinedHeatmap } from "../lib/components/CombinedHeatmap.js"
 import { 
     setTeams, modal, graphContainerBlue, 
     graphContainerRed, red, blue 
@@ -97,6 +98,70 @@ import {
                 false
             )
         )
+
+        graphContainerRed.addGraph(
+            "auto CYCLES over time",
+            new LineGraph(
+                "redAllianceContainer",
+                "Auto CYCLES over time - Red",
+                {},
+                {
+                    formula: function(team) { return stats.getAvrStatOverTime(team, Queries.AUTO_GRID)},
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
+            "teleop CYCLES over time",
+            new LineGraph(
+                "redAllianceContainer",
+                "Teleop CYCLES over time - Red",
+                {},
+                {
+                    formula: function(team) { return stats.getAvrStatOverTime(team, Queries.TELEOP_GRID)},
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
+            "teleop CYCLES heatmap",
+            new CombinedHeatmap(
+                "redAllianceContainer",
+                "Teleop CYCLES Heatmap (Combined) - Red",
+                {},
+                {
+                    formula: function(team) { return stats.getCycleHeatmapData(team, Queries.TELEOP_GRID)},
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
+            "auto CYCLES heatmap",
+            new CombinedHeatmap(
+                "redAllianceContainer",
+                "Auto CYCLES Heatmap (Combined) - Red",
+                {},
+                {
+                    formula: function(team) { return stats.getCycleHeatmapData(team, Queries.AUTO_GRID)},
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
     }
 
 // Blue Graphs Generated Here
@@ -147,6 +212,70 @@ import {
                 {},
                 {
                     formula: function(team) {return stats.getAvrGridScore(team, Queries.TELEOP)},
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "auto CYCLES over time",
+            new LineGraph(
+                "blueAllianceContainer",
+                "Auto CYCLES over time - Blue",
+                {},
+                {
+                    formula: function(team) { return stats.getAvrStatOverTime(team, Queries.AUTO_GRID)},
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "teleop CYCLES over time",
+            new LineGraph(
+                "blueAllianceContainer",
+                "Teleop CYCLES over time - Blue",
+                {},
+                {
+                    formula: function(team) { return stats.getAvrStatOverTime(team, Queries.TELEOP_GRID)},
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "teleop CYCLES heatmap",
+            new CombinedHeatmap(
+                "blueAllianceContainer",
+                "Teleop CYCLES Heatmap (Combined) - Blue",
+                {},
+                {
+                    formula: function(team) { return stats.getCycleHeatmapData(team, Queries.TELEOP_GRID)},
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "auto CYCLES heatmap",
+            new CombinedHeatmap(
+                "blueAllianceContainer",
+                "Auto CYCLES Heatmap (Combined) - Blue",
+                {},
+                {
+                    formula: function(team) { return stats.getCycleHeatmapData(team, Queries.AUTO_GRID)},
                     selectedOptions: blue,
                     allOptions: Selections.TEAMS
                 },

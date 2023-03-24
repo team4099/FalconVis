@@ -93,6 +93,31 @@ class CalculatedStats {
         }
     }
 
+    getAvrStatOverTime(team, stat){
+        try {
+            var match = []
+            var scored = []
+        
+            var count = 0
+            for (const x of this.data[team]) { 
+                if (typeof(x[stat]) == "object"){
+                    match.push(count)
+                    scored.push(x[stat].length)
+                }
+                else {
+                    match.push(count)
+                    scored.push(0)
+                }
+                count += 1
+            }
+
+            return [match, scored]
+        }
+        catch (e) {
+            return [[0], [0]]
+        }
+    }
+
     getAvrStat(team, stat){
         try {
             var values = 0
@@ -249,6 +274,190 @@ class CalculatedStats {
             console.log(e)
             return [[0], [0]]
         }
+    }
+
+    getCycleHeatmapData(team, heatmapGrid) {
+        var positionsToIndices = {
+            "H": 0,
+            "M": 1,
+            "L": 2
+        }
+        var indicesToNames = ["High", "Mid", "Bottom"]
+        var indicesToLocations = ["Cone1", "Cube2", "Cone3", "Cone4", "Cube5", "Cone6", "Cone7", "Cube8", "Cone9"]
+
+        var cycleHeatmap = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+        var heatmapFormatted = []
+
+        try {
+            for (const matchData of this.data[team]) {
+                if (matchData[heatmapGrid][0] != "") {
+                    for (const gamePiece of matchData[heatmapGrid]) {
+                        let gamePieceX = parseInt(gamePiece[0]) - 1
+                        let gamePieceY = gamePiece[1]
+
+                        if (matchData["Alliance"] == "red") {
+                            gamePieceX = 9 - gamePieceX - 1
+                        }
+
+                        cycleHeatmap[positionsToIndices[gamePieceY]][gamePieceX] += 1
+                    }
+                }
+            }
+            
+            for (const row of cycleHeatmap) {
+                var currentIndex = cycleHeatmap.indexOf(row)
+                var rowData = []
+
+                for (let counter = 0; counter < indicesToLocations.length; counter++) {
+                    rowData.push({
+                        "x": indicesToLocations[counter],
+                        "y": row[counter]
+                    })
+                }
+
+                heatmapFormatted.push(
+                    {
+                        "name": indicesToNames[currentIndex],
+                        "data": rowData
+                    }
+                )
+            }
+        }
+        catch (e) {
+            console.log(e)
+
+            return [
+                {
+                    "name": "High",
+                    "data": [
+                        {
+                            "x": "Cone1",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube2",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone3",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone4",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube5",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone6",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone7",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube8",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone9",
+                            "y": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "Mid",
+                    "data": [
+                        {
+                            "x": "Cone1",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube2",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone3",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone4",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube5",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone6",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone7",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube8",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone9",
+                            "y": 0
+                        }
+                    ]
+                },
+                {
+                    "name": "Bottom",
+                    "data": [
+                        {
+                            "x": "Cone1",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube2",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone3",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone4",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube5",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone6",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone7",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cube8",
+                            "y": 0
+                        },
+                        {
+                            "x": "Cone9",
+                            "y": 0
+                        }
+                    ]
+                }
+            ]    
+        }
+
+        return [indicesToLocations, heatmapFormatted.reverse()]
     }
 }
 

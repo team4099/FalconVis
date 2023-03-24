@@ -8,15 +8,16 @@ import { AutomatedMacro } from '../lib/components/AutomatedMacro.js';
 import { CompositeStat } from '../lib/automated/CompositeStat.js'
 import { setTeams, setupTeams, statManager } from './teamParent.js'
 import { LineGraph } from '../lib/components/LineGraph.js';
+import { HeatMap } from '../lib/components/HeatMap.js';
 
 (async () => {
     console.log("test")
     var data = await fetch(JSONData).then(res => res.json())
     var stats = new CalculatedStats(data)
     var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
+    console.log(stats.data)
 
     var team = [Selections.TEAMS[0]]
-
     
     statManager.addGraph(
         "avr_teleop_cycles",
@@ -38,7 +39,6 @@ import { LineGraph } from '../lib/components/LineGraph.js';
             "Avr. auto cycle count", 
             new CompositeStat(
                 [new Factor(function (team) { return stats.getAvrStat(team,mandatoryMatchData.AUTO_GRID)})],
-                5
             ),
             team
         )
@@ -196,6 +196,39 @@ import { LineGraph } from '../lib/components/LineGraph.js';
     )
 
     statManager.addGraph(
+        "teleop CYCLES over time",
+        new LineGraph(
+            "graphContainer",
+            "Teleop CYCLES over time",
+            {},
+            {
+                formula: function(team) { return stats.getAvrStatOverTime(team, Queries.TELEOP_GRID)},
+                selectedOptions: team,
+                allOptions: Selections.TEAMS
+            },
+            modal,
+            false
+        )
+    )
+
+    statManager.addGraph(
+        "auto CYCLES over time",
+        new LineGraph(
+            "graphContainer",
+            "Auto CYCLES over time",
+            {},
+            {
+                formula: function(team) { return stats.getAvrStatOverTime(team, Queries.AUTO_GRID)},
+                selectedOptions: team,
+                allOptions: Selections.TEAMS
+            },
+            modal,
+            false
+        )
+    )
+
+
+    statManager.addGraph(
         "gridScoreGraph",
         new BarGraph(
             "graphContainer",
@@ -212,6 +245,38 @@ import { LineGraph } from '../lib/components/LineGraph.js';
                     "Right grid": function(team) { return stats.getAvrGrid(team, Queries.RIGHT)}
                 },
                 selectedOptions: team,
+                allOptions: Selections.TEAMS
+            },
+            modal,
+            false
+        )
+    )
+
+    statManager.addGraph(
+        "Teleop CYCLES heatmap",
+        new HeatMap(
+            "graphContainer",
+            "Teleop CYCLES Heatmap",
+            {},
+            {
+                formula: function(team) { return stats.getCycleHeatmapData(team, Queries.TELEOP_GRID) },
+                selectedOption: team,
+                allOptions: Selections.TEAMS
+            },
+            modal,
+            false
+        )
+    )
+    
+    statManager.addGraph(
+        "Auto CYCLES heatmap",
+        new HeatMap(
+            "graphContainer",
+            "Auto CYCLES Heatmap",
+            {},
+            {
+                formula: function(team) { return stats.getCycleHeatmapData(team, Queries.AUTO_GRID) },
+                selectedOption: team,
                 allOptions: Selections.TEAMS
             },
             modal,
