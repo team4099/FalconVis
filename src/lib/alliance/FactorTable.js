@@ -37,7 +37,7 @@ export class FactorTable {
             "picklistGraph",
             new BarGraph(
                 "graphContainer",
-                "Picklist Rankings (Measure of Their Capability versus their Maximum Potential)",
+                "Picklist Rankings (Measure of Offensive Potential out of 100)",
                 {
                     bar: {
                         horizontal: true
