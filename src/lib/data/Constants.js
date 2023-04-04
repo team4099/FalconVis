@@ -12,8 +12,15 @@ const Queries =  {
     COUNTER_DEFENSE_TIME: "DefendedTime",
     ENDGAME_CRIT: {
         "None": 0,  //TODO: Edit scores
+        "Parked": 0,
         "Docked": 2,
-        "Engaged": 10
+        "Engage": 10
+    },
+    ENGAGE_CRIT: {
+        "None": 0,  //TODO: Edit scores
+        "Parked": 0,
+        "Docked": 0,
+        "Engage": 1
     },
     TOTAL_ENDGAME: "EndgameFinalCharge",
     AUTO_TOTAL: {
@@ -27,8 +34,13 @@ const Queries =  {
     AUTO_MISSES: "AutoMissed",
     TELEOP_MISSES: "TeleopMissed",
     MOBILITY: "Mobile",
+    DISABLED: "Disable",
     MOBILITY_CRIT: {
-        "true": 100,
+        "true": 100, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
+        "false": 0
+    },
+    DISABLED_CRIT: {
+        "true": 1, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
         "false": 0
     },
     AUTO_GRID_SCORE: {

@@ -1,10 +1,17 @@
+import { BarGraph } from '../components/BarGraph.js';
+import { Selections } from '../data/Constants.js';
+import { GraphManager } from '../components/GraphManager.js';
+import { Graph } from '../components/Graph.js';
+
 export class FactorTable {
-    constructor(parent_id, factors_pair, callback){
+    constructor(parent_id, factors_pair, callback, modal, stats){
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.parent_id = parent_id
         this.factors_pair = factors_pair
         this.onclick = callback
+        this.modal = modal
+        this.stats = stats
 
         for (const key of Object.keys(this.factors_pair)){
             this.factors_pair[key].push(0)
@@ -13,6 +20,44 @@ export class FactorTable {
         this.companionDiv = document.createElement("table")
         this.companionDiv.classList.add("border-collapse","table-auto","w-full","text-sm")
         this.companionDiv.id = this.uuid
+        
+        // Bar graph portion of picklist generation
+        this.finalCalculations = {}
+
+        for (const team of Selections.TEAMS) {
+            this.finalCalculations[team] = 0.0
+        }
+
+        // Able to access this reference from elsewhere
+        var self = this
+
+        this.statManager = new GraphManager()
+
+        this.statManager.addGraph(
+            "picklistGraph",
+            new BarGraph(
+                "graphContainer",
+                "Picklist Rankings (Measure of Their Capability versus their Maximum Potential)",
+                {
+                    bar: {
+                        horizontal: true
+                    }
+                },
+                {
+                    formula: {
+                        "Offensive Potential": function (team) { 
+                            return self.finalCalculations[team].toFixed(1) 
+                        }
+                    },
+                    selectedOptions: Object.keys(this.finalCalculations),
+                    allOptions: Object.keys(Selections.TEAMS)
+                },
+                this.modal,
+                true,
+                true,
+                8
+            )
+        )
 
         document.getElementById(this.parent_id).appendChild(this.companionDiv)
 
@@ -58,12 +103,18 @@ export class FactorTable {
     pushData(){
         var data = {}
 
-        console.log(this.factors_pair)
-
         for (const factor of Object.keys(this.factors_pair)){
-            data[factor] = document.getElementById(this.factors_pair[factor][1]).value
+            data[factor] = parseFloat(document.getElementById(this.factors_pair[factor][1]).value)
         }
 
-        this.onclick(data)
+        let finalCalculations = this.onclick(data, this.stats)
+        this.finalCalculations = finalCalculations
+        
+        // Sort picklist rankings
+        let bestTeams = Object.entries(finalCalculations).sort(
+            ([,value1],[,value2]) => value2 - value1
+        ).map(x => x[0])
+
+        this.statManager.pushEditAll(bestTeams)
     }
 }

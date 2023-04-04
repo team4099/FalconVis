@@ -162,42 +162,70 @@ class CalculatedStats {
         }
     }
 
-    getAvrGrid(team, stat){
+    getAvrGrid(team, stat, type_of_grid){
         try {
             var count = 0
+            var totalSubmissions = 0
+
             for (const x of this.data[team]) { 
-                for (const score of x[mandatoryMatchData.AUTO_GRID]){
+                for (const score of x[type_of_grid]){
                     if (stat == Queries.LEFT){
                         if (["1", "2", "3"].includes(score[0])){
                             count += 1
                         }
                         
                     }
-                    if (stat == Queries.COOP){
+                    else if (stat == Queries.COOP){
                         if (["4", "5", "6"].includes(score[0])){
                             count += 1
                         }
                     }
-                    if (stat == Queries.RIGHT){
+                    else if (stat == Queries.RIGHT){
                         if (["7", "8", "9"].includes(score[0])){
                             count += 1
                         }
                     }
+                    else {
+                        count += 1
+                    }
                 }    
+                totalSubmissions += 1
             }
 
-            return count
+            return (count / totalSubmissions).toFixed(2)
         }
         catch (e) {
             return 0
         }
     }
 
-    getAvrTier(team, stat){
+    getCyclesByMatch(team, type_of_grid){
+        try {
+            var totalCycles = []
+
+            for (const x of this.data[team]) { 
+                var count = 0
+
+                for (const _ of x[type_of_grid]){
+                    count += 1
+                }
+
+                totalCycles.push(count)
+            }
+
+            return totalCycles
+        }
+        catch (e) {
+            return 0
+        }
+    }
+
+    getAvrTier(team, stat, type_of_grid){
         try {
             var count = 0
+            var totalSubmissions = 0
             for (const x of this.data[team]) { 
-                for (const score of x[mandatoryMatchData.AUTO_GRID]){
+                for (const score of x[type_of_grid]){
                     if (stat == Queries.HIGH && score[1] == "H"){
                         count += 1
                         
@@ -209,9 +237,10 @@ class CalculatedStats {
                     if (stat == Queries.HYBRID && score[1] == "L"){
                         count += 1
                     }
-                }    
+                }
+                totalSubmissions += 1
             }
-            return (count).toFixed(2)
+            return (count / totalSubmissions).toFixed(2)
         }
         catch (e) {
             console.log(e, team)
@@ -245,7 +274,7 @@ class CalculatedStats {
                 match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored += stat_crit[x[stat_comp]]
             }
-    
+            
             return scored / match.length
         }
         catch (e) {
@@ -458,6 +487,40 @@ class CalculatedStats {
         }
 
         return [indicesToLocations, heatmapFormatted.reverse()]
+    }
+
+    //Credit D3: https://github.com/d3/d3-array/blob/master/LICENSE
+    quantileSorted(values, p, fnValueFrom) {
+        values.sort((a, b) => a - b)
+
+        var n = values.length
+        if (!n) {
+            return
+        }
+
+        fnValueFrom =
+            Object.prototype.toString.call(fnValueFrom) == "[object Function]"
+                ? fnValueFrom
+                : function (x) {
+                    return x
+                }
+
+            p = +p
+
+        if (p <= 0 || n < 2) {
+            return +fnValueFrom(values[0], 0, values)
+        }
+
+        if (p >= 1) {
+            return +fnValueFrom(values[n - 1], n - 1, values)
+        }
+
+        var i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = +fnValueFrom(values[i0], i0, values),
+        value1 = +fnValueFrom(values[i0 + 1], i0 + 1, values)
+
+        return value0 + (value1 - value0) * (i - i0)
     }
 }
 

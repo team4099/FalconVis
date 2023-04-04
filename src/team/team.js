@@ -50,7 +50,7 @@ import { HeatMap } from '../lib/components/HeatMap.js';
             "macrosContainer", 
             "Avr. Mobility", 
             new CompositeStat(
-                [new Factor(function (team) { return stats.getScoreDataCritSingle(team,Queries.MOBILITY, Queries.MOBILITY_CRIT)})],
+                [new Factor(function (team) { return stats.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_CRIT)})],
                 50.00
             ),
             team
@@ -109,9 +109,9 @@ import { HeatMap } from '../lib/components/HeatMap.js';
             },
             {
                 formula: {
-                    "High Avr": function(team) { return stats.getAvrTier(team, Queries.HIGH)},
-                    "Mid Avr": function(team) { return stats.getAvrTier(team, Queries.MID)},
-                    "Hybrid Avr": function(team) { return stats.getAvrTier(team, Queries.HYBRID)}
+                    "High Avr": function(team) { return stats.getAvrTier(team, Queries.HIGH, Queries.TELEOP_GRID)},
+                    "Mid Avr": function(team) { return stats.getAvrTier(team, Queries.MID, Queries.TELEOP_GRID)},
+                    "Hybrid Avr": function(team) { return stats.getAvrTier(team, Queries.HYBRID, Queries.TELEOP_GRID)}
                 },
                 selectedOptions: team,
                 allOptions: Selections.TEAMS
@@ -240,9 +240,9 @@ import { HeatMap } from '../lib/components/HeatMap.js';
             },
             {
                 formula: {
-                    "Left grid": function(team) { return stats.getAvrGrid(team, Queries.LEFT)},
-                    "Coop grid": function(team) { return stats.getAvrGrid(team, Queries.COOP)},
-                    "Right grid": function(team) { return stats.getAvrGrid(team, Queries.RIGHT)}
+                    "Left grid": function(team) { return stats.getAvrGrid(team, Queries.LEFT, Queries.TELEOP_GRID)},
+                    "Coop grid": function(team) { return stats.getAvrGrid(team, Queries.COOP, Queries.TELEOP_GRID)},
+                    "Right grid": function(team) { return stats.getAvrGrid(team, Queries.RIGHT, Queries.TELEOP_GRID)}
                 },
                 selectedOptions: team,
                 allOptions: Selections.TEAMS

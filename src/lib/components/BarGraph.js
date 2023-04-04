@@ -1,15 +1,15 @@
 import { Graph } from "./Graph.js"
 
 class BarGraph {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true) {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false, highlightFirstN = 0) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
 
         this.companionDiv = document.createElement("div")
-        this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg")
-        this.companionDiv.style.width = "400px"
+        this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg", (fullScreen ? "w-full" : "w-[400px]"))
         this.companionDiv.id = this.uuid
+        this.highlightFirstN = highlightFirstN
 
         document.getElementById(parent_id).appendChild(this.companionDiv)
 
@@ -62,12 +62,22 @@ class BarGraph {
         this.seriesOptions = []
         var definiteSeries = []
 
-
         for (const seriesTypes of Object.keys(this.formulas)){
+            var counter = 0
             definiteSeries = []
+
             for (const selected of this.selectedColumnOptions) {
-                definiteSeries.push(this.formulas[seriesTypes](selected))
+                definiteSeries.push({
+                    x: selected,
+                    y: this.formulas[seriesTypes](selected),
+                    fillColor: counter <= this.highlightFirstN ? "#EFAE04" : "#262626",
+                    strokeColor: counter <= this.highlightFirstN ? "#EFAE04" : "#262626",
+                })
+                counter += 1
             }
+
+            console.log(definiteSeries)
+
             this.seriesOptions.push(
                 {
                     name: seriesTypes,
@@ -105,7 +115,7 @@ class BarGraph {
             else {
                 formString += `
                 <div class="flex items-center">
-                    <input id="${i}${this.uuid}" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <input id="${i}${this.uuid}" type="checkbox" value="" class="w-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                     <label for="${i}${this.uuid}" class="ml-2 text-sm font-medium text-gray-300">${i}</label>
                 </div>
                 `
