@@ -36,12 +36,12 @@ const Queries =  {
     MOBILITY: "Mobile",
     DISABLED: "Disable",
     MOBILITY_CRIT: {
-        "true": 100, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
-        "false": 0
+        1: 100, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
+        0: 0
     },
     DISABLED_CRIT: {
-        "true": 1, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
-        "false": 0
+        1: 1, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
+        0: 0
     },
     AUTO_GRID_SCORE: {
         "L": 3,
