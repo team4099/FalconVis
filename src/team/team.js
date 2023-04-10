@@ -9,6 +9,7 @@ import { CompositeStat } from '../lib/automated/CompositeStat.js'
 import { setTeams, setupTeams, statManager } from './teamParent.js'
 import { LineGraph } from '../lib/components/LineGraph.js';
 import { HeatMap } from '../lib/components/HeatMap.js';
+import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
 
 (async () => {
     console.log("test")
@@ -281,6 +282,18 @@ import { HeatMap } from '../lib/components/HeatMap.js';
             },
             modal,
             false
+        )
+    )
+
+    statManager.addGraph(
+    "TeleopNotes",
+    new NoteHighlighting(
+            "graphContainer",
+            function (team) {return stats.getNotes(team, Queries.TELEOP_NOTES)},
+            team,
+            "Teleop Notes",
+            ["cycle", "good", "fast", "score"],
+            ["can't", "disable", "foul", "bad", "drop", "stuck", "poor", "missed", "slow", "only", "tippy"]
         )
     )
 

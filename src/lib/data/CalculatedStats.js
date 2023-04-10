@@ -67,6 +67,25 @@ class CalculatedStats {
         }
     }
 
+    getNotes(team, stat){
+        try {
+            var notes = []
+
+            for (const x of this.data[team]){
+                if (x[stat] != ""){
+                    notes.push(x[stat])
+                }
+            }
+
+            return notes
+        }
+        catch (e) {
+            console.log(e)
+            return []
+        }
+        
+    }
+
     getAvrGridMissed(team, section){
         try {
             var values = 0
