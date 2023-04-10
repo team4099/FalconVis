@@ -33,6 +33,9 @@ const Queries =  {
     TELEOP_GRID: "TeleopGrid",
     AUTO_MISSES: "AutoMissed",
     TELEOP_MISSES: "TeleopMissed",
+    AUTO_NOTES: "AutoNotes",
+    TELEOP_NOTES: "TeleopNotes",
+    ENDGAME_NOTES: "EndgameNotes",
     MOBILITY: "Mobile",
     DISABLED: "Disable",
     MOBILITY_CRIT: {
