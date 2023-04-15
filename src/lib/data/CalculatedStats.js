@@ -67,6 +67,40 @@ class CalculatedStats {
         }
     }
 
+    getMatchGridScore(team, section, matchKey) {
+        try {
+            var totalSum = 0
+
+            if (section == Queries.AUTONOMOUS){
+                var type = Queries.AUTO_GRID
+                var grid_crit = Queries.AUTO_GRID_SCORE
+            }
+            else {
+                var type = Queries.TELEOP_GRID
+                var grid_crit = Queries.TELEOP_GRID_SCORE
+            }
+            
+            for (const x of this.data[team]) { 
+                if (x[mandatoryMatchData.MATCH_KEY] != matchKey) {
+                    continue
+                }
+
+                for (const score of x[type]){
+                    totalSum += grid_crit[score[1]]
+                }
+
+                if (Number.isNaN(totalSum)){
+                    totalSum = 0
+                }
+            }
+            return totalSum
+        }
+        catch (e) {
+            console.log(e, this.data[team])
+            return 0
+        }
+    }
+
     getNotes(team, stat){
         try {
             var notes = []
@@ -284,21 +318,47 @@ class CalculatedStats {
         }
     }
 
-    getScoreDataCritSingle(team, stat_comp, stat_crit){
+    getScoreDataCritSingle(team, stat_comp, stat_crit, matchKey = null){
         try {
             var match = []
             var scored = 0
         
             for (const x of this.data[team]) { 
+                if (matchKey != null && x[mandatoryMatchData.MATCH_KEY] != matchKey) {
+                    continue
+                }
+
                 match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored += stat_crit[x[stat_comp]]
             }
-            
             return scored / match.length
         }
         catch (e) {
             return 0
         }
+    }
+
+    getPointsAddedByMatch(team) {
+        var pointsAdded = []
+
+        for (const submission of this.data[team]) {
+            let matchKey = submission[mandatoryMatchData.MATCH_KEY]
+            var pointValue = 0
+            // Score during autonomous
+            pointValue += this.getMatchGridScore(team, Queries.AUTONOMOUS, matchKey) 
+            pointValue += this.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_POINAGE, matchKey)
+            pointValue += this.getScoreDataCritSingle(team, Queries.AUTO_CHARGING_STATE, Queries.AUTO_CHARGE_STATION_CRIT, matchKey)
+
+            // Score during teleop
+            pointValue += this.getMatchGridScore(team, Queries.TELEOP, matchKey)
+
+            // Score during endgame
+            pointValue += this.getScoreDataCritSingle(team, Queries.TOTAL_ENDGAME, Queries.ENDGAME_CRIT, matchKey)
+            
+            pointsAdded.push(pointValue)
+        }
+
+        return pointsAdded
     }
 
     getMatchAllianceData(match, stat, alliance){

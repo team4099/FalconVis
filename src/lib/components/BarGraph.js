@@ -63,12 +63,12 @@ class BarGraph {
         var definiteSeries = []
 
         for (const seriesTypes of Object.keys(this.formulas)){
-            var counter = 0
+            var counter = 1
             definiteSeries = []
 
             for (const selected of this.selectedColumnOptions) {
                 definiteSeries.push({
-                    x: selected,
+                    x: selected.toString(),
                     y: this.formulas[seriesTypes](selected),
                     fillColor: counter <= this.highlightFirstN ? "#EFAE04" : "#262626",
                     strokeColor: counter <= this.highlightFirstN ? "#EFAE04" : "#262626",

@@ -37,7 +37,7 @@ export class FactorTable {
             "picklistGraph",
             new BarGraph(
                 "graphContainer",
-                "Picklist Rankings (Measure of Offensive Potential out of 100)",
+                "Picklist Rankings (Points Contributed)",
                 {
                     bar: {
                         horizontal: true
@@ -45,7 +45,7 @@ export class FactorTable {
                 },
                 {
                     formula: {
-                        "Offensive Potential": function (team) { 
+                        "Points Contributed": function (team) { 
                             return self.finalCalculations[team].toFixed(1) 
                         }
                     },

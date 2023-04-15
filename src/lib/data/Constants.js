@@ -10,10 +10,17 @@ const Queries =  {
     DEFENSE_TIME: "DefenseTime",
     COUNTER_DEFENSE_RATING: "CounterDefenseRating",
     COUNTER_DEFENSE_TIME: "DefendedTime",
+    AUTO_CHARGE_STATION_CRIT: {
+        "": 0,
+        "None": 0,
+        "Dock": 8,
+        "Engage": 12
+    },
     ENDGAME_CRIT: {
-        "None": 0,  //TODO: Edit scores
-        "Parked": 0,
-        "Docked": 2,
+        "": 0,
+        "None": 0,
+        "Park": 2,
+        "Dock": 6,
         "Engage": 10
     },
     ENGAGE_CRIT: {
@@ -23,6 +30,7 @@ const Queries =  {
         "Engage": 1
     },
     TOTAL_ENDGAME: "EndgameFinalCharge",
+    AUTO_CHARGING_STATE: "AutoChargingState",
     AUTO_TOTAL: {
         "auto_lower_hub": 2, 
         "auto_upper_hub": 4
@@ -39,11 +47,15 @@ const Queries =  {
     MOBILITY: "Mobile",
     DISABLED: "Disable",
     MOBILITY_CRIT: {
-        1: 100, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
+        1: 100,
+        0: 0
+    },
+    MOBILITY_POINAGE: {
+        1: 3,
         0: 0
     },
     DISABLED_CRIT: {
-        1: 1, // TODO, change mobility and disable crit from true and false to 0 and 1 for CHCMP
+        1: 1,
         0: 0
     },
     AUTO_GRID_SCORE: {
@@ -73,12 +85,7 @@ const Selections =  {
         'qm51', 'qm52', 'qm53', 'qm54', 'qm55', 
         'qm56', 'qm57', 'qm58', 'qm59', 'qm60'
     ],
-    TEAMS: [
-        116, 339, 612, 620, 623, 686, 1389, 1418, 
-        1719, 1727, 1885, 1915, 2186, 2421, 2849, 2961, 2988, 
-        3361, 3373, 3748, 3793, 4099, 4472, 4541, 4638, 5115, 
-        5243, 5587, 5841, 6504, 6882, 7770, 8197, 8230, 8590, 8592,
-        8726, 9033, 9072, 9235],
+    TEAMS: [116, 122, 346, 384, 401, 422, 449, 611, 612, 614, 620, 623, 686, 836, 888, 977, 1086, 1111, 1123, 1262, 1389, 1418, 1599, 1610, 1629, 1727, 1731, 1895, 1908, 2028, 2068, 2106, 2199, 2363, 2377, 2421, 2537, 3136, 3373, 3939, 4099, 4456, 4472, 4541, 5115, 5338, 5549, 5587, 5724, 5804, 6326, 6802, 6863, 7770, 8230, 8592, 8622, 8726, 9033, 9072],
     RED: "red",
     BLUE: "blue"
 }
@@ -91,6 +98,6 @@ const mandatoryMatchData = {
     TELEOP_GRID: "TeleopGrid"
 }
 
-const JSONData = "https://raw.githubusercontent.com/team4099/FalconScout/2023falconscoutcore/falconscoutcore/data/2023vaale_match_data.json"
+const JSONData = "https://raw.githubusercontent.com/team4099/ScoutingAppData/main/2023chcmp_match_data.json"
 
 export { Queries, Selections, JSONData, mandatoryMatchData }
