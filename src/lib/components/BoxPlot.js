@@ -1,7 +1,7 @@
 import { Graph } from "./Graph.js"
 
-class BarGraph {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false, highlightFirstN = null) {
+class BoxPlot {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
@@ -9,7 +9,6 @@ class BarGraph {
         this.companionDiv = document.createElement("div")
         this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg", (fullScreen ? "w-full" : "w-[400px]"))
         this.companionDiv.id = this.uuid
-        this.highlightFirstN = highlightFirstN
 
         document.getElementById(parent_id).appendChild(this.companionDiv)
 
@@ -25,7 +24,8 @@ class BarGraph {
             })
         }
 
-        this.formulas = dataOptions.formula
+
+        this.formula = dataOptions.formula
 
         this.selectedColumnOptions = dataOptions.selectedOptions
         this.allColumnOptions = dataOptions.allOptions
@@ -36,22 +36,24 @@ class BarGraph {
             this.uuid,
             {
                 chart: {
-                    type: 'bar',
+                    type: 'boxPlot',
                     zoom: {
-                        enabled: true
+                        enabled: false
                     },
                     animations: {
                         enabled: false
                     }
                 },
                 plotOptions: plotOptions,
-                series: this.seriesOptions,
+                series: [{
+                    data: this.generatedData
+                }],
+                xaxis: {
+                    type: "category",
+                },
                 title: {
                     text: title,
                     align: 'left'
-                },
-                xaxis: {
-                    categories: this.selectionOptionsToString(),
                 }
             }
         )
@@ -59,45 +61,21 @@ class BarGraph {
     }
 
     generateData() {
-        this.seriesOptions = []
-        var definiteSeries = []
-
-        for (const seriesTypes of Object.keys(this.formulas)){
-            var counter = 1
-            definiteSeries = []
-
-            for (const selected of this.selectedColumnOptions) {
-                let submissionDatum = {
-                    x: selected.toString(),
-                    y: this.formulas[seriesTypes](selected),
-                }
-
-                if (this.highlightFirstN != null) {
-                    submissionDatum["fillColor"] = counter <= this.highlightFirstN ? "#EFAE04" : "#262626"
-                    submissionDatum["strokeColor"] = counter <= this.highlightFirstN ? "#EFAE04" : "#262626"
-                }
-
-                definiteSeries.push(submissionDatum)
-                counter += 1
-            }
-
-            console.log(definiteSeries)
-
-            this.seriesOptions.push(
+        this.generatedData = []
+        for (const teams of this.selectedColumnOptions) {
+            let quartiles = this.formula(teams)
+            this.generatedData.push(
                 {
-                    name: seriesTypes,
-                    data: definiteSeries
+                    x: teams.toString(),
+                    y: quartiles
                 }
             )
         }
-    }
 
-    selectionOptionsToString(){
-        var stringed = []
-        for (const team of this.selectedColumnOptions){
-            stringed.push(team.toString());
-        }
-        return stringed
+        // Sort box plot
+        this.generatedData = this.generatedData.sort(
+            (a, b) => b["y"][2] - a["y"][2]
+        )
     }
 
     setupEdit() {
@@ -120,7 +98,7 @@ class BarGraph {
             else {
                 formString += `
                 <div class="flex items-center">
-                    <input id="${i}${this.uuid}" type="checkbox" value="" class="w-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                    <input id="${i}${this.uuid}" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                     <label for="${i}${this.uuid}" class="ml-2 text-sm font-medium text-gray-300">${i}</label>
                 </div>
                 `
@@ -128,7 +106,6 @@ class BarGraph {
         }
 
         this.modal.formHTML = formString
-
     }
 
     pushEdit(modal = true, x = []) {
@@ -146,13 +123,11 @@ class BarGraph {
 
         this.generateData()
 
-        this.graph.state.series = this.seriesOptions
-        this.graph.state.xaxis.categories = this.selectionOptionsToString()
+        this.graph.state.series = [{data: this.generatedData}]
 
         this.graph.update()
-
     }
 }
 
 
-export { BarGraph }
+export { BoxPlot }

@@ -1,7 +1,7 @@
 import { Graph } from "./Graph.js"
 
-class BarGraph {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false, highlightFirstN = null) {
+class StackedBarGraph {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
@@ -9,7 +9,6 @@ class BarGraph {
         this.companionDiv = document.createElement("div")
         this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg", (fullScreen ? "w-full" : "w-[400px]"))
         this.companionDiv.id = this.uuid
-        this.highlightFirstN = highlightFirstN
 
         document.getElementById(parent_id).appendChild(this.companionDiv)
 
@@ -25,7 +24,9 @@ class BarGraph {
             })
         }
 
-        this.formulas = dataOptions.formula
+        this.fields = dataOptions.fields,
+        this.colors = dataOptions.colors,
+        this.formula = dataOptions.formula
 
         this.selectedColumnOptions = dataOptions.selectedOptions
         this.allColumnOptions = dataOptions.allOptions
@@ -37,6 +38,7 @@ class BarGraph {
             {
                 chart: {
                     type: 'bar',
+                    stacked: true,
                     zoom: {
                         enabled: true
                     },
@@ -52,6 +54,16 @@ class BarGraph {
                 },
                 xaxis: {
                     categories: this.selectionOptionsToString(),
+                },
+                fill: {
+                    colors: this.colors
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'center',
+                    markers: {
+                        fillColors: this.colors,
+                    }
                 }
             }
         )
@@ -60,36 +72,23 @@ class BarGraph {
 
     generateData() {
         this.seriesOptions = []
-        var definiteSeries = []
+        var dataByColumnOptions = []
 
-        for (const seriesTypes of Object.keys(this.formulas)){
-            var counter = 1
-            definiteSeries = []
-
-            for (const selected of this.selectedColumnOptions) {
-                let submissionDatum = {
-                    x: selected.toString(),
-                    y: this.formulas[seriesTypes](selected),
-                }
-
-                if (this.highlightFirstN != null) {
-                    submissionDatum["fillColor"] = counter <= this.highlightFirstN ? "#EFAE04" : "#262626"
-                    submissionDatum["strokeColor"] = counter <= this.highlightFirstN ? "#EFAE04" : "#262626"
-                }
-
-                definiteSeries.push(submissionDatum)
-                counter += 1
-            }
-
-            console.log(definiteSeries)
-
+        for (const selected of this.selectedColumnOptions) {
+            dataByColumnOptions.push(
+                this.formula(selected),
+            )
+        }
+        
+        for (let idx = 0; idx < this.fields.length; idx++) {
             this.seriesOptions.push(
                 {
-                    name: seriesTypes,
-                    data: definiteSeries
+                    name: this.fields[idx],
+                    data: dataByColumnOptions.map(x => x[idx])
                 }
             )
         }
+        console.log(this.seriesOptions)
     }
 
     selectionOptionsToString(){
@@ -155,4 +154,4 @@ class BarGraph {
 }
 
 
-export { BarGraph }
+export { StackedBarGraph }

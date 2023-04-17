@@ -24,12 +24,14 @@ const Queries =  {
         "Engage": 10
     },
     ENGAGE_CRIT: {
-        "None": 0,  //TODO: Edit scores
-        "Parked": 0,
-        "Docked": 0,
+        "": 0,
+        "None": 0,
+        "Park": 0,
+        "Dock": 0,
         "Engage": 1
     },
     TOTAL_ENDGAME: "EndgameFinalCharge",
+    AUTO_ATTEMPTED_CHARGING_STATE: "AutoAttemptedCharge",
     AUTO_CHARGING_STATE: "AutoChargingState",
     AUTO_TOTAL: {
         "auto_lower_hub": 2, 

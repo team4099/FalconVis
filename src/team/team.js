@@ -40,6 +40,7 @@ import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
             "Avr. auto cycle count", 
             new CompositeStat(
                 [new Factor(function (team) { return stats.getAvrStat(team,mandatoryMatchData.AUTO_GRID)})],
+                1.5
             ),
             team
         )
@@ -56,6 +57,39 @@ import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
             ),
             team
         )
+    )  
+
+    statManager.addGraph(
+        "auto_engage_attempts",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Auto Engage Attempts", 
+            new CompositeStat(
+                [new Factor(function (team) { 
+                    return stats.getScoreDataCrit(team, Queries.AUTO_ATTEMPTED_CHARGING_STATE, Queries.ENGAGE_CRIT)[1].reduce(
+                        (a, b) => a + b
+                    )
+                })],
+                6
+            ),
+            team
+        )
+    )
+
+    statManager.addGraph(
+        "auto_engage_accuracy (pcnt)",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Auto Engage Accuracy", 
+            new CompositeStat(
+                [new Factor(function (team) { 
+                    let accuracy = stats.getScoreDataCritSingle(team, Queries.AUTO_CHARGING_STATE, Queries.ENGAGE_CRIT) / stats.getScoreDataCritSingle(team, Queries.AUTO_ATTEMPTED_CHARGING_STATE, Queries.ENGAGE_CRIT)
+                    return accuracy * 100
+                })],
+                75.00
+            ),
+            team
+        )
     )
 
     statManager.addGraph(
@@ -64,7 +98,7 @@ import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
             "macrosContainer", 
             "Avr. Auto Accuracy (Pcnt)", 
             new CompositeStat(
-                [new Factor(function (team) { return stats.getAvrGridMissed(team,Queries.AUTONOMOUS)})],
+                [new Factor(function (team) { return stats.getAvrGridMissed(team, Queries.AUTONOMOUS)})],
                 80
             ),
             team
@@ -139,6 +173,24 @@ import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
                     "Dfns Time": function(team) { return stats.getAvrStat(team, Queries.DEFENSE_TIME)},
                     "Cntr Dfns Rating": function(team) { return stats.getAvrStat(team, Queries.COUNTER_DEFENSE_RATING)},
                     "Cntr Dfns Time": function(team) { return stats.getAvrStat(team, Queries.COUNTER_DEFENSE_TIME)}
+                },
+                selectedOptions: team,
+                allOptions: Selections.TEAMS
+            },
+            modal,
+            false
+        )
+    )
+    
+    statManager.addGraph(
+        "auto charge station score over time",
+        new LineGraph(
+            "graphContainer",
+            "Auto Charge Station POT",
+            {},
+            {
+                formula: function(team) { 
+                    return stats.getScoreDataCrit(team, Queries.AUTO_CHARGING_STATE, Queries.AUTO_CHARGE_STATION_CRIT)
                 },
                 selectedOptions: team,
                 allOptions: Selections.TEAMS

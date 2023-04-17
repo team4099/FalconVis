@@ -1,5 +1,5 @@
 class AutomatedMacro {
-    constructor(parent_id, title, stat, selectedOptions){
+    constructor(parent_id, title, stat, selectedOptions, largeText = true, appendPercentage = false){
         this.id = Math.random().toString(36).substr(2, 9)
 
         const temp = document.createElement('div');
@@ -20,6 +20,8 @@ class AutomatedMacro {
         
         
         this.stat = stat
+        this.largeText = largeText
+        this.appendPercentage = appendPercentage
         
         this.selectedOptions = selectedOptions
         this.pushEdit(false, this.selectedOptions)
@@ -34,6 +36,7 @@ class AutomatedMacro {
         
         for (const team of this.selectedOptions){
             var result = this.stat.getValue(team)
+
             if (result[1]){
                 var color = "#248e24"
             }
@@ -43,11 +46,11 @@ class AutomatedMacro {
 
             document.getElementById(this.id+"_value").innerHTML += `
                 <div id="${this.id+team.toString()}" class="w-full h-10 mt-2">
-                    <h1 class="mt-1 inline float-left ml-2 font-semibold text-2xl">
+                    <h1 class="mt-1 inline float-left ml-2 font-semibold ${this.largeText ? 'text-2xl' : 'text-xl'}">
                         ${team}
                     </h1>
                     <h1 class="mt-1 inline ml-2 font-semibold text-xl" style='float: right; color: ${color}'>
-                        ${result[0]}
+                        ${result[0]}${this.appendPercentage ? '%' : ''}
                     </h1>
                 </div>
             `

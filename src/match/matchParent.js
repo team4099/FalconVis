@@ -16,12 +16,14 @@ var setTeams = () => {
 
     graphContainerBlue.pushEditAll(blue)
     graphContainerRed.pushEditAll(red)
+    graphContainerComparison.pushEditAll(["Blue Alliance", "Red Alliance"])
 }
 var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
 var graphContainerRed = new GraphManager()
 var graphContainerBlue = new GraphManager()
+var graphContainerComparison = new GraphManager()
 
 var red = [9999, 9999, 9999]
 var blue = [9999, 9999, 9999]
 
-export { setTeams, modal, graphContainerRed, graphContainerBlue, red, blue }
+export { setTeams, modal, graphContainerRed, graphContainerBlue, graphContainerComparison, red, blue }

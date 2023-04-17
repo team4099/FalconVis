@@ -56,9 +56,7 @@ class CalculatedStats {
                 else {
                     scored.push(totalSum)
                 }
-                console.log(scored)
             }
-            console.log(scored)
             return [match, scored]
         }
         catch (e) {
@@ -327,7 +325,7 @@ class CalculatedStats {
                 if (matchKey != null && x[mandatoryMatchData.MATCH_KEY] != matchKey) {
                     continue
                 }
-
+                
                 match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored += stat_crit[x[stat_comp]]
             }
@@ -338,24 +336,47 @@ class CalculatedStats {
         }
     }
 
-    getPointsAddedByMatch(team) {
+    getPointsAddedByMatch(team, withEndgame = false, onlyAuto = false, onlyTeleop = false) {
         var pointsAdded = []
+        
+        try {
+            for (const submission of this.data[team]) {
+                let matchKey = submission[mandatoryMatchData.MATCH_KEY]
 
-        for (const submission of this.data[team]) {
-            let matchKey = submission[mandatoryMatchData.MATCH_KEY]
-            var pointValue = 0
-            // Score during autonomous
-            pointValue += this.getMatchGridScore(team, Queries.AUTONOMOUS, matchKey) 
-            pointValue += this.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_POINAGE, matchKey)
-            pointValue += this.getScoreDataCritSingle(team, Queries.AUTO_CHARGING_STATE, Queries.AUTO_CHARGE_STATION_CRIT, matchKey)
+                var pointValue = 0
 
-            // Score during teleop
-            pointValue += this.getMatchGridScore(team, Queries.TELEOP, matchKey)
-            
-            pointsAdded.push(pointValue)
+                // Score during autonomous
+                pointValue += this.getMatchGridScore(team, Queries.AUTONOMOUS, matchKey)
+                pointValue += this.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_POINAGE, matchKey)
+                pointValue += this.getScoreDataCritSingle(team, Queries.AUTO_CHARGING_STATE, Queries.AUTO_CHARGE_STATION_CRIT, matchKey)
+
+                if (onlyAuto) {
+                    pointsAdded.push(pointValue)
+                    continue
+                }
+
+                // Score during teleop
+                let teleopTotal = this.getMatchGridScore(team, Queries.TELEOP, matchKey)
+                pointValue += teleopTotal
+
+                if (onlyTeleop) {
+                    pointsAdded.push(teleopTotal)
+                    continue
+                }
+
+                // Score during endgame
+                if (withEndgame) {
+                    pointValue += this.getScoreDataCritSingle(team, Queries.TOTAL_ENDGAME, Queries.ENDGAME_CRIT, matchKey)
+                }
+                
+                pointsAdded.push(pointValue)
+            }
+
+            return pointsAdded
         }
-
-        return pointsAdded
+        catch (e) {
+            return [0]
+        }
     }
 
     getMatchAllianceData(match, stat, alliance){
@@ -379,6 +400,22 @@ class CalculatedStats {
             console.log(e)
             return [[0], [0]]
         }
+    }
+
+    // Calculates the composite stat of an alliance by combining separate lists altogether.
+    calculateAllianceCompositeStat(alliance, formula) {
+        let allianceCompositeStat = [0, 0, 0].map((_, index) => formula(alliance[index]))
+        var compositeStat = []
+
+        for (let i = 0; i < allianceCompositeStat[0].length; i++) {
+            let robot1Stat = (allianceCompositeStat[0][i] == null) ? 0 : allianceCompositeStat[0][i]
+            let robot2Stat = (allianceCompositeStat[1][i] == null) ? 0 : allianceCompositeStat[1][i]
+            let robot3Stat = (allianceCompositeStat[2][i] == null) ? 0 : allianceCompositeStat[2][i]
+
+            compositeStat.push(robot1Stat + robot2Stat + robot3Stat)
+        }
+
+        return compositeStat
     }
 
     getCycleHeatmapData(team, heatmapGrid) {

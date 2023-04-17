@@ -1,7 +1,7 @@
 import { Graph } from "./Graph.js"
 
 class LineGraph {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true) {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, allianceComparing = false) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
@@ -47,6 +47,14 @@ class LineGraph {
                 },
                 plotOptions: plotOptions,
                 series: this.generatedData,
+                stroke: allianceComparing ? {
+                    colors: ['#1D4ED8', '#EF4444']
+                } : {},
+                legend: allianceComparing ? {
+                    markers: {
+                        fillColors: ['#1D4ED8', '#EF4444']
+                    }
+                } : {},
                 xaxis: {
                     type: "category",
                 },
@@ -63,7 +71,6 @@ class LineGraph {
         this.oldGeneratedData = []
         this.generatedData = []
         for (const teams of this.selectedColumnOptions){
-            
             [this.xAxis, this.yAxis] = this.formula(teams)
             this.oldGeneratedData.push({
                 name: teams.toString(),
