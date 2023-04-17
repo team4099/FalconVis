@@ -11,8 +11,17 @@ function calculatePicklist(weights, stats) {
     var finalCalculations = {}
 
     for (const team of teams) {
-        let pointsAddedByMatch = stats.getPointsAddedByMatch(team)
-        finalCalculations[team] = pointsAddedByMatch.reduce((a, b) => a + b) / pointsAddedByMatch.length
+        let avgAutoHighCycles = stats.getAvrTier(team, Queries.HIGH, Queries.AUTO_GRID) * weights["Auto Cycles (High Nodes)"]
+        let avgAutoMidCycles = stats.getAvrTier(team, Queries.MID, Queries.AUTO_GRID) * weights["Auto Cycles (Mid Nodes)"]
+        let avgAutoHybridCycles = stats.getAvrTier(team, Queries.HYBRID, Queries.AUTO_GRID) * weights["Auto Cycles (Hybrid Nodes)"]
+        let avgTeleopHighCycles = stats.getAvrTier(team, Queries.HIGH, Queries.TELEOP_GRID) * weights["Teleop Cycles (High Nodes)"]
+        let avgTeleopMidCycles = stats.getAvrTier(team, Queries.MID, Queries.TELEOP_GRID) * weights["Teleop Cycles (Mid Nodes)"]
+        let avgTeleopHybridCycles = stats.getAvrTier(team, Queries.HYBRID, Queries.TELEOP_GRID) * weights["Teleop Cycles (Hybrid Nodes)"]
+        var cycleData = [avgAutoHighCycles, avgAutoMidCycles, avgAutoHybridCycles, avgTeleopHighCycles, avgTeleopMidCycles, avgTeleopHybridCycles]
+        cycleData.push(cycleData.reduce((a, b) => a + b))
+        cycleData = cycleData.map(datum => datum.toFixed(1))
+
+        finalCalculations[team] = cycleData
     }
 
     return finalCalculations
@@ -26,13 +35,12 @@ function calculatePicklist(weights, stats) {
     var factor_matrix = new FactorTable(
         "statsContainer", 
         {
-            "Auto Cycles": [0.5],
+            "Auto Cycles (High Nodes)": [1],
+            "Auto Cycles (Mid Nodes)": [1],
+            "Auto Cycles (Hybrid Nodes)": [1],
             "Teleop Cycles (High Nodes)": [1],
-            "Teleop Cycles (Mid Nodes)": [0.75],
-            "Teleop Cycles (Hybrid Nodes)": [0.5],
-            "Total Endgame Engages": [0.5],
-            "Interquartile Range (# of Teleop Cycles)": [-1],
-            "Disables": [-1]
+            "Teleop Cycles (Mid Nodes)": [1],
+            "Teleop Cycles (Hybrid Nodes)": [1],
         },
         calculatePicklist,
         modal,

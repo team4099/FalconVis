@@ -1,4 +1,4 @@
-import { BarGraph } from '../components/BarGraph.js';
+import { StackedBarGraph } from '../components/StackedBarGraph.js';
 import { Selections } from '../data/Constants.js';
 import { GraphManager } from '../components/GraphManager.js';
 import { Graph } from '../components/Graph.js';
@@ -16,7 +16,6 @@ export class FactorTable {
         for (const key of Object.keys(this.factors_pair)){
             this.factors_pair[key].push(0)
         }
-
         this.companionDiv = document.createElement("table")
         this.companionDiv.classList.add("border-collapse","table-auto","w-full","text-sm")
         this.companionDiv.id = this.uuid
@@ -25,7 +24,7 @@ export class FactorTable {
         this.finalCalculations = {}
 
         for (const team of Selections.TEAMS) {
-            this.finalCalculations[team] = 0.0
+            this.finalCalculations[team] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         }
 
         // Able to access this reference from elsewhere
@@ -35,27 +34,32 @@ export class FactorTable {
 
         this.statManager.addGraph(
             "picklistGraph",
-            new BarGraph(
+            new StackedBarGraph(
                 "graphContainer",
-                "Picklist Rankings (Points Contributed)",
+                "Picklist Rankings (Weighted Cycles)",
                 {
                     bar: {
-                        horizontal: true
+                        horizontal: true,
+                        dataLabels: {
+                            total: {
+                                enabled: true,
+                                formatter: label => label.toFixed(1)
+                            }
+                        }
                     }
                 },
                 {
-                    formula: {
-                        "Points Contributed": function (team) { 
-                            return self.finalCalculations[team].toFixed(1) 
-                        }
+                    formula: function (team) { 
+                        return self.finalCalculations[team]
                     },
+                    fields: ["Auto High", "Auto Mid", "Auto Hybrid", "Teleop High", "Teleop Mid", "Teleop Low"],
+                    colors: ["#EFAE09", "#F9D067", "#FBE09C", "#262626", "#6D6D6D", "#ACACAC"],
                     selectedOptions: Object.keys(this.finalCalculations),
                     allOptions: Object.keys(Selections.TEAMS)
                 },
                 this.modal,
                 true,
-                true,
-                8
+                true
             )
         )
 
@@ -86,10 +90,13 @@ export class FactorTable {
         }
 
         this.companionDiv.innerHTML += `
-        <div class="mt-4">
-            <div class="rounded-lg w-28 h-10 bg-yellow-400 text-white text-center pt-1 text-xl font-semibold" id="tableClick">
+        <div class="flex flex-row gap-2 mt-4">
+            <button class="rounded-lg bg-yellow-400 w-28 h-10 text-white text-center pt-1 text-xl font-semibold" id="tableClick">
                 Graph
-            <div>
+            <button>
+            <button class="rounded-lg bg-yellow-400 w-64 h-10 text-white text-center pt-1 text-xl font-semibold" id="usePointage">
+                Use Height Pointage
+            <button>
         </div>
         `
 
@@ -97,6 +104,18 @@ export class FactorTable {
 
         document.getElementById("tableClick").addEventListener("click", function () {
             self.pushData()
+        })
+
+        document.getElementById("usePointage").addEventListener("click", function () {
+            var indexCounter = 0
+            let cyclePointages = [6, 4, 3, 5, 3, 2]
+
+            for (const [name, values] of Object.entries(self.factors_pair)) {
+                self.factors_pair[name][0] = cyclePointages[indexCounter]
+                document.getElementById(values[1]).value = cyclePointages[indexCounter]
+
+                indexCounter += 1
+            }
         })
     }
 
@@ -112,7 +131,7 @@ export class FactorTable {
         
         // Sort picklist rankings
         let bestTeams = Object.entries(finalCalculations).sort(
-            ([,value1],[,value2]) => value2 - value1
+            ([,value1],[,value2]) => value2[6] - value1[6]
         ).map(x => x[0])
 
         this.statManager.pushEditAll(bestTeams)

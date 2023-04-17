@@ -351,9 +351,6 @@ class CalculatedStats {
 
             // Score during teleop
             pointValue += this.getMatchGridScore(team, Queries.TELEOP, matchKey)
-
-            // Score during endgame
-            pointValue += this.getScoreDataCritSingle(team, Queries.TOTAL_ENDGAME, Queries.ENDGAME_CRIT, matchKey)
             
             pointsAdded.push(pointValue)
         }
