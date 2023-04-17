@@ -359,7 +359,7 @@ import {
             "maximum_scores",
             new AutomatedMacro(
                 "macrosContainer", 
-                "Maximum Possible Scores", 
+                "Maximum Scores", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
                         let scoresByTeam = [0, 0, 0].map((_, index) => stats.getPointsAddedByMatch(teamsInAlliances[alliance]()[index], true))
@@ -376,7 +376,7 @@ import {
             "minimum_scores",
             new AutomatedMacro(
                 "macrosContainer", 
-                "Minimum Possible Scores", 
+                "Minimum Scores", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
                         let scoresByTeam = [0, 0, 0].map((_, index) => stats.getPointsAddedByMatch(teamsInAlliances[alliance]()[index], true))
