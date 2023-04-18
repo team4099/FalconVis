@@ -52,7 +52,7 @@ const Queries =  {
         1: 100,
         0: 0
     },
-    MOBILITY_POINAGE: {
+    MOBILITY_POINTAGE: {
         1: 3,
         0: 0
     },

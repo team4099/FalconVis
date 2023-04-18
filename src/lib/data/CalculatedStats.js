@@ -191,6 +191,26 @@ class CalculatedStats {
         }
     }
 
+    getCumulativeStat(team, stat){
+        try {
+            var scored = []
+
+            for (const x of this.data[team]) { 
+                if (typeof(x[stat]) == "object"){
+                    scored.push(x[stat].length)
+                }
+                else {
+                    scored.push(x[stat])
+                }
+            }
+
+            return scored
+        }
+        catch (e) {
+            return [0]
+        }
+    }
+
     getTotalPoints(team, stat){
         try {
             var match = []
@@ -286,7 +306,7 @@ class CalculatedStats {
                     continue
                 }
 
-                pointValue += this.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_POINAGE, matchKey)
+                pointValue += this.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_POINTAGE, matchKey)
                 pointValue += this.getScoreDataCritSingle(team, Queries.AUTO_CHARGING_STATE, Queries.AUTO_CHARGE_STATION_CRIT, matchKey)
                 
                 var gridScoredIn = Queries.COOP
@@ -470,20 +490,32 @@ class CalculatedStats {
         }
     }
 
+    calculateCartesianProduct(set1, set2, set3) {
+        var cartesianProduct = []
+
+        try {
+            for (const x of set1) {
+                for (const y of set2) {
+                    for (const z of set3) {
+                        cartesianProduct.push([x, y, z])
+                    }
+                }
+            }
+        }
+        catch (e) {
+            console.log(e)
+            return [[0, 0, 0]]
+        }
+
+        return cartesianProduct
+    }
     // Calculates the composite stat of an alliance by combining separate lists altogether.
     calculateAllianceCompositeStat(alliance, formula) {
         let allianceCompositeStat = [0, 0, 0].map((_, index) => formula(alliance[index]))
-        var compositeStat = []
-
-        for (let i = 0; i < allianceCompositeStat[0].length; i++) {
-            let robot1Stat = (allianceCompositeStat[0][i] == null) ? 0 : allianceCompositeStat[0][i]
-            let robot2Stat = (allianceCompositeStat[1][i] == null) ? 0 : allianceCompositeStat[1][i]
-            let robot3Stat = (allianceCompositeStat[2][i] == null) ? 0 : allianceCompositeStat[2][i]
-
-            compositeStat.push(robot1Stat + robot2Stat + robot3Stat)
-        }
-
-        return compositeStat
+        let cartesianProduct = this.calculateCartesianProduct(...allianceCompositeStat)
+        return cartesianProduct.map(
+            x => x.reduce((a, b) => a + b)
+        )
     }
 
     optimizeAuto(alliance, sentinel = "qm0") {
