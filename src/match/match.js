@@ -1,4 +1,4 @@
-import { Queries, Selections, JSONData } from '../lib/data/Constants.js'
+import { Queries, Selections, JSONData, mandatoryMatchData } from '../lib/data/Constants.js'
 import { BarGraph } from '../lib/components/BarGraph.js';
 import { LineGraph } from '../lib/components/LineGraph.js';
 import { ScatterGraph } from '../lib/components/ScatterGraph.js';
@@ -15,6 +15,7 @@ import {
     setTeams, modal, graphContainerBlue, 
     graphContainerRed, graphContainerComparison, red, blue 
 } from './matchParent.js'
+import { StackedBarGraph } from '../lib/components/StackedBarGraph.js';
 
 
 (async () => {
@@ -43,7 +44,11 @@ import {
     generateComparisonGraphs()
     
     // Red Graphs Generated Here
-    function generateRedGraphs(){
+    function generateRedGraphs() {
+        let getOptimizedAuto = function() { 
+            return stats.optimizeAuto(red)
+        } // Lazy to avoid it reading only 9999 from the teams
+
         graphContainerRed.addGraph(
             "teleopCargoRed",
             new BarGraph(
@@ -119,6 +124,39 @@ import {
         )
 
         graphContainerRed.addGraph(
+            "breakdown of POINTS ADDED",
+            new StackedBarGraph(
+                "redAllianceContainer",
+                "Breakdown of Points Added by Team",
+                {},
+                {
+                    formula: function(team) { 
+                        let pointsAcrossAuto = stats.getPointsAddedByMatch(team, false, true)
+                        let pointsAcrossTeleop = stats.getPointsAddedByMatch(team, false, false, true)
+                        let totalPoints =  stats.getPointsAddedByMatch(team, true)
+
+                        let averageAutoPoints = pointsAcrossAuto.reduce((a, b) => a + b) / pointsAcrossAuto.length
+                        let averageTeleopPoints = pointsAcrossTeleop.reduce((a, b) => a + b) / pointsAcrossTeleop.length
+                        let averageTotalPoints = totalPoints.reduce((a, b) => a + b) / totalPoints.length
+
+                        let breakdownOfPointsAdded = [
+                            averageAutoPoints.toFixed(2),
+                            averageTeleopPoints.toFixed(2),
+                            (averageTotalPoints - (averageAutoPoints + averageTeleopPoints)).toFixed(2)
+                        ]
+
+                        return breakdownOfPointsAdded
+                    },
+                    fields: ["Auto Contribution (pts.)", "Teleop Contribution (pts.)", "Endgame Contribution (pts.)"],
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS,
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
             "auto CYCLES over time",
             new LineGraph(
                 "redAllianceContainer",
@@ -181,10 +219,62 @@ import {
                 false
             )
         )
+        
+        graphContainerRed.addGraph(
+            "score for auto modes OPTIMIZED",
+            new BarGraph(
+                "redAllianceContainer",
+                "Best Possible Autonomous (pts.) - Red",
+                {},
+                {
+                    formula: {
+                        "Left Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.LEFT ? bestAutoConfig[2] : 0
+                        },
+                        "Co-Op Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.COOP ? bestAutoConfig[2] : 0
+                        },
+                        "Right Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.RIGHT ? bestAutoConfig[2] : 0
+                        }
+                    },
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
+            "auto modes OPTIMIZED",
+            new CombinedHeatmap(
+                "redAllianceContainer",
+                "Best Configuration for Autonomous - Red",
+                {},
+                {
+                    formula: function(team) { 
+                        let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                        return stats.getCycleHeatmapData(team, Queries.AUTO_GRID, stats.data[team][bestAutoConfig[3]][mandatoryMatchData.MATCH_KEY]|| "qm0")
+                    },
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
     }
 
 // Blue Graphs Generated Here
-    function generateBlueGraphs(){
+    function generateBlueGraphs() {
+        let getOptimizedAuto = function() { 
+            return stats.optimizeAuto(blue)
+        } // Lazy to avoid it reading only 9999 from the teams
+
         graphContainerBlue.addGraph(
             "teleopCargoBlue",
             new BarGraph(
@@ -258,6 +348,39 @@ import {
         )
 
         graphContainerBlue.addGraph(
+            "breakdown of POINTS ADDED",
+            new StackedBarGraph(
+                "blueAllianceContainer",
+                "Breakdown of Points Added by Team",
+                {},
+                {
+                    formula: function(team) { 
+                        let pointsAcrossAuto = stats.getPointsAddedByMatch(team, false, true)
+                        let pointsAcrossTeleop = stats.getPointsAddedByMatch(team, false, false, true)
+                        let totalPoints =  stats.getPointsAddedByMatch(team, true)
+
+                        let averageAutoPoints = pointsAcrossAuto.reduce((a, b) => a + b) / pointsAcrossAuto.length
+                        let averageTeleopPoints = pointsAcrossTeleop.reduce((a, b) => a + b) / pointsAcrossTeleop.length
+                        let averageTotalPoints = totalPoints.reduce((a, b) => a + b) / totalPoints.length
+
+                        let breakdownOfPointsAdded = [
+                            averageAutoPoints.toFixed(2),
+                            averageTeleopPoints.toFixed(2),
+                            (averageTotalPoints - (averageAutoPoints + averageTeleopPoints)).toFixed(2)
+                        ]
+
+                        return breakdownOfPointsAdded
+                    },
+                    fields: ["Auto Contribution (pts.)", "Teleop Contribution (pts.)", "Endgame Contribution (pts.)"],
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS,
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
             "auto CYCLES over time",
             new LineGraph(
                 "blueAllianceContainer",
@@ -313,6 +436,54 @@ import {
                 {},
                 {
                     formula: function(team) { return stats.getCycleHeatmapData(team, Queries.AUTO_GRID)},
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+        
+        graphContainerBlue.addGraph(
+            "score for auto modes OPTIMIZED",
+            new BarGraph(
+                "blueAllianceContainer",
+                "Best Possible Autonomous (pts.) - Blue",
+                {},
+                {
+                    formula: {
+                        "Left Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.LEFT ? bestAutoConfig[2] : 0
+                        },
+                        "Co-Op Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.COOP ? bestAutoConfig[2] : 0
+                        },
+                        "Right Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.RIGHT ? bestAutoConfig[2] : 0
+                        }
+                    },
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "auto modes OPTIMIZED",
+            new CombinedHeatmap(
+                "blueAllianceContainer",
+                "Best Configuration for Autonomous - Blue",
+                {},
+                {
+                    formula: function(team) { 
+                        let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                        return stats.getCycleHeatmapData(team, Queries.AUTO_GRID, stats.data[team][bestAutoConfig[3]][mandatoryMatchData.MATCH_KEY]|| "qm0")
+                    },
                     selectedOptions: blue,
                     allOptions: Selections.TEAMS
                 },
@@ -484,15 +655,13 @@ import {
                         var matchesWon = 0
                     
                         for (const ownScore of scoresByTeam) {
-                            if (otherAllianceScores[matchesPlayed] == null) {
-                                break
-                            }
+                            for (const opposingScore of otherAllianceScores) {
+                                if (ownScore > opposingScore) {
+                                    matchesWon += 1
+                                }
 
-                            if (ownScore > otherAllianceScores[matchesPlayed]) {
-                                matchesWon += 1
+                                matchesPlayed += 1
                             }
-
-                            matchesPlayed += 1
                         }
 
                         return matchesWon / matchesPlayed * 100
@@ -556,7 +725,7 @@ import {
             "auto POT COMPARED",
             new LineGraph(
                 "alliancesComparedContainer",
-                "Total Auto POT over time - Compared",
+                "Total Auto POT - Compared",
                 {},
                 {
                     formula: function(alliance) { 
@@ -579,7 +748,7 @@ import {
             "teleop POT COMPARED",
             new LineGraph(
                 "alliancesComparedContainer",
-                "Total Teleop POT over time - Compared",
+                "Total Teleop POT - Compared",
                 {},
                 {
                     formula: function(alliance) { 
@@ -602,7 +771,7 @@ import {
             "endgame POT COMPARED",
             new LineGraph(
                 "alliancesComparedContainer",
-                "Endgame POT over time - Compared",
+                "Endgame POT - Compared",
                 {},
                 {
                     formula: function(alliance) { 
@@ -625,7 +794,7 @@ import {
             "cumulative POT COMPARED",
             new LineGraph(
                 "alliancesComparedContainer",
-                "Cumulative POT over time - Compared",
+                "Cumulative POT - Compared",
                 {},
                 {
                     formula: function(alliance) { 
@@ -641,6 +810,33 @@ import {
                 modal,
                 false,
                 true
+            )
+        )
+
+        graphContainerComparison.addGraph(
+            "breakdown of cumulative POT COMPARED",
+            new StackedBarGraph(
+                "alliancesComparedContainer",
+                "Breakdown of Cumulative POT - Compared",
+                {},
+                {
+                    formula: function(alliance) { 
+                        var cumulativePOT = []
+
+                        for (const team of teamsInAlliances[alliance]()) {
+                            let pointsAcrossMatches = stats.getPointsAddedByMatch(team, true)
+                            let averageCumulativePOT = pointsAcrossMatches.reduce((a, b) => a + b) / pointsAcrossMatches.length
+                            cumulativePOT.push(averageCumulativePOT.toFixed(2))
+                        }
+
+                        return cumulativePOT
+                    },
+                    fields: ["Robot 1", "Robot 2", "Robot 3"],
+                    selectedOptions: options,
+                    allOptions: options
+                },
+                modal,
+                false
             )
         )
     }

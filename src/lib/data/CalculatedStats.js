@@ -271,6 +271,47 @@ class CalculatedStats {
         }
     }
 
+    getAutoModes(team) {
+        try {
+            var autoPoints = []
+
+            for (const x of this.data[team]) { 
+                let matchKey = x[mandatoryMatchData.MATCH_KEY]
+                var pointValue = 0
+
+                // Calculate autonomous points
+                pointValue += this.getMatchGridScore(team, Queries.AUTONOMOUS, matchKey)
+
+                if (pointValue == 0) {
+                    continue
+                }
+
+                pointValue += this.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_POINAGE, matchKey)
+                pointValue += this.getScoreDataCritSingle(team, Queries.AUTO_CHARGING_STATE, Queries.AUTO_CHARGE_STATION_CRIT, matchKey)
+                
+                var gridScoredIn = Queries.COOP
+
+                if (["1", "2", "3"].includes(x[Queries.AUTO_GRID][0][0])) {
+                    gridScoredIn = Queries.LEFT
+                }
+                else if (["4", "5", "6"].includes(x[Queries.AUTO_GRID][0][0])) {
+                    gridScoredIn = Queries.COOP
+                }
+                else if (["7", "8", "9"].includes(x[Queries.AUTO_GRID][0][0])) {
+                    gridScoredIn = Queries.RIGHT
+                }
+
+                autoPoints.push([pointValue, gridScoredIn])
+            }
+
+            return autoPoints
+        }
+        catch (e) {
+            console.log(e)
+            return [[-Infinity, Queries.COOP]]
+        }
+    }
+
     getAvrTier(team, stat, type_of_grid){
         try {
             var count = 0
@@ -336,6 +377,33 @@ class CalculatedStats {
         }
     }
 
+    getTypeOfGamePiece(team, type_of_grid) {
+        var conesScored = 0
+        var cubesScored = 0
+
+        for (const x of this.data[team]) {
+            for (const score of x[type_of_grid]) {
+                if (score[1] == "L" && score.substring(2) == "cone") {
+                    conesScored += 1
+                }
+                else if (score[1] == "L" && score.substring(2) == "cube") {
+                    cubesScored += 1
+                }
+                else if (["1", "3", "4", "6", "7", "9"].includes(score[0])) {
+                    conesScored += 1
+                }
+                else if (["2", "5", "8"].includes(score[0])) {
+                    cubesScored += 1
+                }
+                else {
+                    console.log("Edge case with game piece", score)
+                }
+            }
+        }
+
+        return [conesScored, cubesScored]
+    }
+
     getPointsAddedByMatch(team, withEndgame = false, onlyAuto = false, onlyTeleop = false) {
         var pointsAdded = []
         
@@ -372,7 +440,7 @@ class CalculatedStats {
                 pointsAdded.push(pointValue)
             }
 
-            return pointsAdded
+            return pointsAdded.length > 0 ? pointsAdded : [0]
         }
         catch (e) {
             return [0]
@@ -418,7 +486,65 @@ class CalculatedStats {
         return compositeStat
     }
 
-    getCycleHeatmapData(team, heatmapGrid) {
+    optimizeAuto(alliance, sentinel = "qm0") {
+        var teamAutos = []
+        var bestAutos = []
+
+        for (const team of alliance) {
+            teamAutos.push([team, this.getAutoModes(team)])
+        }
+
+        teamAutos.sort(
+            (a, b) =>  Math.max(...b[1].map(x => x[0])) - Math.max(...a[1].map(x => x[0]))
+        )
+
+        teamAutos = teamAutos.map(function(teamModes) {
+            const [team, data] = teamModes
+            var autoModesAsObject = {
+                LEFT_GRID: [],
+                COOP_GRID: [],
+                RIGHT_GRID: []
+            }
+            
+            for (const [pointage, location] of data) {
+                autoModesAsObject[location].push(pointage)
+            }
+
+            return [team, Object.entries(autoModesAsObject)]
+        })
+
+        let teamAutosAsObject = teamAutos.map(value => [value[0], Object.fromEntries(value[1])])
+        let possibleCombinations = this.calculatePermutations([Queries.LEFT, Queries.COOP, Queries.RIGHT])
+        
+        for (const combination of possibleCombinations) {
+            let cumulativeAutoFromCombo = []
+
+            for (let i = 0; i < combination.length; i++) {
+                let teamToUse = teamAutosAsObject[i][0]
+                let gridData = teamAutosAsObject[i][1]
+                let gridToUse = combination[i]
+
+                var maximumPointage = Math.max(...gridData[gridToUse])
+                var matchIndex = sentinel // Sentinel value used to denote that there is no auto that works well for said team.
+
+                if (maximumPointage != Number.NEGATIVE_INFINITY) {
+                    matchIndex = gridData[gridToUse].indexOf(maximumPointage)
+                }
+                else {
+                    maximumPointage = 0
+                }
+
+                cumulativeAutoFromCombo.push([teamToUse, gridToUse, maximumPointage, matchIndex])
+            }
+            bestAutos.push(cumulativeAutoFromCombo)
+        }
+
+        return bestAutos.sort(
+            (a, b) => b.map(value => value[2]).reduce((x, y) => x + y) - a.map(value => value[2]).reduce((x, y) => x + y)
+        )[0]
+    }
+
+    getCycleHeatmapData(team, heatmapGrid, matchKey = null) {
         var positionsToIndices = {
             "H": 0,
             "M": 1,
@@ -436,6 +562,10 @@ class CalculatedStats {
 
         try {
             for (const matchData of this.data[team]) {
+                if (matchKey != null && matchData[mandatoryMatchData.MATCH_KEY] != matchKey) {
+                    continue
+                }
+
                 if (matchData[heatmapGrid][0] != "") {
                     for (const gamePiece of matchData[heatmapGrid]) {
                         let gamePieceX = parseInt(gamePiece[0]) - 1
@@ -634,6 +764,16 @@ class CalculatedStats {
         value1 = +fnValueFrom(values[i0 + 1], i0 + 1, values)
 
         return value0 + (value1 - value0) * (i - i0)
+    }
+
+    calculatePermutations(arr) {
+        if (!arr.length) {
+            return [[]]
+        }
+        return arr.flatMap(x => {
+          // get permutations of arr without x, then prepend x to each
+          return this.calculatePermutations(arr.filter(v => v !== x)).map(vs => [x, ...vs]);
+        })
     }
 }
 
