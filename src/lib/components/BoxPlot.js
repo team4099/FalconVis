@@ -1,7 +1,7 @@
 import { Graph } from "./Graph.js"
 
 class BoxPlot {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false) {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = false, fullScreen = false) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
@@ -18,17 +18,18 @@ class BoxPlot {
 
         var self = this
         if (editable) {
-            document.getElementById(this.uuid).addEventListener("click", function () {
+            this.companionDiv.addEventListener("click", function () {
                 self.setupEdit()
                 document.getElementById('fakeToggle').click()
             })
         }
 
+        this.selectedColumnOptions = dataOptions.selectedOptions
+        this.allColumnOptions = dataOptions.allOptions
 
         this.formula = dataOptions.formula
 
-        this.selectedColumnOptions = dataOptions.selectedOptions
-        this.allColumnOptions = dataOptions.allOptions
+        this.filter = 3
 
         this.generateData()
 
@@ -58,6 +59,7 @@ class BoxPlot {
             }
         )
 
+        this.generateFilters()
     }
 
     generateData() {
@@ -76,6 +78,10 @@ class BoxPlot {
         this.generatedData = this.generatedData.sort(
             (a, b) => b["y"][2] - a["y"][2]
         )
+
+        var filterRange = [parseInt(this.allColumnOptions.length/4*this.filter), parseInt(this.allColumnOptions.length/4*(this.filter+1))]
+        console.log(filterRange)
+        this.generatedData = this.generatedData.slice(filterRange[0], filterRange[1])
     }
 
     setupEdit() {
@@ -126,6 +132,36 @@ class BoxPlot {
         this.graph.state.series = [{data: this.generatedData}]
 
         this.graph.update()
+
+        this.generateFilters()
+    }
+
+    generateFilters(){
+        var self = this
+
+        this.companionDiv.innerHTML += `
+        <div class="h-10 flex flex-row gap-4">
+            <button class="h-8 w-16 pt-[2px] border-2 border-red-600 text-red-600 font-bold rounded-md text-center" id="${this.uuid}section1">
+                1-25
+            </button>
+            <button class="h-8 w-16 pt-[2px] border-2 border-orange-500 text-orange-500 font-bold rounded-md text-center" id="${this.uuid}section2">
+                25-50
+            </button>
+            <button class="h-8 w-16 pt-[2px] border-2 border-green-600 text-green-600 font-bold rounded-md text-center" id="${this.uuid}section3">
+                50-75
+            </button>
+            <button class="h-8 w-16 pt-[2px] border-2 border-blue-600 text-blue-600 font-bold rounded-md text-center" id="${this.uuid}section4">
+                75-99
+            </button>
+        </div>
+        `
+
+        for (const section of [1, 2, 3, 4]){
+            document.getElementById(this.uuid + `section${section}`).addEventListener("click", function () {
+                self.filter = (5 - section) - 1
+                self.pushEdit(false, self.allColumnOptions)
+            })
+        }
     }
 }
 

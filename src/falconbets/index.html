@@ -5,10 +5,10 @@
 	<meta charset="UTF-8" />
 	<link rel="icon" type="image/svg+xml" href="../public/logo.svg" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<script src="../lib/tailwind.js"></script>
-	<link rel="stylesheet" href="../lib/flowbite.css" />
-	<script src="../lib/apexcharts.js" type="module"></script>
-	<title>FalconVis</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="https://unpkg.com/flowbite@1.5.3/dist/flowbite.min.css" />
+	<script src="https://cdn.jsdelivr.net/npm/apexcharts" type="module"></script>
+	<title>FalconBets</title>
 </head>
 
 <body>
@@ -24,33 +24,21 @@
 		  </button>
 		  <div class="hidden w-full md:block md:w-auto" id="navbar-default">
 			<ul class="flex flex-col p-4 mt-2 rounded-lg border md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0">
-			  <li>
-          <a href="/match/" class="block pr-4 pl-3 text-lg" aria-current="page">Match</a>
-        </li>
-        <li>
-          <a href="/" class="block pr-4 pl-3 text-lg" aria-current="page">Event</a>
-        </li>
-        <li>
-          <a href="/team/" class="block pr-4 pl-3 text-lg" aria-current="page">Teams</a>
-        </li>
-        <li>
-          <a href="/alliance/" class="block pr-4 pl-3 text-lg" aria-current="page">Alliance</a>
-        </li>
-			</ul>
-		  </div>
+			  
 		</div>
 	</nav>
 
     <div class="md:mx-12 mt-8">
         <h1 class="text-3xl font-bold mb-8 ml-4">
-            Alliance Picklist
+            Rankings
         </h1>
 
-        <h1 class="text-2xl font-bold mb-4 ml-4"> Factors </h1>
-        <div class="flex flex-wrap gap-4 px-4 mx-auto mb-10" id="statsContainer"></div>
+        <div class="w-full" id="tableContainer">
+          <div class="flex flex-wrap gap-4 px-4 mx-auto mb-10" id="statsContainer">
+            <table id="rankcon">
 
-        <div class="w-full" id="graphContainer">
-          <div id="picklistGraph"></div>
+            </table>
+          </div>
         </div>
 
 
@@ -96,6 +84,6 @@
 	
 	<script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
 </body>
-<script type="module" src="alliance.js"></script>
+<script type="module" src="bets.js"></script>
 
 </html>

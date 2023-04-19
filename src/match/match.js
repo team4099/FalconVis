@@ -18,7 +18,7 @@ import {
 
 
 (async () => {
-    var data = await fetch(JSONData).then(res => res.json())
+    var data = await fetch("../lib/chcmp.json").then(res => res.json())
     var stats = new CalculatedStats(data)
 
     // Shared Stats and Properties here
@@ -242,7 +242,7 @@ import {
         )
 
         graphContainerBlue.addGraph(
-            "teleopPOTRed",
+            "teleopPOTBlue",
             new LineGraph(
                 "blueAllianceContainer",
                 "Teleop POT - Blue",

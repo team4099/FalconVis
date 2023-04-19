@@ -28,7 +28,9 @@ function calculatePicklist(weights, stats) {
 }
 
 (async () => {
-    var data = await fetch(JSONData).then(res => res.json())
+    console.log("test")
+    var data = await fetch("../lib/chcmp.json").then(res => res.json())
+   
     var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
     var stats = new CalculatedStats(data)
     

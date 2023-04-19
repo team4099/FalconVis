@@ -11,8 +11,7 @@ class StackedBarGraph {
         this.companionDiv.id = this.uuid
 
         document.getElementById(parent_id).appendChild(this.companionDiv)
-
-        this.companionDiv = document.getElementById(this.uuid)
+        
         this.companionDiv.setAttribute("type", "button")
         this.companionDiv.setAttribute("data-modal-toggle", this.uuid)
 
@@ -30,6 +29,8 @@ class StackedBarGraph {
 
         this.selectedColumnOptions = dataOptions.selectedOptions
         this.allColumnOptions = dataOptions.allOptions
+
+        this.filter = 3
 
         this.generateData()
 
@@ -67,6 +68,8 @@ class StackedBarGraph {
                 }
             }
         )
+
+        this.generateFilters()
 
     }
 
@@ -150,6 +153,36 @@ class StackedBarGraph {
 
         this.graph.update()
 
+    }
+
+    generateFilters(){
+        var self = this
+
+        document.getElementById(this.uuid).innerHTML = `
+        <div class="h-10 flex flex-row gap-4">
+            <button class="h-8 w-16 pt-[2px] border-2 border-red-600 text-red-600 font-bold rounded-md text-center" id="${this.uuid}section1">
+                1-25
+            </button>
+            <button class="h-8 w-16 pt-[2px] border-2 border-orange-500 text-orange-500 font-bold rounded-md text-center" id="${this.uuid}section2">
+                25-50
+            </button>
+            <button class="h-8 w-16 pt-[2px] border-2 border-green-600 text-green-600 font-bold rounded-md text-center" id="${this.uuid}section3">
+                50-75
+            </button>
+            <button class="h-8 w-16 pt-[2px] border-2 border-blue-600 text-blue-600 font-bold rounded-md text-center" id="${this.uuid}section4">
+                75-99
+            </button>
+        </div>
+        `
+
+        for (const section of [1, 2, 3, 4]){
+            document.getElementById(this.uuid + `section${section}`).addEventListener("click", function () {
+                self.filter = (5 - section) - 1
+                self.pushEdit(false, self.allColumnOptions)
+            })
+        }
+
+        console.log(this.companionDiv.innerHTML)
     }
 }
 

@@ -67,6 +67,8 @@ export class FactorTable {
 
         this.generateTable()
 
+        document.getElementById("tableClick").click()
+
     }
 
     generateTable(){
