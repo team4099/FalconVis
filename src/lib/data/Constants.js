@@ -30,6 +30,13 @@ const Queries =  {
         "Dock": 0,
         "Engage": 1
     },
+    DOCKED_CRIT: {
+        "": 0,
+        "None": 0,
+        "Park": 0,
+        "Dock": 1,
+        "Engage": 0
+    },
     TOTAL_ENDGAME: "EndgameFinalCharge",
     AUTO_ATTEMPTED_CHARGING_STATE: "AutoAttemptedCharge",
     AUTO_CHARGING_STATE: "AutoChargingState",

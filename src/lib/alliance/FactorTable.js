@@ -58,7 +58,7 @@ export class FactorTable {
                     allOptions: Object.keys(Selections.TEAMS)
                 },
                 this.modal,
-                true,
+                false,
                 true
             )
         )

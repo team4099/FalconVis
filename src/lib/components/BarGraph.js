@@ -7,7 +7,8 @@ class BarGraph {
         this.modal = modal
 
         this.companionDiv = document.createElement("div")
-        this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg", (fullScreen ? "w-full" : "w-[400px]"), (fullScreen ? "h-full" : "h-[400px]"))
+        this.companionDiv.setAttribute("draggable", "true")
+        this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg", (fullScreen ? "w-full" : "w-[400px]"), (fullScreen ? "h-full" : "h-auto"))
         this.companionDiv.id = this.uuid
         this.highlightFirstN = highlightFirstN
 

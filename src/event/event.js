@@ -43,6 +43,7 @@ import { BoxPlot } from '../lib/components/BoxPlot.js';
             },
             modal,
             false,
+            true,
             true
         )
     )
@@ -79,6 +80,7 @@ import { BoxPlot } from '../lib/components/BoxPlot.js';
             },
             modal,
             false,
+            true,
             true
         )
     )

@@ -4,7 +4,8 @@ class AutomatedMacro {
 
         const temp = document.createElement('div');
         temp.setAttribute("id", parent_id);
-        temp.setAttribute("class", "p-4 border-2 border-gray-200 rounded-lg")
+        temp.setAttribute("draggable", "true")
+        temp.setAttribute("class", "p-4 border-2 border-gray-200 rounded-lg bg-white")
         temp.setAttribute("style", "width: 400px;")
         temp.innerHTML = `
         <div class="h-8 w-full mt-1 ml-2 mb-4">

@@ -1,10 +1,11 @@
 import { Graph } from "./Graph.js"
 
 class BoxPlot {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = false, fullScreen = false) {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = false, fullScreen = false, addButtons = false) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
+        this.addButtons = addButtons
 
         this.companionDiv = document.createElement("div")
         this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg", (fullScreen ? "w-full" : "w-[400px]"))
@@ -80,8 +81,10 @@ class BoxPlot {
         )
 
         var filterRange = [parseInt(this.allColumnOptions.length/4*this.filter), parseInt(this.allColumnOptions.length/4*(this.filter+1))]
-        console.log(filterRange)
-        this.generatedData = this.generatedData.slice(filterRange[0], filterRange[1])
+    
+        if (this.addButtons) {
+            this.generatedData = this.generatedData.slice(filterRange[0], filterRange[1])
+        }
     }
 
     setupEdit() {
@@ -138,6 +141,10 @@ class BoxPlot {
 
     generateFilters(){
         var self = this
+
+        if (!this.addButtons) {
+            return 1
+        }
 
         this.companionDiv.innerHTML += `
         <div class="h-10 flex flex-row gap-4">
