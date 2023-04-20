@@ -4,7 +4,7 @@ import { GraphManager } from '../components/GraphManager.js';
 import { Graph } from '../components/Graph.js';
 
 export class FactorTable {
-    constructor(parent_id, factors_pair, callback, modal, stats){
+    constructor(parent_id, factors_pair, callback, modal, stats) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.parent_id = parent_id
@@ -13,13 +13,13 @@ export class FactorTable {
         this.modal = modal
         this.stats = stats
 
-        for (const key of Object.keys(this.factors_pair)){
+        for (const key of Object.keys(this.factors_pair)) {
             this.factors_pair[key].push(0)
         }
         this.companionDiv = document.createElement("table")
-        this.companionDiv.classList.add("border-collapse","table-auto","w-full","text-sm")
+        this.companionDiv.classList.add("border-collapse", "table-auto", "w-full", "text-sm")
         this.companionDiv.id = this.uuid
-        
+
         // Bar graph portion of picklist generation
         this.finalCalculations = {}
 
@@ -33,7 +33,7 @@ export class FactorTable {
         this.statManager = new GraphManager()
 
         this.statManager.addGraph(
-            "picklistGraph",
+            "picklistRankings",
             new StackedBarGraph(
                 "graphContainer",
                 "Picklist Rankings (Weighted Cycles)",
@@ -49,15 +49,17 @@ export class FactorTable {
                     }
                 },
                 {
-                    formula: function (team) { 
+                    formula: function (team) {
                         return self.finalCalculations[team]
                     },
-                    fields: ["Auto High", "Auto Mid", "Auto Hybrid", "Teleop High", "Teleop Mid", "Teleop Low"],
+                    fields: ["Auto High", "Auto Mid", "Auto Hybrid", "Teleop High", "Teleop Mid", "Teleop Hybrid"],
                     colors: ["#EFAE09", "#F9D067", "#FBE09C", "#262626", "#6D6D6D", "#ACACAC"],
                     selectedOptions: Object.keys(this.finalCalculations),
-                    allOptions: Object.keys(Selections.TEAMS)
+                    allOptions: Selections.TEAMS
                 },
                 this.modal,
+                false,
+                true,
                 false,
                 true
             )
@@ -71,7 +73,7 @@ export class FactorTable {
 
     }
 
-    generateTable(){
+    generateTable() {
         this.companionDiv.innerHTML = `
         <thead>
             <tr>
@@ -81,7 +83,7 @@ export class FactorTable {
         </thead>
         `
 
-        for (const factor of Object.keys(this.factors_pair)){
+        for (const factor of Object.keys(this.factors_pair)) {
             this.factors_pair[factor][1] = Math.random().toString(36).substr(2, 9)
             this.companionDiv.innerHTML += `
             <tr>
@@ -121,19 +123,19 @@ export class FactorTable {
         })
     }
 
-    pushData(){
+    pushData() {
         var data = {}
 
-        for (const factor of Object.keys(this.factors_pair)){
+        for (const factor of Object.keys(this.factors_pair)) {
             data[factor] = parseFloat(document.getElementById(this.factors_pair[factor][1]).value)
         }
 
         let finalCalculations = this.onclick(data, this.stats)
         this.finalCalculations = finalCalculations
-        
+
         // Sort picklist rankings
         let bestTeams = Object.entries(finalCalculations).sort(
-            ([,value1],[,value2]) => value2[6] - value1[6]
+            ([, value1], [, value2]) => value2[6] - value1[6]
         ).map(x => x[0])
 
         this.statManager.pushEditAll(bestTeams)

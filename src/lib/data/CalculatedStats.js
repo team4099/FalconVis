@@ -1,15 +1,15 @@
 import { mandatoryMatchData, Queries } from "../data/Constants.js"
 
 class CalculatedStats {
-    constructor(data){
+    constructor(data) {
         this.old_data = data
         this.data = {}
 
-        for (const entry of this.old_data){
+        for (const entry of this.old_data) {
             entry[mandatoryMatchData.AUTO_GRID] = entry[mandatoryMatchData.AUTO_GRID].split("|")
             entry[mandatoryMatchData.TELEOP_GRID] = entry[mandatoryMatchData.TELEOP_GRID].split("|")
 
-            if (Object.keys(this.data).includes(entry[mandatoryMatchData.TEAM_NUMBER].toString())){
+            if (Object.keys(this.data).includes(entry[mandatoryMatchData.TEAM_NUMBER].toString())) {
                 this.data[entry[mandatoryMatchData.TEAM_NUMBER]].push(entry)
             }
             else {
@@ -17,23 +17,23 @@ class CalculatedStats {
             }
         }
 
-        for (const team of Object.keys(this.data)){
-            this.data[team].sort(function(a,b){
+        for (const team of Object.keys(this.data)) {
+            this.data[team].sort(function (a, b) {
                 return parseInt(a[mandatoryMatchData.MATCH_KEY].slice(2)) -
-                parseInt(b[mandatoryMatchData.MATCH_KEY].slice(2))
+                    parseInt(b[mandatoryMatchData.MATCH_KEY].slice(2))
             });
         }
 
         console.log(this.data)
     }
 
-    getAvrGridScore(team, section){
+    getAvrGridScore(team, section) {
         try {
             console.log("getAvrGridScore")
             var match = []
             var scored = []
 
-            if (section == Queries.AUTONOMOUS){
+            if (section == Queries.AUTONOMOUS) {
                 var type = Queries.AUTO_GRID
                 var grid_crit = Queries.AUTO_GRID_SCORE
             }
@@ -41,16 +41,16 @@ class CalculatedStats {
                 var type = Queries.TELEOP_GRID
                 var grid_crit = Queries.TELEOP_GRID_SCORE
             }
-            
+
             var count = 0
-            for (const x of this.data[team]) { 
+            for (const x of this.data[team]) {
                 match.push(count)
                 count += 1
                 var totalSum = 0
-                for (const score of x[type]){
+                for (const score of x[type]) {
                     totalSum += grid_crit[score[1]]
                 }
-                if (Number.isNaN(totalSum)){
+                if (Number.isNaN(totalSum)) {
                     scored.push(0)
                 }
                 else {
@@ -69,7 +69,7 @@ class CalculatedStats {
         try {
             var totalSum = 0
 
-            if (section == Queries.AUTONOMOUS){
+            if (section == Queries.AUTONOMOUS) {
                 var type = Queries.AUTO_GRID
                 var grid_crit = Queries.AUTO_GRID_SCORE
             }
@@ -77,17 +77,17 @@ class CalculatedStats {
                 var type = Queries.TELEOP_GRID
                 var grid_crit = Queries.TELEOP_GRID_SCORE
             }
-            
-            for (const x of this.data[team]) { 
+
+            for (const x of this.data[team]) {
                 if (x[mandatoryMatchData.MATCH_KEY] != matchKey) {
                     continue
                 }
 
-                for (const score of x[type]){
+                for (const score of x[type]) {
                     totalSum += grid_crit[score[1]]
                 }
 
-                if (Number.isNaN(totalSum)){
+                if (Number.isNaN(totalSum)) {
                     totalSum = 0
                 }
             }
@@ -99,12 +99,12 @@ class CalculatedStats {
         }
     }
 
-    getNotes(team, stat){
+    getNotes(team, stat) {
         try {
             var notes = []
 
-            for (const x of this.data[team]){
-                if (x[stat] != ""){
+            for (const x of this.data[team]) {
+                if (x[stat] != "" || x[stat] != "|") {
                     notes.push(x[stat])
                 }
             }
@@ -115,43 +115,43 @@ class CalculatedStats {
             console.log(e)
             return []
         }
-        
+
     }
 
-    getAvrGridMissed(team, section){
+    getAvrGridMissed(team, section) {
         try {
             var values = 0
             var count = 0
-        
-            for (const x of this.data[team]) { 
-                if (section == Queries.AUTONOMOUS){
-                    values += (x[Queries.AUTO_GRID].length / (x[Queries.AUTO_GRID].length +x[Queries.AUTO_MISSES] + 1))*100
+
+            for (const x of this.data[team]) {
+                if (section == Queries.AUTONOMOUS) {
+                    values += (x[Queries.AUTO_GRID].length / (x[Queries.AUTO_GRID].length + x[Queries.AUTO_MISSES] + 1)) * 100
                     count += 1
                 }
                 else {
-                    values += (x[Queries.TELEOP_GRID].length / (x[Queries.TELEOP_GRID].length +x[Queries.TELEOP_MISSES]))*100
+                    values += (x[Queries.TELEOP_GRID].length / (x[Queries.TELEOP_GRID].length + x[Queries.TELEOP_MISSES])) * 100
                     count += 1
                 }
-                
+
             }
 
             console.log(values, count)
 
-            return (values/count).toFixed(2)
+            return (values / count).toFixed(2)
         }
         catch (e) {
             return 0
         }
     }
 
-    getAvrStatOverTime(team, stat){
+    getAvrStatOverTime(team, stat) {
         try {
             var match = []
             var scored = []
-        
+
             var count = 0
-            for (const x of this.data[team]) { 
-                if (typeof(x[stat]) == "object"){
+            for (const x of this.data[team]) {
+                if (typeof (x[stat]) == "object") {
                     match.push(count)
                     scored.push(x[stat].length)
                 }
@@ -169,13 +169,13 @@ class CalculatedStats {
         }
     }
 
-    getAvrStat(team, stat){
+    getAvrStat(team, stat) {
         try {
             var values = 0
             var count = 0
-        
-            for (const x of this.data[team]) { 
-                if (typeof(x[stat]) == "object"){
+
+            for (const x of this.data[team]) {
+                if (typeof (x[stat]) == "object") {
                     values += x[stat].length
                 }
                 else {
@@ -184,19 +184,19 @@ class CalculatedStats {
                 count += 1
             }
 
-            return (values/count).toFixed(2)
+            return (values / count).toFixed(2)
         }
         catch (e) {
             return 0
         }
     }
 
-    getCumulativeStat(team, stat){
+    getCumulativeStat(team, stat) {
         try {
             var scored = []
 
-            for (const x of this.data[team]) { 
-                if (typeof(x[stat]) == "object"){
+            for (const x of this.data[team]) {
+                if (typeof (x[stat]) == "object") {
                     scored.push(x[stat].length)
                 }
                 else {
@@ -211,21 +211,21 @@ class CalculatedStats {
         }
     }
 
-    getTotalPoints(team, stat){
+    getTotalPoints(team, stat) {
         try {
             var match = []
             var scored = []
             var temp = 0
-        
-            for (const x of this.data[team]) { 
+
+            for (const x of this.data[team]) {
                 temp = 0
-                for (const component of Object.keys(stat)){
-                    temp += x[component]*stat[component]
+                for (const component of Object.keys(stat)) {
+                    temp += x[component] * stat[component]
                 }
                 match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored.push(temp)
             }
-    
+
             return [match, scored]
         }
         catch (e) {
@@ -233,33 +233,33 @@ class CalculatedStats {
         }
     }
 
-    getAvrGrid(team, stat, type_of_grid){
+    getAvrGrid(team, stat, type_of_grid) {
         try {
             var count = 0
             var totalSubmissions = 0
 
-            for (const x of this.data[team]) { 
-                for (const score of x[type_of_grid]){
-                    if (stat == Queries.LEFT){
-                        if (["1", "2", "3"].includes(score[0])){
+            for (const x of this.data[team]) {
+                for (const score of x[type_of_grid]) {
+                    if (stat == Queries.LEFT) {
+                        if (["1", "2", "3"].includes(score[0])) {
                             count += 1
                         }
-                        
+
                     }
-                    else if (stat == Queries.COOP){
-                        if (["4", "5", "6"].includes(score[0])){
+                    else if (stat == Queries.COOP) {
+                        if (["4", "5", "6"].includes(score[0])) {
                             count += 1
                         }
                     }
-                    else if (stat == Queries.RIGHT){
-                        if (["7", "8", "9"].includes(score[0])){
+                    else if (stat == Queries.RIGHT) {
+                        if (["7", "8", "9"].includes(score[0])) {
                             count += 1
                         }
                     }
                     else {
                         count += 1
                     }
-                }    
+                }
                 totalSubmissions += 1
             }
 
@@ -270,14 +270,14 @@ class CalculatedStats {
         }
     }
 
-    getCyclesByMatch(team, type_of_grid){
+    getCyclesByMatch(team, type_of_grid) {
         try {
             var totalCycles = []
 
-            for (const x of this.data[team]) { 
+            for (const x of this.data[team]) {
                 var count = 0
 
-                for (const _ of x[type_of_grid]){
+                for (const _ of x[type_of_grid]) {
                     count += 1
                 }
 
@@ -295,7 +295,7 @@ class CalculatedStats {
         try {
             var autoPoints = []
 
-            for (const x of this.data[team]) { 
+            for (const x of this.data[team]) {
                 let matchKey = x[mandatoryMatchData.MATCH_KEY]
                 var pointValue = 0
 
@@ -308,7 +308,7 @@ class CalculatedStats {
 
                 pointValue += this.getScoreDataCritSingle(team, Queries.MOBILITY, Queries.MOBILITY_POINTAGE, matchKey)
                 pointValue += this.getScoreDataCritSingle(team, Queries.AUTO_CHARGING_STATE, Queries.AUTO_CHARGE_STATION_CRIT, matchKey)
-                
+
                 var gridScoredIn = Queries.COOP
 
                 if (["1", "2", "3"].includes(x[Queries.AUTO_GRID][0][0])) {
@@ -332,21 +332,21 @@ class CalculatedStats {
         }
     }
 
-    getAvrTier(team, stat, type_of_grid){
+    getAvrTier(team, stat, type_of_grid) {
         try {
             var count = 0
             var totalSubmissions = 0
-            for (const x of this.data[team]) { 
-                for (const score of x[type_of_grid]){
-                    if (stat == Queries.HIGH && score[1] == "H"){
+            for (const x of this.data[team]) {
+                for (const score of x[type_of_grid]) {
+                    if (stat == Queries.HIGH && score[1] == "H") {
                         count += 1
-                        
+
                     }
-                    if (stat == Queries.MID && score[1] == "M"){
+                    if (stat == Queries.MID && score[1] == "M") {
                         count += 1
-                        
+
                     }
-                    if (stat == Queries.HYBRID && score[1] == "L"){
+                    if (stat == Queries.HYBRID && score[1] == "L") {
                         count += 1
                     }
                 }
@@ -360,16 +360,16 @@ class CalculatedStats {
         }
     }
 
-    getScoreDataCrit(team, stat_comp, stat_crit){
+    getScoreDataCrit(team, stat_comp, stat_crit) {
         try {
             var match = []
             var scored = []
-        
-            for (const x of this.data[team]) { 
+
+            for (const x of this.data[team]) {
                 match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored.push(stat_crit[x[stat_comp]])
             }
-    
+
             return [match, scored]
         }
         catch (e) {
@@ -377,16 +377,16 @@ class CalculatedStats {
         }
     }
 
-    getScoreDataCritSingle(team, stat_comp, stat_crit, matchKey = null){
+    getScoreDataCritSingle(team, stat_comp, stat_crit, matchKey = null) {
         try {
             var match = []
             var scored = 0
-        
-            for (const x of this.data[team]) { 
+
+            for (const x of this.data[team]) {
                 if (matchKey != null && x[mandatoryMatchData.MATCH_KEY] != matchKey) {
                     continue
                 }
-                
+
                 match.push(x[mandatoryMatchData.MATCH_KEY])
                 scored += stat_crit[x[stat_comp]]
             }
@@ -426,7 +426,7 @@ class CalculatedStats {
 
     getPointsAddedByMatch(team, withEndgame = false, onlyAuto = false, onlyTeleop = false) {
         var pointsAdded = []
-        
+
         try {
             for (const submission of this.data[team]) {
                 let matchKey = submission[mandatoryMatchData.MATCH_KEY]
@@ -456,7 +456,7 @@ class CalculatedStats {
                 if (withEndgame) {
                     pointValue += this.getScoreDataCritSingle(team, Queries.TOTAL_ENDGAME, Queries.ENDGAME_CRIT, matchKey)
                 }
-                
+
                 pointsAdded.push(pointValue)
             }
 
@@ -467,21 +467,21 @@ class CalculatedStats {
         }
     }
 
-    getMatchAllianceData(match, stat, alliance){
+    getMatchAllianceData(match, stat, alliance) {
         try {
             var teams = []
             var scored = []
-        
+
             for (const x of Object.values(this.data)) {
-                for (const l of x){
-                    if (l[mandatoryMatchData.MATCH_KEY] == match && l[mandatoryMatchData.ALLIANCE] == alliance){
+                for (const l of x) {
+                    if (l[mandatoryMatchData.MATCH_KEY] == match && l[mandatoryMatchData.ALLIANCE] == alliance) {
                         teams.push(l[mandatoryMatchData.TEAM_NUMBER].toString())
                         scored.push(l[stat])
                         break
                     }
                 }
             }
-    
+
             return [teams, scored]
         }
         catch (e) {
@@ -527,17 +527,17 @@ class CalculatedStats {
         }
 
         teamAutos.sort(
-            (a, b) =>  Math.max(...b[1].map(x => x[0])) - Math.max(...a[1].map(x => x[0]))
+            (a, b) => Math.max(...b[1].map(x => x[0])) - Math.max(...a[1].map(x => x[0]))
         )
 
-        teamAutos = teamAutos.map(function(teamModes) {
+        teamAutos = teamAutos.map(function (teamModes) {
             const [team, data] = teamModes
             var autoModesAsObject = {
                 LEFT_GRID: [],
                 COOP_GRID: [],
                 RIGHT_GRID: []
             }
-            
+
             for (const [pointage, location] of data) {
                 autoModesAsObject[location].push(pointage)
             }
@@ -547,7 +547,7 @@ class CalculatedStats {
 
         let teamAutosAsObject = teamAutos.map(value => [value[0], Object.fromEntries(value[1])])
         let possibleCombinations = this.calculatePermutations([Queries.LEFT, Queries.COOP, Queries.RIGHT])
-        
+
         for (const combination of possibleCombinations) {
             let cumulativeAutoFromCombo = []
 
@@ -611,7 +611,7 @@ class CalculatedStats {
                     }
                 }
             }
-            
+
             for (const row of cycleHeatmap) {
                 var currentIndex = cycleHeatmap.indexOf(row)
                 var rowData = []
@@ -758,7 +758,7 @@ class CalculatedStats {
                         }
                     ]
                 }
-            ]    
+            ]
         }
 
         return [indicesToLocations, heatmapFormatted.reverse()]
@@ -780,7 +780,7 @@ class CalculatedStats {
                     return x
                 }
 
-            p = +p
+        p = +p
 
         if (p <= 0 || n < 2) {
             return +fnValueFrom(values[0], 0, values)
@@ -791,9 +791,9 @@ class CalculatedStats {
         }
 
         var i = (n - 1) * p,
-        i0 = Math.floor(i),
-        value0 = +fnValueFrom(values[i0], i0, values),
-        value1 = +fnValueFrom(values[i0 + 1], i0 + 1, values)
+            i0 = Math.floor(i),
+            value0 = +fnValueFrom(values[i0], i0, values),
+            value1 = +fnValueFrom(values[i0 + 1], i0 + 1, values)
 
         return value0 + (value1 - value0) * (i - i0)
     }
@@ -803,8 +803,8 @@ class CalculatedStats {
             return [[]]
         }
         return arr.flatMap(x => {
-          // get permutations of arr without x, then prepend x to each
-          return this.calculatePermutations(arr.filter(v => v !== x)).map(vs => [x, ...vs]);
+            // get permutations of arr without x, then prepend x to each
+            return this.calculatePermutations(arr.filter(v => v !== x)).map(vs => [x, ...vs]);
         })
     }
 }

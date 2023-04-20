@@ -1,17 +1,18 @@
 import { Graph } from "./Graph.js"
 
 class StackedBarGraph {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false, normalizeGraph = false) {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false, normalizeGraph = false, addButtons = false) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
+        this.addButtons = addButtons
 
         this.companionDiv = document.createElement("div")
         this.companionDiv.classList.add("p-4", "border-2", "border-gray-200", "rounded-lg", (fullScreen ? "w-full" : "w-[400px]"))
         this.companionDiv.id = this.uuid
 
         document.getElementById(parent_id).appendChild(this.companionDiv)
-        
+
         this.companionDiv.setAttribute("type", "button")
         this.companionDiv.setAttribute("data-modal-toggle", this.uuid)
 
@@ -24,8 +25,8 @@ class StackedBarGraph {
         }
 
         this.fields = dataOptions.fields,
-        this.colors = dataOptions.colors,
-        this.formula = dataOptions.formula
+            this.colors = dataOptions.colors,
+            this.formula = dataOptions.formula
 
         this.selectedColumnOptions = dataOptions.selectedOptions
         this.allColumnOptions = dataOptions.allOptions
@@ -77,13 +78,29 @@ class StackedBarGraph {
     generateData() {
         this.seriesOptions = []
         var dataByColumnOptions = []
+        var cumulativeData = {}
 
         for (const selected of this.selectedColumnOptions) {
-            dataByColumnOptions.push(
-                this.formula(selected),
+            cumulativeData[selected] = this.formula(selected).reduce(
+                (a, b) => parseFloat(a) + parseFloat(b)
             )
         }
-        
+
+        // Sort column options
+        var columns = this.allColumnOptions.sort(
+            (a, b) => cumulativeData[b] - cumulativeData[a]
+        )
+
+        var filterRange = [parseInt(this.allColumnOptions.length / 4 * this.filter), parseInt(this.allColumnOptions.length / 4 * (this.filter + 1))]
+
+        if (this.addButtons) {
+            columns = columns.slice(filterRange[0], filterRange[1])
+            this.selectedColumnOptions = columns
+        }
+        for (const selected of this.selectedColumnOptions) {
+            dataByColumnOptions.push(this.formula(selected))
+        }
+
         for (let idx = 0; idx < this.fields.length; idx++) {
             this.seriesOptions.push(
                 {
@@ -92,12 +109,11 @@ class StackedBarGraph {
                 }
             )
         }
-        console.log(this.seriesOptions)
     }
 
-    selectionOptionsToString(){
+    selectionOptionsToString() {
         var stringed = []
-        for (const team of this.selectedColumnOptions){
+        for (const team of this.selectedColumnOptions) {
             stringed.push(team.toString());
         }
         return stringed
@@ -135,7 +151,7 @@ class StackedBarGraph {
     }
 
     pushEdit(modal = true, x = []) {
-        if (modal){
+        if (modal) {
             this.selectedColumnOptions = []
             for (const i of this.allColumnOptions) {
                 if (document.getElementById(i.toString() + this.uuid.toString()).checked) {
@@ -151,15 +167,19 @@ class StackedBarGraph {
 
         this.graph.state.series = this.seriesOptions
         this.graph.state.xaxis.categories = this.selectionOptionsToString()
-
         this.graph.update()
 
+        this.generateFilters()
     }
 
-    generateFilters(){
+    generateFilters() {
         var self = this
 
-        document.getElementById(this.uuid).innerHTML = `
+        if (!this.addButtons) {
+            return 1
+        }
+
+        this.companionDiv.innerHTML += `
         <div class="h-10 flex flex-row gap-4">
             <button class="h-8 w-16 pt-[2px] border-2 border-red-600 text-red-600 font-bold rounded-md text-center" id="${this.uuid}section1">
                 1-25
@@ -176,14 +196,12 @@ class StackedBarGraph {
         </div>
         `
 
-        for (const section of [1, 2, 3, 4]){
+        for (const section of [1, 2, 3, 4]) {
             document.getElementById(this.uuid + `section${section}`).addEventListener("click", function () {
                 self.filter = (5 - section) - 1
                 self.pushEdit(false, self.allColumnOptions)
             })
         }
-
-        console.log(this.companionDiv.innerHTML)
     }
 }
 
