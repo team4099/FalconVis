@@ -20,7 +20,7 @@ import { StackedBarGraph } from '../lib/components/StackedBarGraph.js';
 
 
 (async () => {
-    var data = await fetch("../lib/chcmp.json").then(res => res.json())
+    var data = await fetch(JSONData).then(res => res.json())
     var stats = new CalculatedStats(data)
 
     // Shared Stats and Properties here

@@ -6,7 +6,7 @@ import { BoxPlot } from '../lib/components/BoxPlot.js';
 
 (async () => {
     console.log("test")
-    var data = await fetch("../lib/chcmp.json").then(res => res.json())
+    var data = await fetch(JSONData).then(res => res.json())
     var stats = new CalculatedStats(data)
     var modal = new Modal("editModal", "fakeToggle", "getEditedData", "editableFormContainer")
     console.log(stats.data)
