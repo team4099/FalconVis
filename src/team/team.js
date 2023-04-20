@@ -10,6 +10,7 @@ import { setTeams, setupTeams, statManager } from './teamParent.js'
 import { LineGraph } from '../lib/components/LineGraph.js';
 import { HeatMap } from '../lib/components/HeatMap.js';
 import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
+import { StackedBarGraph } from '../lib/components/StackedBarGraph.js';
 
 (async () => {
     console.log("test")
@@ -20,6 +21,22 @@ import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
 
     var team = [Selections.TEAMS[0]]
     
+    statManager.addGraph(
+        "avr_points_contributed",
+        new AutomatedMacro(
+            "macrosContainer", 
+            "Avr. Points Contributed", 
+            new CompositeStat(
+                [new Factor(function (team) { 
+                    let pointsAdded = stats.getPointsAddedByMatch(team, true)
+                    return pointsAdded.reduce((a, b) => a + b) / pointsAdded.length
+                })],
+                30.0
+            ),
+            team
+        )
+    )
+
     statManager.addGraph(
         "avr_teleop_cycles",
         new AutomatedMacro(
@@ -247,7 +264,31 @@ import { NoteHighlighting } from '../lib/components/NoteHighlighting.js';
             false
         )
     )
-
+    
+    statManager.addGraph(
+        "breakdown of GAME PIECES over time",
+        new StackedBarGraph(
+            "graphContainer",
+            "Breakdown of Game Pieces Scored",
+            {},
+            {
+                formula: function(team) { 
+                    let autoGamePieces = stats.getTypeOfGamePiece(team, Queries.AUTO_GRID)
+                    let teleopGamePieces = stats.getTypeOfGamePiece(team, Queries.TELEOP_GRID)
+                    return autoGamePieces.map((value, index) => value + teleopGamePieces[index])
+                },
+                selectedOptions: team,
+                allOptions: Selections.TEAMS,
+                fields: ["Cones", "Cubes"],
+                colors: ["#FACC15", "#7C3AED"]
+            },
+            modal,
+            false,
+            false,
+            true
+        )
+    )
+    
     statManager.addGraph(
         "teleop CYCLES over time",
         new LineGraph(

@@ -1,7 +1,7 @@
 import { Graph } from "./Graph.js"
 
 class StackedBarGraph {
-    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false) {
+    constructor(parent_id, title, plotOptions, dataOptions, modal, editable = true, fullScreen = false, normalizeGraph = false) {
         this.uuid = Math.random().toString(36).substr(2, 9)
 
         this.modal = modal
@@ -40,6 +40,7 @@ class StackedBarGraph {
                 chart: {
                     type: 'bar',
                     stacked: true,
+                    stackType: normalizeGraph ? '100%' : 'normal',
                     zoom: {
                         enabled: true
                     },

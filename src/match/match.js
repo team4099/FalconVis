@@ -1,6 +1,7 @@
-import { Queries, Selections, JSONData } from '../lib/data/Constants.js'
+import { Queries, Selections, JSONData, mandatoryMatchData } from '../lib/data/Constants.js'
 import { BarGraph } from '../lib/components/BarGraph.js';
 import { LineGraph } from '../lib/components/LineGraph.js';
+import { BoxPlot } from '../lib/components/BoxPlot.js';
 import { ScatterGraph } from '../lib/components/ScatterGraph.js';
 import { PieGraph } from '../lib/components/PieGraph.js';
 import { AutomatedMacro } from '../lib/components/AutomatedMacro.js';
@@ -15,6 +16,7 @@ import {
     setTeams, modal, graphContainerBlue, 
     graphContainerRed, graphContainerComparison, red, blue 
 } from './matchParent.js'
+import { StackedBarGraph } from '../lib/components/StackedBarGraph.js';
 
 
 (async () => {
@@ -43,12 +45,16 @@ import {
     generateComparisonGraphs()
     
     // Red Graphs Generated Here
-    function generateRedGraphs(){
+    function generateRedGraphs() {
+        let getOptimizedAuto = function() { 
+            return stats.optimizeAuto(red)
+        } // Lazy to avoid it reading only 9999 from the teams
+
         graphContainerRed.addGraph(
             "teleopCargoRed",
             new BarGraph(
-                "redAllianceContainer",
-                "Avr. Cycles Cargo - Red",
+                "redTeleopContainer",
+                "Avr. Cycles - Red",
                 {
                     bar: {
                         horizontal: false
@@ -70,7 +76,7 @@ import {
         graphContainerRed.addGraph(
             "autoPOTRed",
             new LineGraph(
-                "redAllianceContainer",
+                "redAutoContainer",
                 "Auto POT - Red",
                 {},
                 {
@@ -86,7 +92,7 @@ import {
         graphContainerRed.addGraph(
             "autoChargeStationPOTRed",
             new LineGraph(
-                "redAllianceContainer",
+                "redAutoContainer",
                 "Auto Charge Station POT - Red",
                 {},
                 {
@@ -101,11 +107,66 @@ import {
             )
         )
 
+        graphContainerRed.addGraph(
+            "autoEngageRed",
+            new StackedBarGraph(
+                "redAutoContainer",
+                "Auto Engage Stats - Red",
+                {},
+                {
+                    formula: function(team) { 
+                        let successfulEngages = stats.getScoreDataCrit(team, Queries.AUTO_CHARGING_STATE, Queries.ENGAGE_CRIT)[1].reduce((a, b) => a + b)
+                        let successfulDocks = stats.getScoreDataCrit(team, Queries.AUTO_CHARGING_STATE, Queries.DOCKED_CRIT)[1].reduce((a, b) => a + b)
+                        let engageMissed = (
+                            stats.getScoreDataCrit(team, Queries.AUTO_ATTEMPTED_CHARGING_STATE, Queries.ENGAGE_CRIT)[1].reduce((a, b) => a + b)
+                            - successfulEngages
+                            - successfulDocks
+                        )
+                        return [
+                            successfulEngages,
+                            successfulDocks,
+                            engageMissed
+                        ]
+
+                    },
+                    fields: ["# Of Successful Engages", "# of Docks", "# of Missed Engages"],
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
+            "autoAccuracyRed",
+            new StackedBarGraph(
+                "redAutoContainer",
+                "Auto Accuracy - Red",
+                {},
+                {
+                    formula: function(team) { 
+                        let totalAutoCycles = stats.getCumulativeStat(team, Queries.AUTO_GRID)
+                        let totalAutoMisses = stats.getCumulativeStat(team, Queries.AUTO_MISSES)
+                        return [
+                            totalAutoCycles.reduce((a, b) => a + b),
+                            totalAutoMisses.reduce((a, b) => a + b)
+                        ]
+                    },
+                    fields: ["Total Auto Cycles", "Total Auto Misses"],
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
         
         graphContainerRed.addGraph(
             "teleopPOTRed",
             new LineGraph(
-                "redAllianceContainer",
+                "redTeleopContainer",
                 "Teleop POT - Red",
                 {},
                 {
@@ -119,9 +180,42 @@ import {
         )
 
         graphContainerRed.addGraph(
+            "breakdown of POINTS ADDED",
+            new StackedBarGraph(
+                "redTeleopContainer",
+                "Breakdown of Points Added by Team",
+                {},
+                {
+                    formula: function(team) { 
+                        let pointsAcrossAuto = stats.getPointsAddedByMatch(team, false, true)
+                        let pointsAcrossTeleop = stats.getPointsAddedByMatch(team, false, false, true)
+                        let totalPoints =  stats.getPointsAddedByMatch(team, true)
+
+                        let averageAutoPoints = pointsAcrossAuto.reduce((a, b) => a + b) / pointsAcrossAuto.length
+                        let averageTeleopPoints = pointsAcrossTeleop.reduce((a, b) => a + b) / pointsAcrossTeleop.length
+                        let averageTotalPoints = totalPoints.reduce((a, b) => a + b) / totalPoints.length
+
+                        let breakdownOfPointsAdded = [
+                            averageAutoPoints.toFixed(2),
+                            averageTeleopPoints.toFixed(2),
+                            (averageTotalPoints - (averageAutoPoints + averageTeleopPoints)).toFixed(2)
+                        ]
+
+                        return breakdownOfPointsAdded
+                    },
+                    fields: ["Auto Contribution (pts.)", "Teleop Contribution (pts.)", "Endgame Contribution (pts.)"],
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS,
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
             "auto CYCLES over time",
             new LineGraph(
-                "redAllianceContainer",
+                "redAutoContainer",
                 "Auto CYCLES over time - Red",
                 {},
                 {
@@ -137,7 +231,7 @@ import {
         graphContainerRed.addGraph(
             "teleop CYCLES over time",
             new LineGraph(
-                "redAllianceContainer",
+                "redTeleopContainer",
                 "Teleop CYCLES over time - Red",
                 {},
                 {
@@ -153,7 +247,7 @@ import {
         graphContainerRed.addGraph(
             "teleop CYCLES heatmap",
             new CombinedHeatmap(
-                "redAllianceContainer",
+                "redTeleopContainer",
                 "Teleop CYCLES Heatmap (Combined) - Red",
                 {},
                 {
@@ -169,7 +263,7 @@ import {
         graphContainerRed.addGraph(
             "auto CYCLES heatmap",
             new CombinedHeatmap(
-                "redAllianceContainer",
+                "redAutoContainer",
                 "Auto CYCLES Heatmap (Combined) - Red",
                 {},
                 {
@@ -181,15 +275,67 @@ import {
                 false
             )
         )
+        
+        graphContainerRed.addGraph(
+            "score for auto modes OPTIMIZED",
+            new BarGraph(
+                "redAutoContainer",
+                "Best Possible Autonomous (pts.) - Red",
+                {},
+                {
+                    formula: {
+                        "Left Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.LEFT ? bestAutoConfig[2] : 0
+                        },
+                        "Co-Op Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.COOP ? bestAutoConfig[2] : 0
+                        },
+                        "Right Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.RIGHT ? bestAutoConfig[2] : 0
+                        }
+                    },
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerRed.addGraph(
+            "auto modes OPTIMIZED",
+            new CombinedHeatmap(
+                "redAutoContainer",
+                "Best Configuration for Autonomous - Red",
+                {},
+                {
+                    formula: function(team) { 
+                        let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                        return stats.getCycleHeatmapData(team, Queries.AUTO_GRID, stats.data[team][bestAutoConfig[3]][mandatoryMatchData.MATCH_KEY]|| "qm0")
+                    },
+                    selectedOptions: red,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
     }
 
 // Blue Graphs Generated Here
-    function generateBlueGraphs(){
+    function generateBlueGraphs() {
+        let getOptimizedAuto = function() { 
+            return stats.optimizeAuto(blue)
+        } // Lazy to avoid it reading only 9999 from the teams
+
         graphContainerBlue.addGraph(
             "teleopCargoBlue",
             new BarGraph(
-                "blueAllianceContainer",
-                "Avr. Cycles Cargo - Blue",
+                "blueTeleopContainer",
+                "Avr. Cycles - Blue",
                 {
                     bar: {
                         horizontal: false
@@ -210,7 +356,7 @@ import {
         graphContainerBlue.addGraph(
             "autoPOTBlue",
             new LineGraph(
-                "blueAllianceContainer",
+                "blueAutoContainer",
                 "Auto POT - Blue",
                 {},
                 {
@@ -226,7 +372,7 @@ import {
         graphContainerBlue.addGraph(
             "autoChargeStationPOTBlue",
             new LineGraph(
-                "blueAllianceContainer",
+                "blueAutoContainer",
                 "Auto Charge Station POT - Blue",
                 {},
                 {
@@ -242,9 +388,64 @@ import {
         )
 
         graphContainerBlue.addGraph(
+            "autoEngageBlue",
+            new StackedBarGraph(
+                "blueAutoContainer",
+                "Auto Engage Stats - Blue",
+                {},
+                {
+                    formula: function(team) { 
+                        let successfulEngages = stats.getScoreDataCrit(team, Queries.AUTO_CHARGING_STATE, Queries.ENGAGE_CRIT)[1].reduce((a, b) => a + b)
+                        let successfulDocks = stats.getScoreDataCrit(team, Queries.AUTO_CHARGING_STATE, Queries.DOCKED_CRIT)[1].reduce((a, b) => a + b)
+                        let engageMissed = (
+                            stats.getScoreDataCrit(team, Queries.AUTO_ATTEMPTED_CHARGING_STATE, Queries.ENGAGE_CRIT)[1].reduce((a, b) => a + b)
+                            - successfulEngages
+                            - successfulDocks
+                        )
+                        return [
+                            successfulEngages,
+                            successfulDocks,
+                            engageMissed
+                        ]
+
+                    },
+                    fields: ["# Of Successful Engages", "# of Docks", "# of Missed Engages"],
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "autoAccuracyBlue",
+            new StackedBarGraph(
+                "blueAutoContainer",
+                "Auto Accuracy - Blue",
+                {},
+                {
+                    formula: function(team) { 
+                        let totalAutoCycles = stats.getCumulativeStat(team, Queries.AUTO_GRID)
+                        let totalAutoMisses = stats.getCumulativeStat(team, Queries.AUTO_MISSES)
+                        return [
+                            totalAutoCycles.reduce((a, b) => a + b),
+                            totalAutoMisses.reduce((a, b) => a + b)
+                        ]
+                    },
+                    fields: ["Total Auto Cycles", "Total Auto Misses"],
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
             "teleopPOTBlue",
             new LineGraph(
-                "blueAllianceContainer",
+                "blueTeleopContainer",
                 "Teleop POT - Blue",
                 {},
                 {
@@ -258,9 +459,42 @@ import {
         )
 
         graphContainerBlue.addGraph(
+            "breakdown of POINTS ADDED",
+            new StackedBarGraph(
+                "blueTeleopContainer",
+                "Breakdown of Points Added by Team",
+                {},
+                {
+                    formula: function(team) { 
+                        let pointsAcrossAuto = stats.getPointsAddedByMatch(team, false, true)
+                        let pointsAcrossTeleop = stats.getPointsAddedByMatch(team, false, false, true)
+                        let totalPoints =  stats.getPointsAddedByMatch(team, true)
+
+                        let averageAutoPoints = pointsAcrossAuto.reduce((a, b) => a + b) / pointsAcrossAuto.length
+                        let averageTeleopPoints = pointsAcrossTeleop.reduce((a, b) => a + b) / pointsAcrossTeleop.length
+                        let averageTotalPoints = totalPoints.reduce((a, b) => a + b) / totalPoints.length
+
+                        let breakdownOfPointsAdded = [
+                            averageAutoPoints.toFixed(2),
+                            averageTeleopPoints.toFixed(2),
+                            (averageTotalPoints - (averageAutoPoints + averageTeleopPoints)).toFixed(2)
+                        ]
+
+                        return breakdownOfPointsAdded
+                    },
+                    fields: ["Auto Contribution (pts.)", "Teleop Contribution (pts.)", "Endgame Contribution (pts.)"],
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS,
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
             "auto CYCLES over time",
             new LineGraph(
-                "blueAllianceContainer",
+                "blueAutoContainer",
                 "Auto CYCLES over time - Blue",
                 {},
                 {
@@ -276,7 +510,7 @@ import {
         graphContainerBlue.addGraph(
             "teleop CYCLES over time",
             new LineGraph(
-                "blueAllianceContainer",
+                "blueTeleopContainer",
                 "Teleop CYCLES over time - Blue",
                 {},
                 {
@@ -292,7 +526,7 @@ import {
         graphContainerBlue.addGraph(
             "teleop CYCLES heatmap",
             new CombinedHeatmap(
-                "blueAllianceContainer",
+                "blueTeleopContainer",
                 "Teleop CYCLES Heatmap (Combined) - Blue",
                 {},
                 {
@@ -308,11 +542,59 @@ import {
         graphContainerBlue.addGraph(
             "auto CYCLES heatmap",
             new CombinedHeatmap(
-                "blueAllianceContainer",
+                "blueAutoContainer",
                 "Auto CYCLES Heatmap (Combined) - Blue",
                 {},
                 {
                     formula: function(team) { return stats.getCycleHeatmapData(team, Queries.AUTO_GRID)},
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+        
+        graphContainerBlue.addGraph(
+            "score for auto modes OPTIMIZED",
+            new BarGraph(
+                "blueAutoContainer",
+                "Best Possible Autonomous (pts.) - Blue",
+                {},
+                {
+                    formula: {
+                        "Left Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.LEFT ? bestAutoConfig[2] : 0
+                        },
+                        "Co-Op Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.COOP ? bestAutoConfig[2] : 0
+                        },
+                        "Right Grid (pts.)": function(team) { 
+                            let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                            return bestAutoConfig[1] == Queries.RIGHT ? bestAutoConfig[2] : 0
+                        }
+                    },
+                    selectedOptions: blue,
+                    allOptions: Selections.TEAMS
+                },
+                modal,
+                false
+            )
+        )
+
+        graphContainerBlue.addGraph(
+            "auto modes OPTIMIZED",
+            new CombinedHeatmap(
+                "blueAutoContainer",
+                "Best Configuration for Autonomous - Blue",
+                {},
+                {
+                    formula: function(team) { 
+                        let bestAutoConfig = getOptimizedAuto().filter(value => value[0] == team)[0]
+                        return stats.getCycleHeatmapData(team, Queries.AUTO_GRID, stats.data[team][bestAutoConfig[3]][mandatoryMatchData.MATCH_KEY]|| "qm0")
+                    },
                     selectedOptions: blue,
                     allOptions: Selections.TEAMS
                 },
@@ -350,7 +632,7 @@ import {
                     })],
                     100.0,
                 ),
-                ["Blue Alliance", "Red Alliance"],
+                options,
                 false
             )
         )
@@ -362,8 +644,11 @@ import {
                 "Maximum Scores", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
-                        let scoresByTeam = [0, 0, 0].map((_, index) => stats.getPointsAddedByMatch(teamsInAlliances[alliance]()[index], true))
-                        return Math.max(...scoresByTeam[0]) + Math.max(...scoresByTeam[1]) + Math.max(...scoresByTeam[2])
+                        let totalScores = stats.calculateAllianceCompositeStat(
+                            teamsInAlliances[alliance](), 
+                            team => stats.getPointsAddedByMatch(team, true)
+                        )
+                        return Math.max(...totalScores)
                     })],
                     100.0,
                 ),
@@ -379,12 +664,15 @@ import {
                 "Minimum Scores", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
-                        let scoresByTeam = [0, 0, 0].map((_, index) => stats.getPointsAddedByMatch(teamsInAlliances[alliance]()[index], true))
-                        return Math.min(...scoresByTeam[0]) + Math.min(...scoresByTeam[1]) + Math.min(...scoresByTeam[2])
+                        let totalScores = stats.calculateAllianceCompositeStat(
+                            teamsInAlliances[alliance](), 
+                            team => stats.getPointsAddedByMatch(team, true)
+                        )
+                        return Math.min(...totalScores)
                     })],
                     100.0,
                 ),
-                ["Blue Alliance", "Red Alliance"],
+                options,
                 false
             )
         )
@@ -396,16 +684,17 @@ import {
                 "25th Percentile (Bottom 25%) Scores", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
-                        let scoresByTeam = [0, 0, 0].map((_, index) => stats.getPointsAddedByMatch(teamsInAlliances[alliance]()[index], true))
+                        let totalScores = stats.calculateAllianceCompositeStat(
+                            teamsInAlliances[alliance](), 
+                            team => stats.getPointsAddedByMatch(team, true)
+                        )
                         return Math.round(
-                            stats.quantileSorted(scoresByTeam[0], 0.25, value => value) 
-                            + stats.quantileSorted(scoresByTeam[1], 0.25, value => value) 
-                            + stats.quantileSorted(scoresByTeam[2], 0.25, value => value) 
+                            stats.quantileSorted(totalScores, 0.25, value => value) 
                         )
                     })],
                     100.0,
                 ),
-                ["Blue Alliance", "Red Alliance"],
+                options,
                 false
             )
         )
@@ -417,16 +706,17 @@ import {
                 "75th Percentile (Top 25%) Scores", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
-                        let scoresByTeam = [0, 0, 0].map((_, index) => stats.getPointsAddedByMatch(teamsInAlliances[alliance]()[index], true))
+                        let totalScores = stats.calculateAllianceCompositeStat(
+                            teamsInAlliances[alliance](), 
+                            team => stats.getPointsAddedByMatch(team, true)
+                        )
                         return Math.round(
-                            stats.quantileSorted(scoresByTeam[0], 0.75, value => value) 
-                            + stats.quantileSorted(scoresByTeam[1], 0.75, value => value) 
-                            + stats.quantileSorted(scoresByTeam[2], 0.75, value => value) 
+                            stats.quantileSorted(totalScores, 0.75, value => value) 
                         )
                     })],
                     100.0,
                 ),
-                ["Blue Alliance", "Red Alliance"],
+                options,
                 false
             )
         )
@@ -438,12 +728,15 @@ import {
                 "Average Total Auto Cycles", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
-                        let scoresByTeam = [0, 0, 0].map((_, index) => stats.getAvrStat(teamsInAlliances[alliance]()[index], Queries.AUTO_GRID))
-                        return scoresByTeam.reduce((a, b) => parseFloat(a) + parseFloat(b))
+                        let autoCycles = stats.calculateAllianceCompositeStat(
+                            teamsInAlliances[alliance](), 
+                            team => stats.getCyclesByMatch(team, Queries.AUTO_GRID)
+                        )
+                        return Math.round(autoCycles.reduce((a, b) => a + b) / autoCycles.length)
                     })],
                     4.0,
                 ),
-                ["Blue Alliance", "Red Alliance"],
+                options,
                 false
             )
         )
@@ -455,12 +748,15 @@ import {
                 "Average Total Teleop Cycles", 
                 new CompositeStat(
                     [new Factor(function (alliance) { 
-                        let scoresByTeam = [0, 0, 0].map((_, index) => stats.getAvrStat(teamsInAlliances[alliance]()[index], Queries.TELEOP_GRID))
-                        return scoresByTeam.reduce((a, b) => parseFloat(a) + parseFloat(b))
+                        let teleopCycles = stats.calculateAllianceCompositeStat(
+                            teamsInAlliances[alliance](), 
+                            team => stats.getCyclesByMatch(team, Queries.TELEOP_GRID)
+                        )
+                        return Math.round(teleopCycles.reduce((a, b) => a + b) / teleopCycles.length)
                     })],
                     9.0,
                 ),
-                ["Blue Alliance", "Red Alliance"],
+                options,
                 false
             )
         )
@@ -484,22 +780,20 @@ import {
                         var matchesWon = 0
                     
                         for (const ownScore of scoresByTeam) {
-                            if (otherAllianceScores[matchesPlayed] == null) {
-                                break
-                            }
+                            for (const opposingScore of otherAllianceScores) {
+                                if (ownScore > opposingScore) {
+                                    matchesWon += 1
+                                }
 
-                            if (ownScore > otherAllianceScores[matchesPlayed]) {
-                                matchesWon += 1
+                                matchesPlayed += 1
                             }
-
-                            matchesPlayed += 1
                         }
 
                         return matchesWon / matchesPlayed * 100
                     })],
                     50.0,
                 ),
-                ["Blue Alliance", "Red Alliance"],
+                options,
                 false,
                 true
             )
@@ -508,139 +802,256 @@ import {
         // Comparison graphs
         graphContainerComparison.addGraph(
             "auto cycles COMPARED",
-            new LineGraph(
+            new BoxPlot(
                 "alliancesComparedContainer",
                 "Total Auto CYCLES over time - Compared",
-                {},
+                {
+                    boxPlot: {
+                        colors: {
+                            upper: '#EFAE04',
+                            lower: '#FBC22B'
+                        }
+                    },
+                    bar: {
+                        horizontal: true
+                    }
+                },
                 {
                     formula: function(alliance) { 
                         let compositeStat = stats.calculateAllianceCompositeStat(
                             teamsInAlliances[alliance](), 
-                            team => stats.getPointsAddedByMatch(team, false, true)
+                            team => stats.getCyclesByMatch(team, Queries.AUTO_GRID)
                         )
-                        return [[...Array(compositeStat.length).keys()], compositeStat]
+                        return [
+                            Math.min(...compositeStat),
+                            stats.quantileSorted(compositeStat, 0.25, value => value),
+                            stats.quantileSorted(compositeStat, 0.5, value => value),
+                            stats.quantileSorted(compositeStat, 0.75, value => value),
+                            Math.max(...compositeStat)
+                        ]
                     },
                     selectedOptions: options,
                     allOptions: options
                 },
                 modal,
-                false,
-                true
+                false
             )
         )
 
         graphContainerComparison.addGraph(
             "teleop CYCLES COMPARED",
-            new LineGraph(
+            new BoxPlot(
                 "alliancesComparedContainer",
                 "Total Teleop CYCLES over time - Compared",
-                {},
+                {
+                    boxPlot: {
+                        colors: {
+                            upper: '#EFAE04',
+                            lower: '#FBC22B'
+                        }
+                    },
+                    bar: {
+                        horizontal: true
+                    }
+                },
                 {
                     formula: function(alliance) { 
                         let compositeStat = stats.calculateAllianceCompositeStat(
                             teamsInAlliances[alliance](), 
-                            team => stats.getAvrStatOverTime(team, Queries.TELEOP_GRID)[1]
+                            team => stats.getCyclesByMatch(team, Queries.TELEOP_GRID)
                         )
-                        return [[...Array(compositeStat.length).keys()], compositeStat]
+                        return [
+                            Math.min(...compositeStat),
+                            stats.quantileSorted(compositeStat, 0.25, value => value),
+                            stats.quantileSorted(compositeStat, 0.5, value => value),
+                            stats.quantileSorted(compositeStat, 0.75, value => value),
+                            Math.max(...compositeStat)
+                        ]
                     },
                     selectedOptions: options,
                     allOptions: options
                 },
                 modal,
-                false,
-                true
+                false
             )
         )
 
         graphContainerComparison.addGraph(
             "auto POT COMPARED",
-            new LineGraph(
+            new BoxPlot(
                 "alliancesComparedContainer",
-                "Total Auto POT over time - Compared",
-                {},
+                "Total Auto POT - Compared",
+                {
+                    boxPlot: {
+                        colors: {
+                            upper: '#EFAE04',
+                            lower: '#FBC22B'
+                        }
+                    },
+                    bar: {
+                        horizontal: true
+                    }
+                },
                 {
                     formula: function(alliance) { 
                         let compositeStat = stats.calculateAllianceCompositeStat(
                             teamsInAlliances[alliance](), 
                             team => stats.getPointsAddedByMatch(team, false, true)
                         )
-                        return [[...Array(compositeStat.length).keys()], compositeStat]
+                        return [
+                            Math.min(...compositeStat),
+                            stats.quantileSorted(compositeStat, 0.25, value => value),
+                            stats.quantileSorted(compositeStat, 0.5, value => value),
+                            stats.quantileSorted(compositeStat, 0.75, value => value),
+                            Math.max(...compositeStat)
+                        ]
                     },
                     selectedOptions: options,
                     allOptions: options
                 },
                 modal,
-                false,
-                true
+                false
             )
         )
 
         graphContainerComparison.addGraph(
             "teleop POT COMPARED",
-            new LineGraph(
+            new BoxPlot(
                 "alliancesComparedContainer",
-                "Total Teleop POT over time - Compared",
-                {},
+                "Total Teleop POT - Compared",
+                {
+                    boxPlot: {
+                        colors: {
+                            upper: '#EFAE04',
+                            lower: '#FBC22B'
+                        }
+                    },
+                    bar: {
+                        horizontal: true
+                    }
+                },
                 {
                     formula: function(alliance) { 
                         let compositeStat = stats.calculateAllianceCompositeStat(
                             teamsInAlliances[alliance](), 
                             team => stats.getPointsAddedByMatch(team, false, false, true)
                         )
-                        return [[...Array(compositeStat.length).keys()], compositeStat]
+                        return [
+                            Math.min(...compositeStat),
+                            stats.quantileSorted(compositeStat, 0.25, value => value),
+                            stats.quantileSorted(compositeStat, 0.5, value => value),
+                            stats.quantileSorted(compositeStat, 0.75, value => value),
+                            Math.max(...compositeStat)
+                        ]
                     },
                     selectedOptions: options,
                     allOptions: options
                 },
                 modal,
-                false,
-                true
+                false
             )
         )
 
         graphContainerComparison.addGraph(
             "endgame POT COMPARED",
-            new LineGraph(
+            new BoxPlot(
                 "alliancesComparedContainer",
-                "Endgame POT over time - Compared",
-                {},
+                "Endgame POT - Compared",
+                {
+                    boxPlot: {
+                        colors: {
+                            upper: '#EFAE04',
+                            lower: '#FBC22B'
+                        }
+                    },
+                    bar: {
+                        horizontal: true
+                    }
+                },
                 {
                     formula: function(alliance) { 
                         let compositeStat = stats.calculateAllianceCompositeStat(
                             teamsInAlliances[alliance](), 
                             team => stats.getScoreDataCrit(team, Queries.TOTAL_ENDGAME, Queries.ENDGAME_CRIT)[1]
                         )
-                        return [[...Array(compositeStat.length).keys()], compositeStat]
+                        return [
+                            Math.min(...compositeStat),
+                            stats.quantileSorted(compositeStat, 0.25, value => value),
+                            stats.quantileSorted(compositeStat, 0.5, value => value),
+                            stats.quantileSorted(compositeStat, 0.75, value => value),
+                            Math.max(...compositeStat)
+                        ]
                     },
                     selectedOptions: options,
                     allOptions: options
                 },
                 modal,
-                false,
-                true
+                false
             )
         )
 
         graphContainerComparison.addGraph(
             "cumulative POT COMPARED",
-            new LineGraph(
+            new BoxPlot(
                 "alliancesComparedContainer",
-                "Cumulative POT over time - Compared",
-                {},
+                "Cumulative POT - Compared",
+                {
+                    boxPlot: {
+                        colors: {
+                            upper: '#EFAE04',
+                            lower: '#FBC22B'
+                        }
+                    },
+                    bar: {
+                        horizontal: true
+                    }
+                },
                 {
                     formula: function(alliance) { 
                         let compositeStat = stats.calculateAllianceCompositeStat(
                             teamsInAlliances[alliance](), 
                             team => stats.getPointsAddedByMatch(team, true)
                         )
-                        return [[...Array(compositeStat.length).keys()], compositeStat]
+                        return [
+                            Math.min(...compositeStat),
+                            stats.quantileSorted(compositeStat, 0.25, value => value),
+                            stats.quantileSorted(compositeStat, 0.5, value => value),
+                            stats.quantileSorted(compositeStat, 0.75, value => value),
+                            Math.max(...compositeStat)
+                        ]
                     },
                     selectedOptions: options,
                     allOptions: options
                 },
                 modal,
-                false,
-                true
+                false
+            )
+        )
+
+        graphContainerComparison.addGraph(
+            "breakdown of cumulative POT COMPARED",
+            new StackedBarGraph(
+                "alliancesComparedContainer",
+                "Breakdown of Cumulative POT - Compared",
+                {},
+                {
+                    formula: function(alliance) { 
+                        var cumulativePOT = []
+
+                        for (const team of teamsInAlliances[alliance]()) {
+                            let pointsAcrossMatches = stats.getPointsAddedByMatch(team, true)
+                            let averageCumulativePOT = pointsAcrossMatches.reduce((a, b) => a + b) / pointsAcrossMatches.length
+                            cumulativePOT.push(averageCumulativePOT.toFixed(2))
+                        }
+
+                        return cumulativePOT
+                    },
+                    fields: ["Robot 1", "Robot 2", "Robot 3"],
+                    selectedOptions: options,
+                    allOptions: options
+                },
+                modal,
+                false
             )
         )
     }
