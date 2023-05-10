@@ -10,16 +10,16 @@ class MatchManager(PageManager):
     """The page manager for the `Match` page."""
 
     def generate_input_section(self) -> list[list, list]:
-        """Creates the input section for the `Teams` page.
+        """Creates the input section for the `Match` page.
 
-        Creates a dropdown to select a team for graphs.
+        Creates six dropdowns to choose teams for each alliance separately.
 
         :return: Returns a 2D list with the lists being the three teams for the Red and Blue alliances.
         """
         team_list = retrieve_team_list()
 
         # Create the separate columns for submitting teams.
-        red_alliance_form, blue_alliance_form = st.columns(2)
+        red_alliance_form, blue_alliance_form = st.columns(2, gap="medium")
 
         # Create the different dropdowns to choose the three teams for Red Alliance.
         with red_alliance_form:

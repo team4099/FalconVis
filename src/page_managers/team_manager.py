@@ -2,11 +2,12 @@
 
 import streamlit as st
 
+from .contains_metrics import ContainsMetrics
 from .page_manager import PageManager
 from utils.functions import retrieve_team_list
 
 
-class TeamManager(PageManager):
+class TeamManager(PageManager, ContainsMetrics):
     """The page manager for the `Teams` page."""
 
     def generate_input_section(self) -> int:
@@ -20,3 +21,9 @@ class TeamManager(PageManager):
             "Team Number",
             retrieve_team_list()
         )
+
+    def generate_metrics(self, quartile: float) -> None:
+        """Creates the metrics for the `Teams` page.
+
+        :param quartile: The quartile to use per-metric for comparisons between a team and the xth-percentile.
+        """

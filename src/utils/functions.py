@@ -7,6 +7,7 @@ import streamlit as st
 from .constants import EventSpecificConstants, GeneralConstants
 
 __all__ = [
+    "retrieve_team_list",
     "retrieve_scouting_data",
     "scouting_data_for_team"
 ]

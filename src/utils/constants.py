@@ -9,6 +9,10 @@ __all__ = [
 class GeneralConstants:
     """Year-agnostic constants that will remain the same between all events & years."""
 
+    PICKLIST_FIELDS = [
+        "Average Teleop Cycles",
+        "Average Auto Cycles"
+    ]
     SECONDS_TO_CACHE = 60 * 4
 
 
