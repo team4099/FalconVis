@@ -30,7 +30,14 @@ Utility functions like retrieving the current scouting data can be found in `uti
 
 Constants like when to delete the cached scouting data, event code, etc. are found in `utils/constants.py`
 
+Statistics used in the app are calculated in `utils/calculated_stats.py`.
+
 The `pages` directory contains the Match, Event and Picklist pages. `Teams.py` is located outside the directory due to being the entrypoint to the app. Your app should be run with this file, and an entrypoint file means that the app opens on this page and is the "main" page:
 
 ## Running the Streamlit App Locally
 In order to run the Streamlit app locally, make sure you're in the `src` directory, then run `python -m streamlit run Teams.py`
+
+## Principles to Follow
+In `calculated_stats.py`, if there's ever a missing method that isn't included in calculating statistics, make sure to double check the previous methods. For example, if you ever find yourself wanting to calculate the average mobility %, instead of creating a method for that specific purpose, you could use `average_stat` in order to calculate said percentage.
+
+In addition, if you ever must create a new method, ensure that you create methods that calculate said statistic by match first. For example, if you want to create a method that calculates the average cubes scored in the Low nodes for a team, you should first create a method that returns a `pd.Series` containing the amount of cubes scored in Low nodes by match and then create a wrapper around `l3_cubes_per_match` that calculates the mean of said series.
