@@ -1,14 +1,24 @@
 """Creates the `TeamManager` class used to set up the Teams page and its graphs."""
 
-from numpy import percentile
+import plotly.express as px
 import streamlit as st
 
+from .contains_graphs import ContainsGraphs
 from .contains_metrics import ContainsMetrics
 from .page_manager import PageManager
-from utils import CalculatedStats, Criteria, Queries, retrieve_team_list, retrieve_scouting_data
+from utils import (
+    CalculatedStats,
+    create_df,
+    Criteria,
+    GeneralConstants,
+    Queries,
+    retrieve_team_list,
+    retrieve_scouting_data,
+    scouting_data_for_team
+)
 
 
-class TeamManager(PageManager, ContainsMetrics):
+class TeamManager(PageManager, ContainsGraphs, ContainsMetrics):
     """The page manager for the `Teams` page."""
 
     def __init__(self):
@@ -183,3 +193,65 @@ class TeamManager(PageManager, ContainsMetrics):
                 f"{average_auto_accuracy:.1%}",
                 f"{round(average_auto_accuracy - auto_accuracy_for_percentile, 2):.1%}"
             )
+
+    def generate_graphs(self, team_number: int) -> None:
+        """Generates the graphs for the `Team` page.
+
+        :param team_number: The team to generate the graphs for.
+        :return:
+        """
+        team_data = scouting_data_for_team(team_number)
+
+        # Autonomous graphs
+        with st.container():
+            st.write("#### Autonomous Graphs")
+
+            auto_cycles_over_time_col, _ = st.columns(2)
+
+            # Grpah for auto cycles over time
+            with auto_cycles_over_time_col:
+                auto_cycles_over_time = self.calculated_stats.cycles_by_match(team_number, Queries.AUTO_GRID)
+                auto_cycles_df = create_df(
+                    team_data[Queries.MATCH_KEY],
+                    auto_cycles_over_time,
+                    x_axis_label="Match Key",
+                    y_axis_label="# of Auto Cycles"
+                )
+
+                st.plotly_chart(
+                    px.line(
+                        auto_cycles_df,
+                        x="Match Key",
+                        y="# of Auto Cycles",
+                        title="Auto Cycles Over Time"
+                    ).update_traces(
+                        line_color=GeneralConstants.PRIMARY_COLOR
+                    )
+                )
+
+        # Teleop + endgame graphs
+        with st.container():
+            st.write("#### Teleop + Endgame Graphs")
+
+            teleop_cycles_over_time_col, _ = st.columns(2)
+
+            # Graph for teleop cycles over time
+            with teleop_cycles_over_time_col:
+                teleop_cycles_over_time = self.calculated_stats.cycles_by_match(team_number, Queries.TELEOP_GRID)
+                teleop_cycles_df = create_df(
+                    team_data[Queries.MATCH_KEY],
+                    teleop_cycles_over_time,
+                    x_axis_label="Match Key",
+                    y_axis_label="# of Teleop Cycles"
+                )
+
+                st.plotly_chart(
+                    px.line(
+                        teleop_cycles_df,
+                        x="Match Key",
+                        y="# of Teleop Cycles",
+                        title="Teleop Cycles Over Time"
+                    ).update_traces(
+                        line_color=GeneralConstants.PRIMARY_COLOR
+                    )
+                )

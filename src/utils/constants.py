@@ -57,6 +57,7 @@ class GeneralConstants:
         "Average Auto Cycles"
     ]
     SECONDS_TO_CACHE = 60 * 4
+    PRIMARY_COLOR = "#EFAE09"
 
 
 class EventSpecificConstants:
@@ -70,6 +71,10 @@ class Queries:
     """Constants specific to fields in the scouting data."""
 
     # Constants relating to fields
+    MATCH_KEY = "MatchKey"
+    MATCH_NUMBER = "MatchNumber"
+    TEAM_NUMBER = "TeamNumber"
+
     AUTO_GRID = "AutoGrid"
     AUTO_MISSED = "AutoMissed"
     LEFT_COMMUNITY = "Mobile"

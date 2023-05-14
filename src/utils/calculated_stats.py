@@ -78,7 +78,7 @@ class CalculatedStats:
         team_data = scouting_data_for_team(team, self.data)
         return team_data[type_of_grid].apply(
             lambda grid_data: len(grid_data.split("|"))
-        ).mean()
+        )
 
     # Accuracy methods
     def average_auto_accuracy(self, team_number: int) -> float:
