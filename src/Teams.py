@@ -5,12 +5,12 @@ import streamlit as st
 from page_managers import TeamManager
 
 # Configuration for Streamlit
-team_manager = TeamManager()
 st.set_page_config(
     layout="wide",
     page_title="Teams",
     page_icon="🤖",
 )
+team_manager = TeamManager()
 
 if __name__ == '__main__':
     # Write the title of the page.
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         st.write("## Metrics")
 
         quartile = st.slider("Quartile for Comparisons", 1, 100, 50) / 100
-        team_manager.generate_metrics(quartile)
+        team_manager.generate_metrics(team_number, quartile)
 
     with graphs_tab:
         st.write("## Graphs")

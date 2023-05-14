@@ -4,12 +4,12 @@ import streamlit as st
 from page_managers import PicklistManager
 
 # Configuration for Streamlit
-picklist_manager = PicklistManager()
 st.set_page_config(
     layout="wide",
     page_title="Picklist",
     page_icon="🫂",
 )
+picklist_manager = PicklistManager()
 
 if __name__ == '__main__':
     # Write the title of the page.

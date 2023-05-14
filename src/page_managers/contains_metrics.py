@@ -7,6 +7,6 @@ class ContainsMetrics:
     """Used to define an abstract method needed for page managers that are generating metrics on their page."""
 
     @abstractmethod
-    def generate_metrics(self) -> NotImplemented:
+    def generate_metrics(self, *args, **kwargs) -> NotImplemented:
         """Used to generate metrics on a single page."""
         return NotImplemented

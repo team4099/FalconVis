@@ -24,13 +24,16 @@ def retrieve_scouting_data() -> DataFrame:
     )
 
 
-def scouting_data_for_team(team_number: int) -> DataFrame:
+def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = None) -> DataFrame:
     """Retrieves the submissions within the scouting data for a certain team.
 
     :param team_number: The number of the team to retrieve the submissions for.
+    :param scouting_data: An optional argument allowing the user to pass in the scouting data if already retrieved.
     :return: A dataframe containing th submissions within the scouting data for the team passed in.
     """
-    scouting_data = retrieve_scouting_data()
+    if scouting_data is None:
+        scouting_data = retrieve_scouting_data()
+
     return scouting_data[
         scouting_data["TeamNumber"] == team_number
     ]
