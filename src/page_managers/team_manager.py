@@ -1,10 +1,11 @@
 """Creates the `TeamManager` class used to set up the Teams page and its graphs."""
 
+from numpy import percentile
 import streamlit as st
 
 from .contains_metrics import ContainsMetrics
 from .page_manager import PageManager
-from utils import CalculatedStats, Queries, retrieve_team_list, retrieve_scouting_data
+from utils import CalculatedStats, Criteria, Queries, retrieve_team_list, retrieve_scouting_data
 
 
 class TeamManager(PageManager, ContainsMetrics):
@@ -34,6 +35,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :param quartile: The quartile to use per-metric for comparisons between a team and the xth-percentile.
         """
         points_contributed_col, auto_cycle_col, teleop_cycle_col, mobility_col = st.columns(4)
+        iqr_col, auto_engage_col, auto_engage_accuracy_col, auto_accuracy_col = st.columns(4)
 
         # Metric for avg. points contributed
         with points_contributed_col:
@@ -47,7 +49,7 @@ class TeamManager(PageManager, ContainsMetrics):
             st.metric(
                 "Average Points Contributed",
                 round(average_points_contributed, 2),
-                round(average_points_contributed - points_contributed_for_percentile, 2)
+                f"{round(average_points_contributed - points_contributed_for_percentile, 2)} pts"
             )
 
         # Metric for average auto cycles
@@ -63,7 +65,7 @@ class TeamManager(PageManager, ContainsMetrics):
             st.metric(
                 "Average Auto Cycles",
                 round(average_auto_cycles, 2),
-                round(average_auto_cycles - auto_cycles_for_percentile, 2)
+                f"{round(average_auto_cycles - auto_cycles_for_percentile, 2)} cycles"
             )
 
         # Metric for average teleop cycles
@@ -79,7 +81,7 @@ class TeamManager(PageManager, ContainsMetrics):
             st.metric(
                 "Average Teleop Cycles",
                 round(average_teleop_cycles, 2),
-                round(average_teleop_cycles - teleop_cycles_for_percentile, 2)
+                f"{round(average_teleop_cycles - teleop_cycles_for_percentile, 2)} cycles"
             )
 
         # Metric for avg. mobility (%)
@@ -87,14 +89,14 @@ class TeamManager(PageManager, ContainsMetrics):
             average_mobility = self.calculated_stats.average_stat(
                 team_number,
                 Queries.LEFT_COMMUNITY,
-                Queries.MOBILITY_CRITERIA
+                Criteria.MOBILITY_CRITERIA
             )
             mobility_for_percentile = self.calculated_stats.quantile_stat(
                 quartile,
                 lambda self, team: self.average_stat(
                     team,
                     Queries.LEFT_COMMUNITY,
-                    Queries.MOBILITY_CRITERIA
+                    Criteria.MOBILITY_CRITERIA
                 )
             )
 
@@ -102,4 +104,82 @@ class TeamManager(PageManager, ContainsMetrics):
                 "Average Mobility (%)",
                 f"{round(average_mobility, 2):.1%}",
                 f"{round(average_mobility - mobility_for_percentile, 2):.1%}"
+            )
+
+        # Metric for IQR of points contributed (consistency)
+        with iqr_col:
+            team_dataset = self.calculated_stats.points_contributed_by_match(
+                team_number
+            )
+            iqr_of_points_contributed = self.calculated_stats.calculate_iqr(team_dataset)
+            iqr_for_percentile = self.calculated_stats.quantile_stat(
+                quartile,
+                lambda self, team: self.calculate_iqr(
+                    self.points_contributed_by_match(team)
+                )
+            )
+
+            st.metric(
+                "IQR of Points Contributed (Consistency)",
+                iqr_of_points_contributed,
+                f"{round(iqr_of_points_contributed - iqr_for_percentile, 2)} pts",
+                delta_color="inverse"
+            )
+
+        # Metric for total auto engage attempts
+        with auto_engage_col:
+            total_auto_engage_attempts = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.AUTO_ENGAGE_ATTEMPTED,
+                Criteria.AUTO_ATTEMPT_CRITERIA
+            )
+            auto_engage_attempts_for_percentile = self.calculated_stats.quantile_stat(
+                quartile,
+                lambda self, team: self.cumulative_stat(
+                    team,
+                    Queries.AUTO_ENGAGE_ATTEMPTED,
+                    Criteria.AUTO_ATTEMPT_CRITERIA
+                )
+            )
+
+            st.metric(
+                "Auto Engage Attempts",
+                total_auto_engage_attempts,
+                f"{round(total_auto_engage_attempts - auto_engage_attempts_for_percentile, 2)} attempts"
+            )
+
+        # Metric for auto engage accuracy
+        with auto_engage_accuracy_col:
+            total_successful_engages = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.AUTO_CHARGING_STATE,
+                Criteria.SUCCESSFUL_ENGAGE_CRITERIA
+            )
+            auto_engage_accuracy = (
+                total_successful_engages / total_auto_engage_attempts
+                if total_auto_engage_attempts
+                else None
+            )
+
+            st.metric(
+                "Auto Engage Accuracy",
+                (
+                    f"{auto_engage_accuracy:.1%}"
+                    if auto_engage_accuracy is not None
+                    else auto_engage_accuracy
+                )
+            )
+
+        # Metric for average auto accuracy by match
+        with auto_accuracy_col:
+            average_auto_accuracy = self.calculated_stats.average_auto_accuracy(team_number)
+            auto_accuracy_for_percentile = self.calculated_stats.quantile_stat(
+                quartile,
+                lambda self, team: self.average_auto_accuracy(team)
+            )
+
+            st.metric(
+                "Average Auto Accuracy (%)",
+                f"{average_auto_accuracy:.1%}",
+                f"{round(average_auto_accuracy - auto_accuracy_for_percentile, 2):.1%}"
             )

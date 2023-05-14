@@ -1,6 +1,7 @@
 """Creates the page for team-specific graphs in Streamlit."""
 
 import streamlit as st
+from numpy import arange
 
 from page_managers import TeamManager
 
@@ -24,7 +25,10 @@ if __name__ == '__main__':
     with metric_tab:
         st.write("## Metrics")
 
-        quartile = st.slider("Quartile for Comparisons", 1, 100, 50) / 100
+        quartile = st.select_slider(
+            "Quartile for Comparisons (The deltas for each metric represent the deviation from said quartile).",
+            options=[1, *arange(5, 101, 5)]
+        ) / 100
         team_manager.generate_metrics(team_number, quartile)
 
     with graphs_tab:

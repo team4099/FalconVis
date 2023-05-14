@@ -1,12 +1,11 @@
 """File that contains the class which calculates statistics for a team/event/for other purposes."""
 
-from statistics import mean
 from typing import Callable
 
 from numpy import percentile
 from pandas import DataFrame, Series
 
-from .constants import Queries
+from .constants import Criteria, Queries
 from .functions import scouting_data_for_team, retrieve_team_list
 
 __all__ = ["CalculatedStats"]
@@ -24,47 +23,40 @@ class CalculatedStats:
 
         :param team: The team number to calculate the average points contributed for.
         """
-        return mean(
-            self.points_contributed_by_match(team)
-        )
+        return self.points_contributed_by_match(team).mean()
 
-    def points_contributed_by_match(self, team: int) -> list[int]:
+    def points_contributed_by_match(self, team: int) -> Series:
         """Returns the points contributed by match for a team.
 
         :param team: The team number to calculate the points contributed over the matches they played.
-        :return: A list containing the points contributed by said team per match.
+        :return: A Series containing the points contributed by said team per match.
         """
-        team_data = scouting_data_for_team(team, self.data).to_dict(orient="records")
-        points_contributed = []
+        team_data = scouting_data_for_team(team, self.data)
 
-        for submission in team_data:
-            auto_points = sum([
-                Queries.AUTO_GRID_POINTAGE[game_piece[1]]
-                for game_piece in submission[Queries.AUTO_GRID].split("|")
+        auto_grid_points = team_data[Queries.AUTO_GRID].apply(
+            lambda grid_data: sum([
+                Criteria.AUTO_GRID_POINTAGE[game_piece[1]]
+                for game_piece in grid_data.split("|")
                 if game_piece
             ])
-            auto_points += Queries.MOBILITY_CRITERIA[
-                submission[Queries.LEFT_COMMUNITY]
-            ] * 3
-            auto_points += Queries.AUTO_CHARGE_POINTAGE.get(
-                submission[Queries.AUTO_CHARGING_STATE],
-                0
-            )
+        )
+        auto_mobility_points = team_data[Queries.LEFT_COMMUNITY].apply(
+            lambda left_community: Criteria.MOBILITY_CRITERIA[left_community] * 3
+        )
 
-            teleop_points = sum([
-                Queries.TELEOP_GRID_POINTAGE[game_piece[1]]
-                for game_piece in submission[Queries.TELEOP_GRID].split("|")
+        teleop_grid_points = team_data[Queries.TELEOP_GRID].apply(
+            lambda grid_data: sum([
+                Criteria.TELEOP_GRID_POINTAGE[game_piece[1]]
+                for game_piece in grid_data.split("|")
                 if game_piece
             ])
+        )
 
-            endgame_points = Queries.ENDGAME_POINTAGE.get(
-                submission[Queries.ENDGAME_FINAL_CHARGE],
-                0
-            )
+        endgame_points = team_data[Queries.ENDGAME_FINAL_CHARGE].apply(
+            lambda charging_state: Criteria.ENDGAME_POINTAGE.get(charging_state, 0)
+        )
 
-            points_contributed.append(auto_points + teleop_points + endgame_points)
-
-        return points_contributed
+        return auto_grid_points + auto_mobility_points + teleop_grid_points + endgame_points
 
     # Cycle calculation methods
     def average_cycles(self, team: int, type_of_grid: str) -> float:
@@ -88,6 +80,31 @@ class CalculatedStats:
             lambda grid_data: len(grid_data.split("|"))
         ).mean()
 
+    # Accuracy methods
+    def average_auto_accuracy(self, team_number: int) -> float:
+        """Returns the average auto accuracy of a team (wrapper around `auto_accuracy_by_match`).
+
+        :param team_number: The team to determine the average auto accuracy for.
+        :return: A float representing a percentage of the average auto accuracy of said team.
+        """
+        return self.auto_accuracy_by_match(team_number).mean()
+
+    def auto_accuracy_by_match(self, team_number: int) -> Series:
+        """Returns the auto accuracy of a team by match.
+
+        :param team_number: The team to determine the auto accuracy per match for.
+        :return: A series containing the auto accuracy by match for said team.
+        """
+        auto_missed_by_match = self.stat_per_match(
+            team_number,
+            Queries.AUTO_MISSED
+        )
+        auto_cycles_by_match = self.cycles_by_match(
+            team_number,
+            Queries.AUTO_GRID
+        ) + auto_missed_by_match  # Adding auto missed in order to get an accurate % (2 scored + 1 missed = 33%)
+        return 1 - (auto_missed_by_match / auto_cycles_by_match)
+
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:
         """Calculates a scalar value for a percentile of a dataset.
@@ -102,25 +119,43 @@ class CalculatedStats:
         return percentile(dataset, quantile * 100)
 
     # General methods
-    def average_stat(self, team: int, stat: str, criteria: dict) -> float:
+    def average_stat(self, team: int, stat: str, criteria: dict | None = None) -> float:
         """Calculates the average statistic for a team (wrapper around `stat_per_match`).
 
         :param team: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
-        :param criteria: A criteria used to determine what the weightage of the statistic is.
+        :param criteria: An optional riteria used to determine what the weightage of the statistic is.
         :return: A float representing the "average statistic".
         """
         return self.stat_per_match(team, stat, criteria).mean()
 
-    def stat_per_match(self, team: int, stat: str, criteria: dict) -> Series:
+    def cumulative_stat(self, team: int, stat: str, criteria: dict | None = None) -> int:
+        """Calculates a cumulative stat for a team (wrapper around `stat_per_match`).
+
+        :param team: The team number to calculate said statistic for.
+        :param stat: The field within the scouting data that corresponds to the desired statistic.
+        :param criteria: An optional criteria used to determine what the weightage of the statistic is.
+        :return: A float representing the "cumulative statistic".
+        """
+        return self.stat_per_match(team, stat, criteria).sum()
+
+    def stat_per_match(self, team: int, stat: str, criteria: dict | None = None) -> Series:
         """Calculates a statistic over time as specified for a team.
 
         :param team: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
-        :param criteria: A criteria used to determine what the weightage of the statistic is.
+        :param criteria: An optional criteria used to determine what the weightage of the statistic is.
         :return: A series representing the statistic for the team for each match.
         """
         team_data = scouting_data_for_team(team, self.data)
         return team_data[stat].apply(
-            lambda datum: criteria[datum]
+            lambda datum: criteria.get(datum, 0) if criteria is not None else datum
         )
+
+    def calculate_iqr(self, dataset: Series) -> float:
+        """Calculates the IQR of a dataset (75th percentile - 25th percentile).
+
+        :param dataset: The dataset to calculate the IQR for.
+        :return: A float representing the IQR.
+        """
+        return percentile(dataset, 75) - percentile(dataset, 25)
