@@ -1,4 +1,5 @@
 """Defines utility functions that are later used in FalconVis."""
+
 from re import search
 
 from pandas import DataFrame
@@ -8,35 +9,10 @@ import streamlit as st
 from .constants import EventSpecificConstants, GeneralConstants, Queries
 
 __all__ = [
-    "create_df",
     "retrieve_team_list",
     "retrieve_scouting_data",
     "scouting_data_for_team"
 ]
-
-
-def create_df(
-        x_axis: list,
-        y_axis: list,
-        x_axis_label: str = "x",
-        y_axis_label: str = "y"
-) -> DataFrame:
-    """Creates a DF where every element in x_axis and every element in y_axis is mapped to each other in a DataFrame.
-
-    :param x_axis: Sequence representing elements in the desired X axis.
-    :param y_axis: Sequence representing elements in the desired Y axis.
-    :param x_axis_label: Optional label for desired X axis (header for X axis).
-    :param y_axis_label: Optional label for desired Y axis (header for Y axis).
-    :return: A DataFrame where the headers are `x_axis_label` and `y_axis_label` and each element in `x_axis` is mapped to one in `y_axis`.
-    """
-    return DataFrame.from_dict(
-        [
-            {
-                x_axis_label: x,
-                y_axis_label: y
-            } for x, y in zip(x_axis, y_axis)
-        ]
-    )
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
