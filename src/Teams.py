@@ -32,5 +32,5 @@ if __name__ == '__main__':
 
     with graphs_tab:
         st.write("## Graphs")
-
+        
         team_manager.generate_graphs(team_number)
