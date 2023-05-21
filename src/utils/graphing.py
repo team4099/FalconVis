@@ -7,6 +7,7 @@ from plotly.graph_objects import Figure
 from .constants import GeneralConstants
 
 __all__ = [
+    "bar_graph",
     "line_graph"
 ]
 
@@ -51,4 +52,23 @@ def line_graph(
         title=title
     ).update_traces(
         line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
+    )
+
+
+def bar_graph(
+    x: list,
+    y: list,
+    x_axis_label: str = "x",
+    y_axis_label: str = "y",
+    title: str = "",
+    color: str | None = None
+) -> Figure:
+    data_df = _create_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
+    return px.bar(
+        data_df,
+        x=x_axis_label,
+        y=y_axis_label,
+        title=title
+    ).update_traces(
+        marker_color=GeneralConstants.PRIMARY_COLOR if color is None else color
     )
