@@ -40,13 +40,15 @@ def line_graph(
     y: list,
     x_axis_label: str = "x",
     y_axis_label: str = "y",
+    title: str = "",
     color: str | None = None
 ) -> Figure:
     data_df = _create_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
     return px.line(
         data_df,
         x=x_axis_label,
-        y=y_axis_label
+        y=y_axis_label,
+        title=title
     ).update_traces(
         line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
     )
