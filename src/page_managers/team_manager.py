@@ -1,12 +1,13 @@
 """Creates the `TeamManager` class used to set up the Teams page and its graphs."""
 
-import plotly.express as px
 import streamlit as st
 
 from .contains_graphs import ContainsGraphs
 from .contains_metrics import ContainsMetrics
 from .page_manager import PageManager
 from utils import (
+    bar_graph,
+    box_plot,
     CalculatedStats,
     Criteria,
     GeneralConstants,
@@ -211,7 +212,7 @@ class TeamManager(PageManager, ContainsGraphs, ContainsMetrics):
 
             auto_cycles_over_time_col, _ = st.columns(2)
 
-            # Grpah for auto cycles over time
+            # Graph for auto cycles over time
             with auto_cycles_over_time_col:
                 auto_cycles_over_time = self.calculated_stats.cycles_by_match(team_number, Queries.AUTO_GRID)
 
@@ -220,7 +221,8 @@ class TeamManager(PageManager, ContainsGraphs, ContainsMetrics):
                         x=team_data[Queries.MATCH_KEY],
                         y=auto_cycles_over_time,
                         x_axis_label="Match Key",
-                        y_axis_label="# of Auto Cycles"
+                        y_axis_label="# of Auto Cycles",
+                        title="Auto Cycles Over Time"
                     )
                 )
 
@@ -228,7 +230,35 @@ class TeamManager(PageManager, ContainsGraphs, ContainsMetrics):
         with teleop_graphs_tab:
             st.write("#### Teleop + Endgame Graphs")
 
-            teleop_cycles_over_time_col, _ = st.columns(2)
+            cycles_by_height_col, teleop_cycles_over_time_col = st.columns(2)
+
+            # Bar graph for displaying average # of cycles per height
+            with cycles_by_height_col:
+                cycles_for_low = self.calculated_stats.cycles_by_height_per_match(
+                    team_number,
+                    Queries.TELEOP_GRID,
+                    Queries.LOW
+                )
+                cycles_for_mid = self.calculated_stats.cycles_by_height_per_match(
+                    team_number,
+                    Queries.TELEOP_GRID,
+                    Queries.MID
+                )
+                cycles_for_high = self.calculated_stats.cycles_by_height_per_match(
+                    team_number,
+                    Queries.TELEOP_GRID,
+                    Queries.HIGH
+                )
+
+                st.plotly_chart(
+                    box_plot(
+                        x=["Hybrid Avr.", "Mid Avr.", "High Avr."],
+                        y=[cycles_for_low, cycles_for_mid, cycles_for_high],
+                        x_axis_label="Node Height",
+                        y_axis_label="Average # of Teleop Cycles",
+                        title="Average # of Teleop Cycles by Height"
+                    )
+                )
 
             # Graph for teleop cycles over time
             with teleop_cycles_over_time_col:
@@ -239,6 +269,7 @@ class TeamManager(PageManager, ContainsGraphs, ContainsMetrics):
                         x=team_data[Queries.MATCH_KEY],
                         y=teleop_cycles_over_time,
                         x_axis_label="Match Key",
-                        y_axis_label="# of Teleop Cycles"
+                        y_axis_label="# of Teleop Cycles",
+                        title="Teleop Cycles Over Time"
                     )
                 )

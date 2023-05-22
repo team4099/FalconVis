@@ -68,6 +68,16 @@ class CalculatedStats:
         """
         return self.cycles_by_match(team, type_of_grid).mean()
 
+    def average_cycles_for_height(self, team: int, type_of_grid: str, height: str) -> float:
+        """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
+
+        :param team: The team number to calculate the average cycles for.
+        :param type_of_grid: The mode to calculate said cycles for (autonomous/teleop)
+        :param height: The height to return cycles by match for (Low/Mid/High).
+        :return: A float representing the average cycles for said team in the mode specified.
+        """
+        return self.cycles_by_height_per_match(team, type_of_grid, height).mean()
+
     def cycles_by_match(self, team: int, type_of_grid: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) in a match
 
@@ -78,6 +88,22 @@ class CalculatedStats:
         team_data = scouting_data_for_team(team, self.data)
         return team_data[type_of_grid].apply(
             lambda grid_data: len(grid_data.split("|"))
+        )
+
+    def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
+        """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
+
+        :param team: The team number to calculate the cycles by match for.
+        :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
+        :param height: The height to return cycles by match for (Low/Mid/High).
+        :return: A series containing the cycles per match for the mode specified.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        return team_data[type_of_grid].apply(
+            lambda grid_data: len([
+                game_piece for game_piece in grid_data.split("|")
+                if game_piece and game_piece[1] == height
+            ])
         )
 
     # Accuracy methods
