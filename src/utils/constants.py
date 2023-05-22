@@ -80,7 +80,12 @@ class Queries:
     LEFT_COMMUNITY = "Mobile"
     AUTO_ENGAGE_ATTEMPTED = "AutoAttemptedCharge"
     AUTO_CHARGING_STATE = "AutoChargingState"
+    AUTO_CONES = "AutoCones"
+    AUTO_CUBES = "AutoCubes"
 
     TELEOP_GRID = "TeleopGrid"
     ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
+    CUMULATIVE_GRID = "CumulativeGrid"
+    TELEOP_CONES = "TeleopCones"
+    TELEOP_CUBES = "TeleopCubes"
 

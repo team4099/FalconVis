@@ -25,7 +25,7 @@ class CalculatedStats:
         """
         return self.points_contributed_by_match(team).mean()
 
-    def points_contributed_by_match(self, team: int) -> Series:
+    def points_contributed_by_match(self, team: int, type_of_grid: str = "") -> Series:
         """Returns the points contributed by match for a team.
 
         :param team: The team number to calculate the points contributed over the matches they played.
@@ -56,6 +56,12 @@ class CalculatedStats:
             lambda charging_state: Criteria.ENDGAME_POINTAGE.get(charging_state, 0)
         )
 
+        match type_of_grid:
+            case Queries.AUTO_GRID: 
+                return auto_grid_points
+            case Queries.TELEOP_GRID:
+                return teleop_grid_points
+
         return auto_grid_points + auto_mobility_points + teleop_grid_points + endgame_points
 
     # Cycle calculation methods
@@ -77,7 +83,7 @@ class CalculatedStats:
         """
         team_data = scouting_data_for_team(team, self.data)
         return team_data[type_of_grid].apply(
-            lambda grid_data: len(grid_data.split("|"))
+            lambda grid_data: len(grid_data) if type(grid_data) is list else len(grid_data.split("|"))
         )
 
     # Accuracy methods
