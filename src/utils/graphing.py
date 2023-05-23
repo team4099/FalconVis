@@ -73,7 +73,7 @@ def _create_longform_df(
     y_axis_label: list,
     y_axis_title: str
 ) -> DataFrame:
-    """Helper function that creates a long-form DF, used for stacked graphs (stacked bar chart/multi-line chart/etc.)
+    """Helper function that creates a long-form DF, used for multi-line chart
 
     :param x_axis: Sequence representing elements in the desired X axis.
     :param y_axis: Sequence representing elements in the desired Y axis.
@@ -82,6 +82,7 @@ def _create_longform_df(
     :param y_axis_title: The title for the Y-axis.
     :return: A long-form DataFrame where the headers are the id variable (the x-axis label), the repeated variables (the y-axis labels) and their values.
     """
+
     resultant_df = DataFrame.from_dict(
         [
             {
@@ -94,12 +95,45 @@ def _create_longform_df(
         ]
     )
 
-    return resultant_df.melt(
+
+    resultant_df = resultant_df.melt(
         id_vars=x_axis_label,
         value_vars=y_axis_label,
         var_name="Legend",
         value_name=y_axis_title
     )
+    return resultant_df
+
+def _create_multicolumn_df(
+    x_axis: list,
+    y_axis: list[list],
+    x_axis_label: str,
+    y_axis_label: list
+) -> DataFrame:
+    """Helper function that creates a multi column DF, used for hover data
+
+    :param x_axis: Sequence representing elements in the desired X axis.
+    :param y_axis: Sequence representing elements in the desired Y axis.
+    :param x_axis_label: Optional label for desired X axis (header for X axis).
+    :param y_axis_label: Optional labels for desired Y axis (header for Y axis).
+    :return: A multiple column DataFrame where the headers are the x-axis label and the y axis labels.
+    """
+    
+    rows  = []
+    for x, y in zip(x_axis, y_axis):
+        row = [x]
+        row.extend(y)
+        rows.append(row)
+
+    headers = [x_axis_label]
+    headers.extend(y_axis_label)
+
+
+    return DataFrame.from_dict(
+        [ {header:value for header, value in zip(headers, row)} for row in rows]     
+    )
+    
+
 
 
 # Primitive graphs
@@ -110,18 +144,26 @@ def bar_graph(
     y_axis_label: str = "y",
     title: str = "",
     horizontal: bool = False,
-    color: str | None = None
+    color: str | None = None,
+    hover_data: list = None
 ) -> Figure:
-    data_df = _create_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
-    return px.bar(
+    if hover_data:
+        data_df = _create_multicolumn_df(x, y, x_axis_label=x_axis_label, y_axis_label=[y_axis_label]+hover_data)
+    else:
+        data_df = _create_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
+    
+    fig = px.bar(
         data_df,
         x=(y_axis_label if horizontal else x_axis_label),
         y=(x_axis_label if horizontal else y_axis_label),
         title=title,
-        orientation=("h" if horizontal else "v")
+        orientation=("h" if horizontal else "v"),
+        hover_data = hover_data
     ).update_traces(
         marker_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
     )
+    fig.update_xaxes(type='category')
+    return fig
 
 
 def box_plot(
@@ -162,7 +204,8 @@ def line_graph(
         y=y_axis_label,
         title=title
     ).update_traces(
-        line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
+        line_color=GeneralConstants.PRIMARY_COLOR if color is None else color,
+        line=dict(width=4)
     )
 
 
@@ -182,13 +225,14 @@ def multi_line_graph(
         y_axis_label=y_axis_label,
         y_axis_title=y_axis_title
     )
-
     return px.line(
         data_df,
         x=x_axis_label,
         y=y_axis_title,
         color="Legend",
         title=title
+    ).update_traces(
+        line=dict(width=4)
     )
 
 
@@ -201,6 +245,7 @@ def stacked_bar_graph(
     horizontal: bool = False,
     title: str = ""
 ) -> Figure:
+    
     data_df = _create_longform_df(
         x,
         y,
@@ -208,7 +253,7 @@ def stacked_bar_graph(
         y_axis_label=y_axis_label,
         y_axis_title=y_axis_title
     )
-    return px.bar(
+    fig = px.bar(
         data_df,
         x=(y_axis_title if horizontal else x_axis_label),
         y=(x_axis_label if horizontal else y_axis_title),
@@ -216,3 +261,5 @@ def stacked_bar_graph(
         title=title,
         orientation=("h" if horizontal else "v")
     )
+    fig.update_xaxes(type='category')
+    return fig

@@ -85,6 +85,43 @@ class CalculatedStats:
         return team_data[type_of_grid].apply(
             lambda grid_data: len(grid_data) if type(grid_data) is list else len(grid_data.split("|"))
         )
+    
+    def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
+        """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
+
+        :param team: The team number to calculate the cycles by match for.
+        :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
+        :param height: The height to return cycles by match for (Low/Mid/High).
+        :return: A series containing the cycles per match for the mode specified.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        return team_data[type_of_grid].apply(
+            lambda grid_data: len([
+                game_piece for game_piece in grid_data.split("|")
+                if game_piece and game_piece[1] == height
+            ])
+        )
+    
+    def cycles_by_game_piece_per_match(self, team: int, type_of_grid: str) -> Series:
+        """Returns the cycles for a certain mode (autonomous/teleop) and game piece(cone/cube) in a match
+
+        :param team: The team number to calculate the cycles by match for.
+        :param type_of_grid: The mode and game piece to return cycles by match for (autonomous_cone/autonomous_cube/teleop_cone/teleop_cube).
+        :return: A series containing the cycles per match for the mode specified.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        return team_data[type_of_grid].apply(
+            lambda game_piece_data: len(game_piece_data)
+        )
+    
+    def cycles_by_game_piece_average(self, team: int, type_of_grid: str) -> Series:
+        """Returns the average cycles for a certain mode (autonomous/teleop) and game piece(cone/cube) 
+
+        :param team: The team number to calculate the cycles by match for.
+        :param type_of_grid: The mode and game piece to return cycles by match for (autonomous_cone/autonomous_cube/teleop_cone/teleop_cube).
+        :return: A series containing the cycles per match for the mode specified.
+        """
+        return self.cycles_by_game_piece_per_match(team, type_of_grid).mean()
 
     # Accuracy methods
     def average_auto_accuracy(self, team_number: int) -> float:
@@ -110,6 +147,41 @@ class CalculatedStats:
             Queries.AUTO_GRID
         ) + auto_missed_by_match  # Adding auto missed in order to get an accurate % (2 scored + 1 missed = 33%)
         return 1 - (auto_missed_by_match / auto_cycles_by_match)
+    
+    def auto_total_attempted_charge(self, team_number: int) -> int:
+        """Calculates the total times a team attempted to charge
+
+        :param team_number: The team to determine the auto accuracy per match for.
+        :return: the total times a team attempted to charge
+        """
+        attempted_charges = self.stat_per_match(team_number, Queries.AUTO_ENGAGE_ATTEMPTED).apply(
+            lambda state: int(state == "Engage") 
+        ).sum()
+
+        successful_charges = self.auto_total_successful_charge(team_number)
+
+        return successful_charges if attempted_charges < successful_charges else attempted_charges
+        
+
+    def auto_total_successful_charge(self, team_number: int) -> int:
+        """Calculates the total times a team successfully charged
+
+        :param team_number: The team to determine the auto accuracy per match for.
+        :return: the total times a team successfully charged
+        """
+        return self.stat_per_match(team_number, Queries.AUTO_CHARGING_STATE).apply(
+            lambda state: int(state == "Engage") 
+        ).sum()
+    
+    def auto_engage_success_rate(self, team_number: int) -> float:
+        """Calculates the successrate a team has for auto engaging
+
+        :param team_number: The team to determine the auto accuracy per match for.
+        :return: value from 0 to 1 that represent the percent succesrate, rounded to 3 decimal places
+        """
+        return round(self.auto_total_successful_charge(team_number) / self.auto_total_attempted_charge(team_number), 3)
+        
+        
 
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:

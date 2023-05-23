@@ -22,7 +22,8 @@ if __name__ == '__main__':
     # Generate the input section of the `Match` page.
     teams_selected = match_manager.generate_input_section()
 
-    display_points = toggle(label="Display Point Total")
+
+    display_points = st.checkbox(label="Display Point Total", )
 
     # Tabs to switch between the Comparison Graphs/Red Alliance/Blue Alliance
     comparison_tab, red_alliance_tab, blue_alliance_tab = st.tabs(

@@ -89,3 +89,7 @@ class Queries:
     TELEOP_CONES = "TeleopCones"
     TELEOP_CUBES = "TeleopCubes"
 
+    LOW = "L"
+    MID = "M"
+    HIGH = "H"
+
