@@ -18,6 +18,17 @@ class GeneralConstants:
     SECONDS_TO_CACHE = 60 * 4
     PRIMARY_COLOR = "#EFAE09"
 
+    # Color sequences
+    TEAM_GOLD_GRADIENT = [
+        "#EFAE09",
+        "#F1B828",
+        "#F5CC65",
+        "#F7D784",
+        "#F9E1A3",
+        "#FBEBC2",
+        "#FDF5E0"
+    ]
+
 
 class EventSpecificConstants:
     """Constants specific to an event."""
@@ -47,6 +58,10 @@ class Queries:
     LOW = "L"
     MID = "M"
     HIGH = "H"
+
+    # Constants for different game pieces
+    CONE = "cone"
+    CUBE = "cube"
     
 
 class Criteria:

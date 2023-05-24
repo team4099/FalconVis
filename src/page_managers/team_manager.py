@@ -15,7 +15,8 @@ from utils import (
     Queries,
     retrieve_team_list,
     retrieve_scouting_data,
-    scouting_data_for_team
+    scouting_data_for_team,
+    stacked_bar_graph
 )
 
 
@@ -230,34 +231,35 @@ class TeamManager(PageManager, ContainsGraphs, ContainsMetrics):
         with teleop_graphs_tab:
             st.write("#### Teleop + Endgame Graphs")
 
-            cycles_by_height_col, teleop_cycles_over_time_col = st.columns(2)
+            cycles_by_height_col, teleop_cycles_over_time_col, breakdown_cycles_col = st.columns(3)
 
             # Bar graph for displaying average # of cycles per height
             with cycles_by_height_col:
-                cycles_for_low = self.calculated_stats.cycles_by_height_per_match(
+                cycles_for_low = self.calculated_stats.average_cycles_for_height(
                     team_number,
                     Queries.TELEOP_GRID,
                     Queries.LOW
                 )
-                cycles_for_mid = self.calculated_stats.cycles_by_height_per_match(
+                cycles_for_mid = self.calculated_stats.average_cycles_for_height(
                     team_number,
                     Queries.TELEOP_GRID,
                     Queries.MID
                 )
-                cycles_for_high = self.calculated_stats.cycles_by_height_per_match(
+                cycles_for_high = self.calculated_stats.average_cycles_for_height(
                     team_number,
                     Queries.TELEOP_GRID,
                     Queries.HIGH
                 )
 
                 st.plotly_chart(
-                    box_plot(
+                    bar_graph(
                         x=["Hybrid Avr.", "Mid Avr.", "High Avr."],
                         y=[cycles_for_low, cycles_for_mid, cycles_for_high],
                         x_axis_label="Node Height",
                         y_axis_label="Average # of Teleop Cycles",
                         title="Average # of Teleop Cycles by Height"
-                    )
+                    ),
+                    use_container_width=True
                 )
 
             # Graph for teleop cycles over time
@@ -271,5 +273,34 @@ class TeamManager(PageManager, ContainsGraphs, ContainsMetrics):
                         x_axis_label="Match Key",
                         y_axis_label="# of Teleop Cycles",
                         title="Teleop Cycles Over Time"
-                    )
+                    ),
+                    use_container_width=True
+                )
+
+            # Stacked bar graph displaying the breakdown of cones and cubes in Teleop
+            with breakdown_cycles_col:
+                total_cones_scored = self.calculated_stats.cycles_by_game_piece_per_match(
+                    team_number,
+                    Queries.TELEOP_GRID,
+                    Queries.CONE
+                ).sum()
+                total_cubes_scored = self.calculated_stats.cycles_by_game_piece_per_match(
+                    team_number,
+                    Queries.TELEOP_GRID,
+                    Queries.CUBE
+                ).sum()
+
+                st.plotly_chart(
+                    stacked_bar_graph(
+                        x=[str(team_number)],
+                        y=[[total_cones_scored], [total_cubes_scored]],
+                        x_axis_label="Team Number",
+                        y_axis_label=["Total # of Cones Scored", "Total # of Cubes Scored"],
+                        title="Game Piece Breakdown",
+                        color_map={
+                            "Total # of Cones Scored": GeneralConstants.PRIMARY_COLOR,  # Cone color
+                            "Total # of Cubes Scored": "#4F46E5"  # Cube color
+                        }
+                    ),
+                    use_container_width=True
                 )

@@ -118,9 +118,10 @@ def bar_graph(
         x=(y_axis_label if horizontal else x_axis_label),
         y=(x_axis_label if horizontal else y_axis_label),
         title=title,
-        orientation=("h" if horizontal else "v")
-    ).update_traces(
-        marker_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
+        orientation=("h" if horizontal else "v"),
+        color_discrete_sequence=[
+            GeneralConstants.PRIMARY_COLOR if color is None else color
+        ]
     )
 
 
@@ -199,7 +200,8 @@ def stacked_bar_graph(
     y_axis_label: list = ["y"],
     y_axis_title: str = "y",
     horizontal: bool = False,
-    title: str = ""
+    title: str = "",
+    color_map: dict | None = None
 ) -> Figure:
     data_df = _create_longform_df(
         x,
@@ -214,5 +216,11 @@ def stacked_bar_graph(
         y=(x_axis_label if horizontal else y_axis_title),
         color="Legend",
         title=title,
-        orientation=("h" if horizontal else "v")
-    )
+        orientation=("h" if horizontal else "v"),
+        color_discrete_map=color_map
+    ).update_layout(
+        legend_traceorder="reversed",
+        legend={
+            "orientation": "h"
+        }
+    ).update_xaxes(type="category")

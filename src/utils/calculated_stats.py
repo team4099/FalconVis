@@ -93,7 +93,7 @@ class CalculatedStats:
     def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
 
-        :param team: The team number to calculate the cycles by match for.
+        :param team: The team number to calculate the cycles by height per match for.
         :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
         :param height: The height to return cycles by match for (Low/Mid/High).
         :return: A series containing the cycles per match for the mode specified.
@@ -103,6 +103,31 @@ class CalculatedStats:
             lambda grid_data: len([
                 game_piece for game_piece in grid_data.split("|")
                 if game_piece and game_piece[1] == height
+            ])
+        )
+
+    def cycles_by_game_piece_per_match(self, team: int, type_of_grid: str, game_piece: str) -> Series:
+        """Returns the cycles for a certain game piece across matches.
+
+        :param team: The team number to calculate the cycles by game piece per match for.
+        :param type_of_grid: The type of mode to calculate the game piece cycles for (autonomous/teleop).
+        :param game_piece: The type of game piece to count cycles for.
+        :return: A series containing the cycles per match for the game piece specified.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        game_piece_positions = (
+            {"1", "3", "4", "6", "7", "9"}
+            if game_piece == Queries.CONE
+            else {"2", "5", "8"}
+        )
+
+        return team_data[type_of_grid].apply(
+            lambda grid_data: len([
+                cycle for cycle in grid_data.split("|")
+                if cycle and (
+                    cycle[0] in game_piece_positions
+                    or cycle[2:] == game_piece
+                )
             ])
         )
 
