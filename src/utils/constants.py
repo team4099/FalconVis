@@ -1,9 +1,12 @@
 """Defines the constants for FalconVis."""
 
+from enum import Enum
+
 __all__ = [
     "Criteria",
     "EventSpecificConstants",
     "GeneralConstants",
+    "GraphType",
     "Queries"
 ]
 
@@ -36,6 +39,13 @@ class EventSpecificConstants:
     EVENT_CODE = "2023new"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
 
+
+class GraphType(Enum):
+    """Enum class representing the different graph types (cycle contribution graphs / point contribution graphs)."""
+    
+    CYCLE_CONTRIBUTIONS = 0
+    POINT_CONTRIBUTIONS = 1
+    
 
 class Queries:
     """Constants specific to fields in the scouting data."""
