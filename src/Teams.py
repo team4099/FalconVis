@@ -34,8 +34,8 @@ if __name__ == '__main__':
         team_manager.generate_metrics(team_number, quartile)
 
     with auto_graphs_tab:
-        st.write("### 🤖 Autonomous Graphs")
-        
+        st.write("#### 🤖 Autonomous Graphs")
+
         # Create cycle contribution and point contribution graph tabs.
         auto_cycle_contrib_tab, auto_point_contrib_tab = st.tabs(
             ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
@@ -49,6 +49,26 @@ if __name__ == '__main__':
         
         with auto_point_contrib_tab:
             team_manager.generate_autonomous_graphs(
+                team_number,
+                type_of_graph=GraphType.POINT_CONTRIBUTIONS
+            )
+
+    with teleop_graphs_tab:
+        st.write("#### 🎮 Teleop + Endgame Graphs")
+
+        # Create cycle contribution and point contribution graph tabs.
+        teleop_cycle_contrib_tab, teleop_point_contrib_tab = st.tabs(
+            ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+        )
+
+        with teleop_cycle_contrib_tab:
+            team_manager.generate_teleop_graphs(
+                team_number,
+                type_of_graph=GraphType.CYCLE_CONTRIBUTIONS
+            )
+
+        with teleop_point_contrib_tab:
+            team_manager.generate_teleop_graphs(
                 team_number,
                 type_of_graph=GraphType.POINT_CONTRIBUTIONS
             )

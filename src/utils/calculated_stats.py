@@ -25,10 +25,11 @@ class CalculatedStats:
         """
         return self.points_contributed_by_match(team).mean()
 
-    def points_contributed_by_match(self, team: int) -> Series:
+    def points_contributed_by_match(self, team: int, type_of_grid: str = "") -> Series:
         """Returns the points contributed by match for a team.
 
         :param team: The team number to calculate the points contributed over the matches they played.
+        :param type_of_grid: Optional argument defining which mode to return the total points for (auto/teleop).
         :return: A Series containing the points contributed by said team per match.
         """
         team_data = scouting_data_for_team(team, self.data)
@@ -43,6 +44,9 @@ class CalculatedStats:
         auto_mobility_points = team_data[Queries.LEFT_COMMUNITY].apply(
             lambda left_community: Criteria.MOBILITY_CRITERIA[left_community] * 3
         )
+        auto_charge_station_points = team_data[Queries.AUTO_CHARGING_STATE].apply(
+            lambda charging_state: Criteria.AUTO_CHARGE_POINTAGE.get(charging_state, 0)
+        )
 
         teleop_grid_points = team_data[Queries.TELEOP_GRID].apply(
             lambda grid_data: sum([
@@ -56,7 +60,18 @@ class CalculatedStats:
             lambda charging_state: Criteria.ENDGAME_POINTAGE.get(charging_state, 0)
         )
 
-        return auto_grid_points + auto_mobility_points + teleop_grid_points + endgame_points
+        if type_of_grid == Queries.AUTO_GRID:
+            return auto_grid_points + auto_mobility_points + auto_charge_station_points
+        elif type_of_grid == Queries.TELEOP_GRID:
+            return teleop_grid_points
+
+        return (
+            auto_grid_points
+            + auto_mobility_points
+            + auto_charge_station_points
+            + teleop_grid_points
+            + endgame_points
+        )
 
     # Cycle calculation methods
     def average_cycles(self, team: int, type_of_grid: str) -> float:
@@ -125,8 +140,8 @@ class CalculatedStats:
             lambda grid_data: len([
                 cycle for cycle in grid_data.split("|")
                 if cycle and (
-                    cycle[0] in game_piece_positions
-                    or cycle[2:] == game_piece
+                        cycle[0] in game_piece_positions
+                        or cycle[2:] == game_piece
                 )
             ])
         )
