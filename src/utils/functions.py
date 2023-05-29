@@ -52,6 +52,9 @@ def retrieve_team_list() -> list:
     :return: A list containing the teams at the current event.
     """
     scouting_data = retrieve_scouting_data()
+    # Filter out empty team numbers
+    scouting_data = scouting_data[scouting_data["TeamNumber"] != ""]
+
     return sorted(
         set(
             scouting_data["TeamNumber"]

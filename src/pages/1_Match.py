@@ -28,6 +28,9 @@ if __name__ == '__main__':
     with comparison_tab:
         st.write("### :red[Red] vs. :blue[Blue] Graphs")
 
+        # Generate the match predictions that compare the two alliances.
+        match_manager.generate_match_predictions(*teams_selected)
+
     with red_alliance_tab:
         st.write("### :red[Red] Alliance Graphs")
 

@@ -20,6 +20,7 @@ class GeneralConstants:
     ]
     SECONDS_TO_CACHE = 60 * 4
     PRIMARY_COLOR = "#EFAE09"
+    AVERAGE_FOUL_RATE = 1.06
 
     # Color sequences
     TEAM_GOLD_GRADIENT = [
