@@ -236,7 +236,8 @@ class TeamManager(PageManager, ContainsMetrics):
                         else "Auto Points Contributed Over Time"
                     )
                 ),
-                use_container_width=True
+                use_container_width=True,
+                config={'staticPlot': True}
             )
 
         # Bar graph for displaying how successful a team is at their auto engaging.
