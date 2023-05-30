@@ -176,6 +176,8 @@ def line_graph(
         line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
     ).update_xaxes(
         fixedrange=True
+    ).update_yaxes(
+        fixedrange=True
     )
 
 
