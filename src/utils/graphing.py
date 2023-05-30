@@ -246,6 +246,4 @@ def stacked_bar_graph(
     ).update_xaxes(
         fixedrange=True,
         type="category"
-    ).update_yaxes(
-        fixedrange=True
     )
