@@ -34,11 +34,11 @@ class MatchManager(PageManager):
         team_list = retrieve_team_list()
 
         # Create the separate columns for submitting teams.
-        red_alliance_form, blue_alliance_form = st.beta_columns(2, gap="medium")
+        red_alliance_form, blue_alliance_form = st.columns(2, gap="medium")
 
         # Create the different dropdowns to choose the three teams for Red Alliance.
         with red_alliance_form:
-            red_1_col, red_2_col, red_3_col = st.beta_columns(3)
+            red_1_col, red_2_col, red_3_col = st.columns(3)
             red_1 = red_1_col.selectbox(
                 ":red[Red 1]",
                 team_list
