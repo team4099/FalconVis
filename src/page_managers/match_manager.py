@@ -38,7 +38,7 @@ class MatchManager(PageManager):
 
         # Create the different dropdowns to choose the three teams for Red Alliance.
         with red_alliance_form:
-            red_1_col, red_2_col, red_3_col = st.columns(3)
+            red_1_col, red_2_col, red_3_col = st.columns([.25, .25, .25])
             red_1 = red_1_col.selectbox(
                 ":red[Red 1]",
                 team_list
