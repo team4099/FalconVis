@@ -16,16 +16,7 @@ match_manager = MatchManager()
 if __name__ == '__main__':
     # Write the title of the page.
     st.write("# Match")
-    
-    st.write('''<style>
-
-[data-testid="column"] {
-    width: calc(33.3333% - 1rem) !important;
-    flex: 1 1 calc(33.3333% - 1rem) !important;
-    min-width: calc(33% - 1rem) !important;
-}
-</style>''', unsafe_allow_html=True)
-
+   
     # Generate the input section of the `Match` page.
     teams_selected = match_manager.generate_input_section()
 
