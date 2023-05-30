@@ -230,6 +230,6 @@ def stacked_bar_graph(
         legend_traceorder="reversed",
         legend={
             "orientation": "h"
-        },,
+        },
         modebar_remove=['zoom', 'pan']
     ).update_xaxes(type="category")
