@@ -238,6 +238,7 @@ def stacked_bar_graph(
             "orientation": "h"
         },
     ).update_xaxes(
+        fixedrange=True,
         type="category"
     ).update_yaxes(
         fixedrange=True
