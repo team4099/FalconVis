@@ -122,6 +122,8 @@ def bar_graph(
         color_discrete_sequence=[
             GeneralConstants.PRIMARY_COLOR if color is None else color
         ]
+    ).update_layout(
+        modebar_remove=['zoom', 'pan']
     )
 
 
@@ -145,6 +147,8 @@ def box_plot(
         points=("all" if show_underlying_data else "outliers")
     ).update_traces(
         marker_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
+    ).update_layout(
+        modebar_remove=['zoom', 'pan']
     )
 
 
@@ -164,6 +168,8 @@ def line_graph(
         title=title
     ).update_traces(
         line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
+    ).update_layout(
+        modebar_remove=['zoom', 'pan']
     )
 
 
@@ -190,6 +196,8 @@ def multi_line_graph(
         y=y_axis_title,
         color="Legend",
         title=title
+    ).update_layout(
+        modebar_remove=['zoom', 'pan']
     )
 
 
@@ -222,5 +230,6 @@ def stacked_bar_graph(
         legend_traceorder="reversed",
         legend={
             "orientation": "h"
-        }
+        },,
+        modebar_remove=['zoom', 'pan']
     ).update_xaxes(type="category")
