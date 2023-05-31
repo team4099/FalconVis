@@ -211,6 +211,7 @@ class MatchManager(PageManager):
                         game_piece_breakdown,
                         "Teams",
                         ["Total # of Cones Scored", "Total # of Cubes Scored"],
+                        "Total Game Pieces Scored",
                         title="Game Piece Breakdown",
                         color_map={
                             "Total # of Cones Scored": GeneralConstants.CONE_COLOR,  # Cone color
