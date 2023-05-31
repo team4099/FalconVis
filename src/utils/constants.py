@@ -37,6 +37,10 @@ class GeneralConstants:
     DARK_RED = "#450a0a"
     DARK_BLUE = "#172554"
 
+    # Game piece colors
+    CONE_COLOR = PRIMARY_COLOR
+    CUBE_COLOR = "#4F46E5"
+
 
 class EventSpecificConstants:
     """Constants specific to an event."""

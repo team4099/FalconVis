@@ -236,8 +236,7 @@ class TeamManager(PageManager, ContainsMetrics):
                         else "Auto Points Contributed Over Time"
                     )
                 ),
-                use_container_width=True,
-                config={"staticPlot": True}
+                use_container_width=True
             )
 
         # Bar graph for displaying how successful a team is at their auto engaging.
@@ -370,8 +369,8 @@ class TeamManager(PageManager, ContainsMetrics):
                     y_axis_label=["Total # of Cones Scored", "Total # of Cubes Scored"],
                     title="Game Piece Breakdown",
                     color_map={
-                        "Total # of Cones Scored": GeneralConstants.PRIMARY_COLOR,  # Cone color
-                        "Total # of Cubes Scored": "#4F46E5"  # Cube color
+                        "Total # of Cones Scored": GeneralConstants.CONE_COLOR,  # Cone color
+                        "Total # of Cubes Scored": GeneralConstants.CUBE_COLOR  # Cube color
                     }
                 ),
                 use_container_width=True

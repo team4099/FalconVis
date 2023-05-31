@@ -123,6 +123,7 @@ def bar_graph(
             GeneralConstants.PRIMARY_COLOR if color is None else color
         ]
     ).update_xaxes(
+        fixedrange=True,
         type="category"
     ).update_yaxes(
         fixedrange=True
@@ -150,6 +151,7 @@ def box_plot(
     ).update_traces(
         marker_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
     ).update_xaxes(
+        fixedrange=True,
         type="category"
     ).update_yaxes(
         fixedrange=True
@@ -172,6 +174,8 @@ def line_graph(
         title=title
     ).update_traces(
         line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
+    ).update_xaxes(
+        fixedrange=True
     ).update_yaxes(
         fixedrange=True
     )
@@ -201,6 +205,7 @@ def multi_line_graph(
         color="Legend",
         title=title
     ).update_xaxes(
+        fixedrange=True,
         type="category"
     ).update_yaxes(
         fixedrange=True
