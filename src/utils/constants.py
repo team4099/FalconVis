@@ -81,6 +81,10 @@ class Queries:
     # Constants for different game pieces
     CONE = "cone"
     CUBE = "cube"
+
+    # Alliance constants
+    RED_ALLIANCE = "red"
+    BLUE_ALLIANCE = "blue"
     
 
 class Criteria:
@@ -122,4 +126,5 @@ class Criteria:
         "Dock": 6,
         "Engage": 10
     }
+
 

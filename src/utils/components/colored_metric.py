@@ -50,6 +50,6 @@ def colored_metric(
 
         html(
             html_template,
-            height=120
+            height=130
         )
 

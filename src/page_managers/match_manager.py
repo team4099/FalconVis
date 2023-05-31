@@ -8,12 +8,14 @@ from scipy.stats import norm
 
 from .page_manager import PageManager
 from utils import (
+    alliance_breakdown,
     CalculatedStats,
     colored_metric,
     GeneralConstants,
     Queries,
     retrieve_team_list,
     retrieve_scouting_data,
+    scouting_data_for_team,
     stacked_bar_graph,
     win_percentages
 )
@@ -95,7 +97,9 @@ class MatchManager(PageManager):
         combined_teams = red_alliance + blue_alliance
 
         chance_of_winning_col, = st.columns(1)
-        predicted_red_score_col, predicted_blue_score_col = st.columns(2)
+        predicted_red_score_col, red_alliance_breakdown_col = st.columns(2)
+        predicted_blue_score_col, blue_alliance_breakdown_col = st.columns(2)
+
         cycle_contribution_breakdown_tab, point_contribution_breakdown_tab = st.tabs(
             ["📈 Cycle Contribution Breakdown", "🧮 Point Contribution Breakdown"]
         )
@@ -185,6 +189,51 @@ class MatchManager(PageManager):
                 ),
                 background_color=GeneralConstants.DARK_BLUE,
                 opacity=0.5
+            )
+
+        # Alliance breakdowns by team
+        with red_alliance_breakdown_col:
+            average_points_contributed = [
+                round(np.mean(team_distribution), 1) for team_distribution in red_alliance_points
+            ]
+            best_to_defend = sorted(
+                [
+                    (
+                        team,
+                        average_points_contributed[idx],
+                        scouting_data_for_team(team)["DriverRating"].mean()
+                    ) for idx, team in enumerate(red_alliance)
+                ],
+                key=lambda info: (info[1] / info[2], 5 - info[2])
+            )[-1][0]
+
+            alliance_breakdown(
+                red_alliance,
+                average_points_contributed,
+                best_to_defend,
+                Queries.RED_ALLIANCE
+            )
+
+        with blue_alliance_breakdown_col:
+            average_points_contributed = [
+                round(np.mean(team_distribution), 1) for team_distribution in blue_alliance_points
+            ]
+            best_to_defend = sorted(
+                [
+                    (
+                        team,
+                        average_points_contributed[idx],
+                        scouting_data_for_team(team)["DriverRating"].mean()
+                    ) for idx, team in enumerate(blue_alliance)
+                ],
+                key=lambda info: (info[1] / info[2], 5 - info[2])
+            )[-1][0]
+
+            alliance_breakdown(
+                blue_alliance,
+                average_points_contributed,
+                best_to_defend,
+                Queries.BLUE_ALLIANCE
             )
 
         # Creates graphs breaking down cycles among teams
