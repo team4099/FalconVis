@@ -33,6 +33,10 @@ class GeneralConstants:
         "#FDF5E0"
     ]
 
+    # Colors
+    DARK_RED = "#450a0a"
+    DARK_BLUE = "#172554"
+
 
 class EventSpecificConstants:
     """Constants specific to an event."""

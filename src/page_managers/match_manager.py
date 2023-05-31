@@ -8,8 +8,8 @@ from scipy.stats import norm
 from .page_manager import PageManager
 from utils import (
     CalculatedStats,
+    colored_metric,
     GeneralConstants,
-    Queries,
     retrieve_team_list,
     retrieve_scouting_data,
     win_percentages
@@ -85,6 +85,9 @@ class MatchManager(PageManager):
         """
         chance_of_winning_col, = st.columns(1)
         predicted_red_score_col, predicted_blue_score_col = st.columns(2)
+        cycle_contribution_breakdown_col, point_contribution_breakdown_col = st.tabs(
+            ["📈 Cycle Contribution Breakdown", "🧮 Point Contribution Breakdown"]
+        )
 
         # Calculates each alliance's chance of winning.
         with chance_of_winning_col:
@@ -120,6 +123,13 @@ class MatchManager(PageManager):
             # Calculate mean and standard deviation of the point distribution of red alliance - blue alliance
             compared_std = (red_alliance_std ** 2 + blue_alliance_std ** 2) ** 0.5
             compared_mean = red_alliance_mean - blue_alliance_mean
+
+            # Use sentinel value if there isn't enough of a distribution yet to determine standard deviation.
+            if not compared_std and compared_mean:
+                compared_std = abs(compared_mean)
+            elif not compared_std:
+                compared_std = 0.5
+
             compared_distribution = norm(loc=compared_mean, scale=compared_std)
 
             # Calculate odds of red/blue winning using integrals.
@@ -139,25 +149,29 @@ class MatchManager(PageManager):
 
         # Calculates the predicted scores for each alliance
         with predicted_red_score_col:
-            st.metric(
-                "Predicted Score (:red[Red Alliance])",
+            colored_metric(
+                "Predicted Score (Red)",
                 int(
                     red_alliance_mean * (
                         GeneralConstants.AVERAGE_FOUL_RATE
                         if GeneralConstants.AVERAGE_FOUL_RATE
                         else 1
                     )
-                )
+                ),
+                background_color=GeneralConstants.DARK_RED,
+                opacity=0.5
             )
 
         with predicted_blue_score_col:
-            st.metric(
-                "Predicted Score (:blue[Blue Alliance])",
+            colored_metric(
+                "Predicted Score (Blue)",
                 int(
                     blue_alliance_mean * (
                         GeneralConstants.AVERAGE_FOUL_RATE
                         if GeneralConstants.AVERAGE_FOUL_RATE
                         else 1
                     )
-                )
+                ),
+                background_color=GeneralConstants.DARK_BLUE,
+                opacity=0.5
             )

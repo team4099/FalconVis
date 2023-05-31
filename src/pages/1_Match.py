@@ -16,7 +16,7 @@ match_manager = MatchManager()
 if __name__ == '__main__':
     # Write the title of the page.
     st.write("# Match")
-   
+
     # Generate the input section of the `Match` page.
     teams_selected = match_manager.generate_input_section()
 
