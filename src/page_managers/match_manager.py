@@ -216,5 +216,6 @@ class MatchManager(PageManager):
                             "Total # of Cones Scored": GeneralConstants.CONE_COLOR,  # Cone color
                             "Total # of Cubes Scored": GeneralConstants.CUBE_COLOR  # Cube color
                         }
-                    ).update_layout(xaxis={'categoryorder':'total descending'})
+                    ).update_layout(xaxis={"categoryorder": "total descending"}),
+                    use_container_width=True
                 )
