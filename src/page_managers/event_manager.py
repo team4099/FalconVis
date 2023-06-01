@@ -44,7 +44,7 @@ class EventManager(PageManager):
                 "Avg. Cycles (Top 8)",
                 round(mean(average_cycles_per_team[:8]), 2),
                 background_color=GeneralConstants.PRIMARY_COLOR,
-                opacity=0.4
+                opacity=0.5
             )
 
         # Metric displaying the average cycles of the top 16 teams/likely alliance captains
@@ -53,8 +53,8 @@ class EventManager(PageManager):
                 "Avg. Cycles (Top 16)",
                 round(mean(average_cycles_per_team[:16]), 2),
                 background_color=GeneralConstants.PRIMARY_COLOR,
-                opacity=0.3,
-                border_opacity=0.9,
+                opacity=0.4,
+                border_opacity=0.75,
             )
         
         # Metric displaying the average cycles of the top 24 teams/likely alliance captains
@@ -63,7 +63,7 @@ class EventManager(PageManager):
                 "Avg. Cycles (Top 24)",
                 round(mean(average_cycles_per_team[:24]), 2),
                 background_color=GeneralConstants.PRIMARY_COLOR,
-                opacity=0.2,
-                border_opacity=0.8,
+                opacity=0.3,
+                border_opacity=0.5,
             )
 
