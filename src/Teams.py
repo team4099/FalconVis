@@ -27,11 +27,8 @@ if __name__ == '__main__':
     with metric_tab:
         st.write("### Metrics")
 
-        quartile = st.select_slider(
-            "Quartile for Comparisons (The deltas for each metric represent the deviation from said quartile).",
-            options=[1, 10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 99]
-        ) / 100
-        team_manager.generate_metrics(team_number, quartile)
+        # Generate metrics (cards with information surrounding teams)
+        team_manager.generate_metrics(team_number)
 
     with auto_graphs_tab:
         st.write("#### 🤖 Autonomous Graphs")

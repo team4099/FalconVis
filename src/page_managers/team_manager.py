@@ -42,11 +42,10 @@ class TeamManager(PageManager, ContainsMetrics):
             retrieve_team_list()
         )
 
-    def generate_metrics(self, team_number: int, quartile: float) -> None:
+    def generate_metrics(self, team_number: int) -> None:
         """Creates the metrics for the `Teams` page.
 
         :param team_number: The team number to calculate the metrics for.
-        :param quartile: The quartile to use per-metric for comparisons between a team and the xth-percentile.
         """
         points_contributed_col, auto_cycle_col, teleop_cycle_col, mobility_col = st.columns(4)
         iqr_col, auto_engage_col, auto_engage_accuracy_col, auto_accuracy_col = st.columns(4)
@@ -57,7 +56,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 team_number
             )
             points_contributed_for_percentile = self.calculated_stats.quantile_stat(
-                quartile,
+                0.5,
                 lambda self, team: self.average_points_contributed(team)
             )
             colored_metric(
@@ -73,7 +72,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 Queries.AUTO_GRID
             )
             auto_cycles_for_percentile = self.calculated_stats.quantile_stat(
-                quartile,
+                0.5,
                 lambda self, team: self.average_cycles(team, Queries.AUTO_GRID)
             )
             colored_metric(
@@ -89,7 +88,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 Queries.TELEOP_GRID
             )
             teleop_cycles_for_percentile = self.calculated_stats.quantile_stat(
-                quartile,
+                0.5,
                 lambda self, team: self.average_cycles(team, Queries.TELEOP_GRID)
             )
             colored_metric(
@@ -106,7 +105,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 Criteria.MOBILITY_CRITERIA
             )
             mobility_for_percentile = self.calculated_stats.quantile_stat(
-                quartile,
+                0.5,
                 lambda self, team: self.average_stat(
                     team,
                     Queries.LEFT_COMMUNITY,
@@ -128,7 +127,7 @@ class TeamManager(PageManager, ContainsMetrics):
             )
             iqr_of_points_contributed = self.calculated_stats.calculate_iqr(team_dataset)
             iqr_for_percentile = self.calculated_stats.quantile_stat(
-                quartile,
+                0.5,
                 lambda self, team: self.calculate_iqr(
                     self.points_contributed_by_match(team)
                 )
@@ -148,7 +147,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 Criteria.AUTO_ATTEMPT_CRITERIA
             )
             auto_engage_attempts_for_percentile = self.calculated_stats.quantile_stat(
-                quartile,
+                0.5,
                 lambda self, team: self.cumulative_stat(
                     team,
                     Queries.AUTO_ENGAGE_ATTEMPTED,
@@ -186,7 +185,7 @@ class TeamManager(PageManager, ContainsMetrics):
         with auto_accuracy_col:
             average_auto_accuracy = self.calculated_stats.average_auto_accuracy(team_number)
             auto_accuracy_for_percentile = self.calculated_stats.quantile_stat(
-                quartile,
+                0.5,
                 lambda self, team: self.average_auto_accuracy(team)
             )
 
