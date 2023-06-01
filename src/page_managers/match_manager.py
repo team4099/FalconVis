@@ -1,5 +1,4 @@
 """Creates the `MatchManager` class used to set up the Match page and its graphs."""
-from random import randrange
 
 import numpy as np
 import streamlit as st
@@ -9,9 +8,11 @@ from scipy.stats import norm
 from .page_manager import PageManager
 from utils import (
     alliance_breakdown,
+    box_plot,
     CalculatedStats,
     colored_metric,
     GeneralConstants,
+    GraphType,
     Queries,
     retrieve_team_list,
     retrieve_scouting_data,
@@ -84,25 +85,19 @@ class MatchManager(PageManager):
             [blue_1, blue_2, blue_3]
         ]
 
-    def generate_match_predictions(
+    def generate_match_prediction_dashboard(
         self,
         red_alliance: list[int],
         blue_alliance: list[int]
     ) -> None:
-        """Generates graphs and metrics for match predictions (Red vs. Blue Tab).
+        """Generates metrics for match predictions (Red vs. Blue Tab).
 
         :param red_alliance: A list of three integers, each integer representing a team on the Red Alliance
         :param blue_alliance: A list of three integers, each integer representing a team on the Blue Alliance.
         """
-        combined_teams = red_alliance + blue_alliance
-
         chance_of_winning_col, = st.columns(1)
         predicted_red_score_col, red_alliance_breakdown_col = st.columns(2)
         predicted_blue_score_col, blue_alliance_breakdown_col = st.columns(2)
-
-        cycle_contribution_breakdown_tab, point_contribution_breakdown_tab = st.tabs(
-            ["📈 Cycle Contribution Breakdown", "🧮 Point Contribution Breakdown"]
-        )
 
         # Calculates each alliance's chance of winning.
         with chance_of_winning_col:
@@ -196,6 +191,7 @@ class MatchManager(PageManager):
             average_points_contributed = [
                 round(np.mean(team_distribution), 1) for team_distribution in red_alliance_points
             ]
+
             best_to_defend = sorted(
                 [
                     (
@@ -236,36 +232,154 @@ class MatchManager(PageManager):
                 Queries.BLUE_ALLIANCE
             )
 
-        # Creates graphs breaking down cycles among teams
-        with cycle_contribution_breakdown_tab:
-            game_piece_breakdown_col, _ = st.columns(2)
+    def generate_match_prediction_graphs(
+        self,
+        red_alliance: list[int],
+        blue_alliance: list[int],
+        type_of_graph: str
+    ) -> None:
+        """Generate graphs for match prediction (Red vs. Blue tab).
 
-            # Breaks down game pieces between cones/cubes among the six teams
-            with game_piece_breakdown_col:
-                game_piece_breakdown = [
-                    [
-                        self.calculated_stats.cycles_by_game_piece_per_match(
-                            team,
-                            Queries.TELEOP_GRID,
-                            game_piece
-                        ).sum()
-                        for team in combined_teams
-                    ]
-                    for game_piece in (Queries.CONE, Queries.CUBE)
+        :param red_alliance: A list of three integers, each integer representing a team on the Red Alliance
+        :param blue_alliance: A list of three integers, each integer representing a team on the Blue Alliance.
+        :param type_of_graph: The type of graphs to display (cycle contributions / point contributions).
+        """
+        combined_teams = red_alliance + blue_alliance
+        display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+        color_sequence = [
+            "#781212",  # Bright red
+            "#163ba1"  # Bright blue
+        ]
+
+        game_piece_breakdown_col, auto_cycles_col = st.columns(2)
+        teleop_cycles_col, cumulative_cycles_col = st.columns(2)
+
+        # Breaks down game pieces between cones/cubes among the six teams
+        with game_piece_breakdown_col:
+            game_piece_breakdown = [
+                [
+                    self.calculated_stats.cycles_by_game_piece_per_match(
+                        team,
+                        Queries.TELEOP_GRID,
+                        game_piece
+                    ).sum()
+                    for team in combined_teams
                 ]
+                for game_piece in (Queries.CONE, Queries.CUBE)
+            ]
 
-                st.plotly_chart(
-                    stacked_bar_graph(
-                        combined_teams,
-                        game_piece_breakdown,
-                        "Teams",
-                        ["Total # of Cones Scored", "Total # of Cubes Scored"],
-                        "Total Game Pieces Scored",
-                        title="Game Piece Breakdown",
-                        color_map={
-                            "Total # of Cones Scored": GeneralConstants.CONE_COLOR,  # Cone color
-                            "Total # of Cubes Scored": GeneralConstants.CUBE_COLOR  # Cube color
-                        }
-                    ).update_layout(xaxis={"categoryorder": "total descending"}),
-                    use_container_width=True
+            st.plotly_chart(
+                stacked_bar_graph(
+                    combined_teams,
+                    game_piece_breakdown,
+                    "Teams",
+                    ["Total # of Cones Scored", "Total # of Cubes Scored"],
+                    "Total Game Pieces Scored",
+                    title="Game Piece Breakdown",
+                    color_map={
+                        "Total # of Cones Scored": GeneralConstants.CONE_COLOR,  # Cone color
+                        "Total # of Cubes Scored": GeneralConstants.CUBE_COLOR  # Cube color
+                    }
+                ).update_layout(xaxis={"categoryorder": "total descending"}),
+                use_container_width=True
+            )
+
+        # Breaks down cycles/point contributions among both alliances in Autonomous.
+        with auto_cycles_col:
+            auto_alliance_distributions = []
+
+            for alliance in (red_alliance, blue_alliance):
+                cycles_in_alliance = [
+                    (
+                        self.calculated_stats.cycles_by_match(team, Queries.AUTO_GRID)
+                        if display_cycle_contributions
+                        else self.calculated_stats.points_contributed_by_match(team, Queries.AUTO_GRID)
+                    )
+                    for team in alliance
+                ]
+                auto_alliance_distributions.append(
+                    self.calculated_stats.cartesian_product(*cycles_in_alliance, reduce_with_sum=True)
                 )
+
+            st.plotly_chart(
+                box_plot(
+                    ["Red Alliance", "Blue Alliance"],
+                    auto_alliance_distributions,
+                    y_axis_label=(
+                        "Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        f"Cycles During Autonomous (N={len(auto_alliance_distributions[0])})"
+                        if display_cycle_contributions
+                        else f"Points Contributed During Autonomous (N={len(auto_alliance_distributions[0])})"
+                    ),
+                    color_sequence=color_sequence
+                ),
+                use_container_width=True
+            )
+
+        # Breaks down cycles/point contributions among both alliances in Teleop.
+        with teleop_cycles_col:
+            teleop_alliance_distributions = []
+
+            for alliance in (red_alliance, blue_alliance):
+                cycles_in_alliance = [
+                    (
+                        self.calculated_stats.cycles_by_match(team, Queries.TELEOP_GRID)
+                        if display_cycle_contributions
+                        else self.calculated_stats.points_contributed_by_match(team, Queries.TELEOP_GRID)
+                    )
+                    for team in alliance
+                ]
+                teleop_alliance_distributions.append(
+                    self.calculated_stats.cartesian_product(*cycles_in_alliance, reduce_with_sum=True)
+                )
+
+            st.plotly_chart(
+                box_plot(
+                    ["Red Alliance", "Blue Alliance"],
+                    teleop_alliance_distributions,
+                    y_axis_label=(
+                        "Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        f"Cycles During Teleop (N={len(teleop_alliance_distributions[0])})"
+                        if display_cycle_contributions
+                        else f"Points Contributed During Teleop (N={len(teleop_alliance_distributions[0])})"
+                    ),
+                    color_sequence=color_sequence
+                ),
+                use_container_width=True
+            )
+
+        # Show cumulative cycles/point contributions (auto + teleop)
+        with cumulative_cycles_col:
+            cumulative_alliance_distributions = [
+                auto_distribution + teleop_distribution
+                for auto_distribution, teleop_distribution in zip(
+                    auto_alliance_distributions, teleop_alliance_distributions
+                )
+            ]
+
+            st.plotly_chart(
+                box_plot(
+                    ["Red Alliance", "Blue Alliance"],
+                    cumulative_alliance_distributions,
+                    y_axis_label=(
+                        "Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        f"Cycles During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
+                        if display_cycle_contributions
+                        else f"Points Contributed During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
+                    ),
+                    color_sequence=color_sequence
+                ),
+                use_container_width=True
+            )

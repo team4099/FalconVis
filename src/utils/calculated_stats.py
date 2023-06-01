@@ -2,6 +2,7 @@
 
 from typing import Callable
 
+import numpy as np
 from numpy import percentile
 from pandas import DataFrame, Series
 
@@ -225,3 +226,23 @@ class CalculatedStats:
         :return: A float representing the IQR.
         """
         return percentile(dataset, 75) - percentile(dataset, 25)
+
+    def cartesian_product(
+        self,
+        dataset_x: list,
+        dataset_y: list,
+        dataset_z: list,
+        reduce_with_sum: bool = False
+    ) -> np.ndarray:
+        """Creates a cartesian product (permutations of each element in the three datasets).
+
+        :param dataset_x: A dataset containing x values.
+        :param dataset_y: A dataset containing y values.
+        :param dataset_z: A dataset containing z values.
+        :param reduce_with_sum: Whether or not to add up the cartesian product for each tuple yielded.
+        :return: A list containing the cartesian products or the sum of it if `reduce_with_sum` is True.
+        """
+        return np.array([
+            (x + y + z if reduce_with_sum else (x, y, z))
+            for x in dataset_x for y in dataset_y for z in dataset_z
+        ])

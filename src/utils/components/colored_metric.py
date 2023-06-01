@@ -10,6 +10,7 @@ def colored_metric(
     metric_title: str,
     metric_value: Any,
     *,
+    height: int = 130,
     background_color: str = "#OE1117",
     opacity: float = 1.0,
     border_color: str | None = None,
@@ -21,6 +22,7 @@ def colored_metric(
 
     :param metric_title: The title for the colored metric.
     :param metric_value: The value for the colored metric.
+    :param height: A number representing the height of the metric, in pixels. If not specified, the height is automatically found.
     :param background_color: A hex code representing the background color of the metric.
     :param opacity: The opacity of the metric if a background color exists.
     :param border_color: A hex code representing the color of the border attached to the metric.
@@ -38,18 +40,20 @@ def colored_metric(
         html_template = html_file.read().format(
             metric_title=metric_title,
             metric_value=str(metric_value),
+            height=f"[{height}px]",
             background_color=background_color,
             opacity=str(opacity),
             border_color=border_color,
             border_opacity=border_opacity,
             ring=(
-                "" if not create_ring
+                ""
+                if not create_ring
                 else f"ring ring-[{ring_color}] ring-offset-2"
             )
         )
 
         html(
             html_template,
-            height=130
+            height=height
         )
 

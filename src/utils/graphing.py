@@ -2,7 +2,7 @@
 import numpy as np
 import plotly.express as px
 from pandas import DataFrame
-from plotly.graph_objects import Figure
+from plotly.graph_objects import Box, Figure
 
 from .constants import GeneralConstants
 
@@ -106,8 +106,8 @@ def _create_longform_df(
 def bar_graph(
     x: list,
     y: list,
-    x_axis_label: str = "x",
-    y_axis_label: str = "y",
+    x_axis_label: str = "",
+    y_axis_label: str = "",
     title: str = "",
     horizontal: bool = False,
     color: str | None = None
@@ -133,23 +133,32 @@ def bar_graph(
 def box_plot(
     x: list,
     y: list,
-    x_axis_label: str = "x",
-    y_axis_label: str = "y",
+    x_axis_label: str = "",
+    y_axis_label: str = "",
     title: str = "",
     horizontal: bool = False,
     show_underlying_data: bool = False,
-    color: str | None = None
+    color_sequence: list | None = None
 ):
-    data_df = _create_flattened_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
-    return px.box(
-        data_df,
-        x=(y_axis_label if horizontal else x_axis_label),
-        y=(x_axis_label if horizontal else y_axis_label),
-        title=title,
-        orientation=("h" if horizontal else "v"),
-        points=("all" if show_underlying_data else "outliers")
-    ).update_traces(
-        marker_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
+    # Use graph objects in order to be able to individually color candlesticks.
+    fig = Figure()
+
+    for x_data, y_data, color in zip(x, y, (color_sequence if color_sequence else [None] * len(y))):
+        fig.add_trace(
+            Box(
+                y=y_data,
+                name=x_data,
+                marker_color=color,
+                boxpoints=("all" if show_underlying_data else "outliers")
+            )
+        )
+
+    return fig.update_traces(
+        orientation=("h" if horizontal else "v")
+    ).update_layout(
+        xaxis={"title": x_axis_label},
+        yaxis={"title": y_axis_label},
+        title_text=title
     ).update_xaxes(
         fixedrange=True,
         type="category"
@@ -161,8 +170,8 @@ def box_plot(
 def line_graph(
     x: list,
     y: list,
-    x_axis_label: str = "x",
-    y_axis_label: str = "y",
+    x_axis_label: str = "",
+    y_axis_label: str = "",
     title: str = "",
     color: str | None = None
 ) -> Figure:
@@ -186,7 +195,7 @@ def multi_line_graph(
     x: list,
     y: list,
     x_axis_label: str = "x",
-    y_axis_label: list = ["y"],
+    y_axis_label: list = [""],
     y_axis_title: str = "y",
     title: str = ""
 ) -> Figure:
@@ -216,7 +225,7 @@ def stacked_bar_graph(
     x: list,
     y: list,
     x_axis_label: str = "x",
-    y_axis_label: list = ["y"],
+    y_axis_label: list = [""],
     y_axis_title: str = "y",
     horizontal: bool = False,
     title: str = "",
