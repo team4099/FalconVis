@@ -16,5 +16,6 @@ if __name__ == '__main__':
     st.write("# Event")
     
     # Show breakdown of event (average cycles of top 8, 16 and 24 teams)
+    st.write("### Event Breakdown")
     event_manager.generate_event_breakdown()
     
