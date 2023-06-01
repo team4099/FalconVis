@@ -8,6 +8,7 @@ from utils import (
     bar_graph,
     box_plot,
     CalculatedStats,
+    colored_metric,
     Criteria,
     GeneralConstants,
     GraphType,
@@ -59,10 +60,10 @@ class TeamManager(PageManager, ContainsMetrics):
                 quartile,
                 lambda self, team: self.average_points_contributed(team)
             )
-            st.metric(
+            colored_metric(
                 "Average Points Contributed",
                 round(average_points_contributed, 2),
-                f"{round(average_points_contributed - points_contributed_for_percentile, 2)} pts"
+                threshold=points_contributed_for_percentile
             )
 
         # Metric for average auto cycles
@@ -75,10 +76,10 @@ class TeamManager(PageManager, ContainsMetrics):
                 quartile,
                 lambda self, team: self.average_cycles(team, Queries.AUTO_GRID)
             )
-            st.metric(
+            colored_metric(
                 "Average Auto Cycles",
                 round(average_auto_cycles, 2),
-                f"{round(average_auto_cycles - auto_cycles_for_percentile, 2)} cycles"
+                threshold=auto_cycles_for_percentile
             )
 
         # Metric for average teleop cycles
@@ -91,10 +92,10 @@ class TeamManager(PageManager, ContainsMetrics):
                 quartile,
                 lambda self, team: self.average_cycles(team, Queries.TELEOP_GRID)
             )
-            st.metric(
+            colored_metric(
                 "Average Teleop Cycles",
                 round(average_teleop_cycles, 2),
-                f"{round(average_teleop_cycles - teleop_cycles_for_percentile, 2)} cycles"
+                threshold=teleop_cycles_for_percentile
             )
 
         # Metric for avg. mobility (%)
@@ -113,10 +114,11 @@ class TeamManager(PageManager, ContainsMetrics):
                 )
             )
 
-            st.metric(
+            colored_metric(
                 "Average Mobility (%)",
-                f"{round(average_mobility, 2):.1%}",
-                f"{round(average_mobility - mobility_for_percentile, 2):.1%}"
+                round(average_mobility, 2),
+                threshold=mobility_for_percentile,
+                value_formatter=lambda value: f"{value:.1%}"
             )
 
         # Metric for IQR of points contributed (consistency)
@@ -132,11 +134,10 @@ class TeamManager(PageManager, ContainsMetrics):
                 )
             )
 
-            st.metric(
-                "IQR of Points Contributed (Consistency)",
+            colored_metric(
+                "IQR of Points Contributed",
                 iqr_of_points_contributed,
-                f"{round(iqr_of_points_contributed - iqr_for_percentile, 2)} pts",
-                delta_color="inverse"
+                threshold=iqr_for_percentile
             )
 
         # Metric for total auto engage attempts
@@ -155,10 +156,10 @@ class TeamManager(PageManager, ContainsMetrics):
                 )
             )
 
-            st.metric(
+            colored_metric(
                 "Auto Engage Attempts",
                 total_auto_engage_attempts,
-                f"{round(total_auto_engage_attempts - auto_engage_attempts_for_percentile, 2)} attempts"
+                threshold=auto_engage_attempts_for_percentile
             )
 
         # Metric for auto engage accuracy
@@ -171,16 +172,14 @@ class TeamManager(PageManager, ContainsMetrics):
             auto_engage_accuracy = (
                 total_successful_engages / total_auto_engage_attempts
                 if total_auto_engage_attempts
-                else None
+                else 0.0
             )
 
-            st.metric(
+            colored_metric(
                 "Auto Engage Accuracy",
-                (
-                    f"{auto_engage_accuracy:.1%}"
-                    if auto_engage_accuracy is not None
-                    else auto_engage_accuracy
-                )
+                auto_engage_accuracy,
+                threshold=75.0,
+                value_formatter=lambda value: f"{value:.1%}"
             )
 
         # Metric for average auto accuracy by match
@@ -191,10 +190,11 @@ class TeamManager(PageManager, ContainsMetrics):
                 lambda self, team: self.average_auto_accuracy(team)
             )
 
-            st.metric(
+            colored_metric(
                 "Average Auto Accuracy (%)",
-                f"{average_auto_accuracy:.1%}",
-                f"{round(average_auto_accuracy - auto_accuracy_for_percentile, 2):.1%}"
+                average_auto_accuracy,
+                threshold=auto_accuracy_for_percentile,
+                value_formatter=lambda value: f"{value:.1%}"
             )
 
     def generate_autonomous_graphs(

@@ -1,6 +1,6 @@
 """Creates a component to display colored metrics."""
 
-from typing import Any
+from typing import Any, Callable
 from streamlit.components.v1 import html
 
 __all__ = ["colored_metric"]
@@ -13,6 +13,8 @@ def colored_metric(
     height: int = 130,
     background_color: str = "#OE1117",
     opacity: float = 1.0,
+    threshold: float | None = None,
+    value_formatter: Callable = None,
     border_color: str | None = None,
     border_opacity: float | None = None,
     create_ring: bool = False,
@@ -25,12 +27,22 @@ def colored_metric(
     :param height: A number representing the height of the metric, in pixels. If not specified, the height is automatically found.
     :param background_color: A hex code representing the background color of the metric.
     :param opacity: The opacity of the metric if a background color exists.
+    :param threshold: If a threshold exists, change the background color to denote whether the metric "passes" a threshold.
+    :param value_formatter: Optional argument that formats the metric value passed in.
     :param border_color: A hex code representing the color of the border attached to the metric.
     :param border_opacity: The opacity of the border if it exists.
     :param create_ring: A boolean representing whether a ring should be created around the metric.
     :param ring_color: A hex code representing the color of the ring if it exists.
     :return:
     """
+    # Set background color based on threshold
+    if threshold is not None and metric_value >= threshold:
+        background_color = "#052e16"
+        opacity = 0.5
+    elif threshold is not None and metric_value < threshold:
+        background_color = "#450a0a"
+        opacity = 0.5
+
     # Style card to use background color if border color isn't defined
     if border_color is None:
         border_color = background_color
@@ -39,7 +51,7 @@ def colored_metric(
     with open("./src/utils/components/colored_metric_component.html") as html_file:
         html_template = html_file.read().format(
             metric_title=metric_title,
-            metric_value=str(metric_value),
+            metric_value=(str(metric_value) if value_formatter is None else value_formatter(metric_value)),
             height=f"[{height}px]",
             background_color=background_color,
             opacity=str(opacity),

@@ -36,6 +36,7 @@ class GeneralConstants:
     # Colors
     DARK_RED = "#450a0a"
     DARK_BLUE = "#172554"
+    DARK_GREEN = "#052e16"
 
     # Game piece colors
     CONE_COLOR = PRIMARY_COLOR
