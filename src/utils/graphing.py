@@ -158,6 +158,9 @@ def box_plot(
     ).update_layout(
         xaxis={"title": x_axis_label},
         yaxis={"title": y_axis_label},
+        legend={
+            "orientation": "h"
+        },
         title_text=title
     ).update_xaxes(
         fixedrange=True,
@@ -250,7 +253,7 @@ def stacked_bar_graph(
         legend_traceorder="reversed",
         legend={
             "orientation": "h"
-        },
+        }
     ).update_xaxes(
         fixedrange=True,
         type="category"
