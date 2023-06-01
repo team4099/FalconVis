@@ -32,7 +32,7 @@ class EventManager(PageManager):
         
         average_cycles_per_team = sorted(
             [
-                self.calculated_stats.average_cycles(team)
+                self.calculated_stats.average_cycles(team, Queries.TELEOP_GRID)
                 for team in retrieve_team_list()
             ],
             reverse=True
