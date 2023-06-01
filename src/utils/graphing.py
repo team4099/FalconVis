@@ -1,6 +1,7 @@
 """Defines graphing functions that are later used in FalconVis that wrap around Plotly."""
 import numpy as np
 import plotly.express as px
+import streamlit as st
 from pandas import DataFrame
 from plotly.graph_objects import Box, Figure
 
@@ -10,6 +11,7 @@ __all__ = [
     "box_plot",
     "bar_graph",
     "line_graph",
+    "plotly_chart",
     "multi_line_graph",
     "stacked_bar_graph"
 ]
@@ -102,6 +104,23 @@ def _create_longform_df(
     )
 
 
+# Wrapper around `st.plotly_chart` for attaching a configuration making graphs static.
+def plotly_chart(fig: Figure, use_container_width: bool = True, **kwargs) -> None:
+    """A wrapper around `st.plotly_chart` for plotting Plotly figures.
+
+    Used for attaching configurations and other valuable arguments for our app.
+
+    :param fig: A Plotly figure.
+    :param use_container_width: Whether or not to use the full container.
+    """
+    st.plotly_chart(
+        fig,
+        use_container_width=use_container_width,
+        config={"staticPlot": True},
+        **kwargs
+    )
+
+
 # Primitive graphs
 def bar_graph(
     x: list,
@@ -123,10 +142,7 @@ def bar_graph(
             GeneralConstants.PRIMARY_COLOR if color is None else color
         ]
     ).update_xaxes(
-        fixedrange=True,
         type="category"
-    ).update_yaxes(
-        fixedrange=True
     )
 
 
@@ -163,10 +179,7 @@ def box_plot(
         },
         title_text=title
     ).update_xaxes(
-        fixedrange=True,
         type="category"
-    ).update_yaxes(
-        fixedrange=True
     )
 
 
@@ -186,10 +199,6 @@ def line_graph(
         title=title
     ).update_traces(
         line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
-    ).update_xaxes(
-        fixedrange=True
-    ).update_yaxes(
-        fixedrange=True
     )
 
 
@@ -217,10 +226,7 @@ def multi_line_graph(
         color="Legend",
         title=title
     ).update_xaxes(
-        fixedrange=True,
         type="category"
-    ).update_yaxes(
-        fixedrange=True
     )
 
 
@@ -255,8 +261,5 @@ def stacked_bar_graph(
             "orientation": "h"
         }
     ).update_xaxes(
-        fixedrange=True,
         type="category"
-    ).update_yaxes(
-        fixedrange=True
     )

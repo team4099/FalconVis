@@ -13,6 +13,7 @@ from utils import (
     colored_metric,
     GeneralConstants,
     GraphType,
+    plotly_chart,
     Queries,
     retrieve_team_list,
     retrieve_scouting_data,
@@ -268,7 +269,7 @@ class MatchManager(PageManager):
                 for game_piece in (Queries.CONE, Queries.CUBE)
             ]
 
-            st.plotly_chart(
+            plotly_chart(
                 stacked_bar_graph(
                     combined_teams,
                     game_piece_breakdown,
@@ -280,8 +281,7 @@ class MatchManager(PageManager):
                         "Total # of Cones Scored": GeneralConstants.CONE_COLOR,  # Cone color
                         "Total # of Cubes Scored": GeneralConstants.CUBE_COLOR  # Cube color
                     }
-                ).update_layout(xaxis={"categoryorder": "total descending"}),
-                use_container_width=True
+                ).update_layout(xaxis={"categoryorder": "total descending"})
             )
 
         # Breaks down cycles/point contributions among both alliances in Autonomous.
@@ -301,7 +301,7 @@ class MatchManager(PageManager):
                     self.calculated_stats.cartesian_product(*cycles_in_alliance, reduce_with_sum=True)
                 )
 
-            st.plotly_chart(
+            plotly_chart(
                 box_plot(
                     ["Red Alliance", "Blue Alliance"],
                     auto_alliance_distributions,
@@ -316,8 +316,7 @@ class MatchManager(PageManager):
                         else f"Points Contributed During Autonomous (N={len(auto_alliance_distributions[0])})"
                     ),
                     color_sequence=color_sequence
-                ),
-                use_container_width=True
+                )
             )
 
         # Breaks down cycles/point contributions among both alliances in Teleop.
@@ -337,7 +336,7 @@ class MatchManager(PageManager):
                     self.calculated_stats.cartesian_product(*cycles_in_alliance, reduce_with_sum=True)
                 )
 
-            st.plotly_chart(
+            plotly_chart(
                 box_plot(
                     ["Red Alliance", "Blue Alliance"],
                     teleop_alliance_distributions,
@@ -352,8 +351,7 @@ class MatchManager(PageManager):
                         else f"Points Contributed During Teleop (N={len(teleop_alliance_distributions[0])})"
                     ),
                     color_sequence=color_sequence
-                ),
-                use_container_width=True
+                )
             )
 
         # Show cumulative cycles/point contributions (auto and teleop)
@@ -365,7 +363,7 @@ class MatchManager(PageManager):
                 )
             ]
 
-            st.plotly_chart(
+            plotly_chart(
                 box_plot(
                     ["Red Alliance", "Blue Alliance"],
                     cumulative_alliance_distributions,
@@ -380,6 +378,5 @@ class MatchManager(PageManager):
                         else f"Points Contributed During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
                     ),
                     color_sequence=color_sequence
-                ),
-                use_container_width=True
+                )
             )

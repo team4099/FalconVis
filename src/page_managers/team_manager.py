@@ -12,6 +12,7 @@ from utils import (
     GeneralConstants,
     GraphType,
     line_graph,
+    plotly_chart,
     Queries,
     retrieve_team_list,
     retrieve_scouting_data,
@@ -220,7 +221,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 else self.calculated_stats.points_contributed_by_match(team_number, Queries.AUTO_GRID)
             )
 
-            st.plotly_chart(
+            plotly_chart(
                 line_graph(
                     x=team_data[Queries.MATCH_KEY],
                     y=auto_cycles_over_time,
@@ -235,8 +236,7 @@ class TeamManager(PageManager, ContainsMetrics):
                         if using_cycle_contributions
                         else "Auto Points Contributed Over Time"
                     )
-                ),
-                use_container_width=True
+                )
             )
 
         # Bar graph for displaying how successful a team is at their auto engaging.
@@ -257,15 +257,14 @@ class TeamManager(PageManager, ContainsMetrics):
                 Criteria.AUTO_ATTEMPT_CRITERIA
             ) - total_successful_engages - total_successful_docks
 
-            st.plotly_chart(
+            plotly_chart(
                 bar_graph(
                     x=["# of Successful Engages", "# of Successful Docks", "# of Missed Engages"],
                     y=[total_successful_engages, total_successful_docks, total_missed_engages],
                     x_axis_label="",
                     y_axis_label="# of Occurences",
                     title="Auto Charge Station Statistics"
-                ),
-                use_container_width=True
+                )
             )
 
     def generate_teleop_graphs(
@@ -302,7 +301,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 Queries.HIGH
             ) * (1 if using_cycle_contributions else 5)
 
-            st.plotly_chart(
+            plotly_chart(
                 bar_graph(
                     x=["Hybrid Avr.", "Mid Avr.", "High Avr."],
                     y=[cycles_for_low, cycles_for_mid, cycles_for_high],
@@ -317,8 +316,7 @@ class TeamManager(PageManager, ContainsMetrics):
                         if using_cycle_contributions
                         else "Average Pts. Contributed by Height"
                     )
-                ),
-                use_container_width=True
+                )
             )
 
         # Graph for teleop cycles over time
@@ -329,7 +327,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 else self.calculated_stats.points_contributed_by_match(team_number, Queries.TELEOP_GRID)
             )
 
-            st.plotly_chart(
+            plotly_chart(
                 line_graph(
                     x=team_data[Queries.MATCH_KEY],
                     y=teleop_cycles_over_time,
@@ -344,8 +342,7 @@ class TeamManager(PageManager, ContainsMetrics):
                         if using_cycle_contributions
                         else "Teleop Points Contributed Over Time"
                     )
-                ),
-                use_container_width=True
+                )
             )
 
         # Stacked bar graph displaying the breakdown of cones and cubes in Teleop
@@ -361,7 +358,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 Queries.CUBE
             ).sum()
 
-            st.plotly_chart(
+            plotly_chart(
                 stacked_bar_graph(
                     x=[str(team_number)],
                     y=[[total_cones_scored], [total_cubes_scored]],
@@ -372,6 +369,5 @@ class TeamManager(PageManager, ContainsMetrics):
                         "Total # of Cones Scored": GeneralConstants.CONE_COLOR,  # Cone color
                         "Total # of Cubes Scored": GeneralConstants.CUBE_COLOR  # Cube color
                     }
-                ),
-                use_container_width=True
+                )
             )
