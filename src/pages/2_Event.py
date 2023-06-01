@@ -14,3 +14,7 @@ event_manager = EventManager()
 if __name__ == '__main__':
     # Write the title of the page.
     st.write("# Event")
+    
+    # Show breakdown of event (average cycles of top 8, 16 and 24 teams)
+    event_manager.generate_event_breakdown()
+    
