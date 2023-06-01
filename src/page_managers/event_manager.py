@@ -43,7 +43,7 @@ class EventManager(PageManager):
             colored_metric(
                 "Avg. Cycles (Top 8)",
                 mean(average_cycles_per_team[:8]),
-                background_color=GeneralConstants.TEAM_GOLD,
+                background_color=GeneralConstants.PRIMARY_COLOR,
                 opacity=0.5
             )
 
@@ -52,7 +52,7 @@ class EventManager(PageManager):
             colored_metric(
                 "Avg. Cycles (Top 16)",
                 mean(average_cycles_per_team[:16]),
-                background_color=GeneralConstants.TEAM_GOLD,
+                background_color=GeneralConstants.PRIMARY_COLOR,
                 opacity=0.5
             )
         
@@ -61,7 +61,7 @@ class EventManager(PageManager):
             colored_metric(
                 "Avg. Cycles (Top 24)",
                 mean(average_cycles_per_team[:24]),
-                background_color=GeneralConstants.TEAM_GOLD,
+                background_color=GeneralConstants.PRIMARY_COLOR,
                 opacity=0.5
             )
 
