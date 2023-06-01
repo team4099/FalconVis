@@ -46,7 +46,7 @@ def colored_metric(
     # Style card to use background color if border color isn't defined
     if border_color is None:
         border_color = background_color
-        border_opacity = 1
+        border_opacity = (1 if border_opacity is None else border_opacity)
 
     with open("./src/utils/components/colored_metric_component.html") as html_file:
         html_template = html_file.read().format(
