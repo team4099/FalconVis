@@ -356,7 +356,7 @@ class MatchManager(PageManager):
                 use_container_width=True
             )
 
-        # Show cumulative cycles/point contributions (auto + teleop)
+        # Show cumulative cycles/point contributions (auto and teleop)
         with cumulative_cycles_col:
             cumulative_alliance_distributions = [
                 auto_distribution + teleop_distribution
