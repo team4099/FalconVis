@@ -202,7 +202,7 @@ def line_graph(
         y=y_axis_label,
         title=title
     ).update_traces(
-        marker_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
+        line_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
     )
 
 
