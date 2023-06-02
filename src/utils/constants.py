@@ -46,7 +46,7 @@ class GeneralConstants:
 class EventSpecificConstants:
     """Constants specific to an event."""
 
-    EVENT_CODE = "2023chcmp"
+    EVENT_CODE = "2023new"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
 
 
