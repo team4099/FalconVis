@@ -136,7 +136,8 @@ class TeamManager(PageManager, ContainsMetrics):
             colored_metric(
                 "IQR of Points Contributed",
                 iqr_of_points_contributed,
-                threshold=iqr_for_percentile
+                threshold=iqr_for_percentile,
+                invert_threshold=True
             )
 
         # Metric for total auto engage attempts
