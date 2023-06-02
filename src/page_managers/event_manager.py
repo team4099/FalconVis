@@ -27,6 +27,32 @@ class EventManager(PageManager):
             retrieve_scouting_data()
         )
 
+    @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+    def _retrieve_cycle_distributions(_self, type_of_grid: str) -> list:
+        """Retrieves cycle distributions across an event for autonomous/teleop.
+
+        :param type_of_grid: The mode to retrieve cycle data for (autonomous/teleop).
+        :return: A list containing the cycle distirbutions for each team.
+        """
+        teams = retrieve_team_list()
+        return [
+            _self.calculated_stats.cycles_by_match(team, type_of_grid)
+            for team in teams
+        ]
+
+    @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+    def _retrieve_point_distributions(_self, type_of_grid: str) -> list:
+        """Retrieves point distributions across an event for autonomous/teleop.
+
+        :param type_of_grid: The mode to retrieve point contribution data for (autonomous/teleop).
+        :return: A list containing the point distirbutions for each team.
+        """
+        teams = retrieve_team_list()
+        return [
+            _self.calculated_stats.points_contributed_by_match(team, type_of_grid)
+            for team in teams
+        ]
+
     def generate_input_section(self) -> None:
         """Defines that there are no inputs for the event page, showing event-wide graphs."""
         return
@@ -84,24 +110,18 @@ class EventManager(PageManager):
         # Display event-wide graph surrounding each team and their cycle/point contributions in autonomous.
         with auto_cycles_col:
             variable_key = f"auto_cycles_col_{type_of_graph}"
-            distribution_key = f"auto_distributions_{type_of_graph}"
 
-            # TODO: Use @cache_data rather than session state to cache teams' data
-            if not st.session_state.get(distribution_key):
-                st.session_state[distribution_key] = [
-                    (
-                        self.calculated_stats.cycles_by_match(team, Queries.AUTO_GRID)
-                        if display_cycle_contributions
-                        else self.calculated_stats.points_contributed_by_match(team, Queries.AUTO_GRID)
-                    )
-                    for team in teams
-                ]
+            auto_distributions = (
+                self._retrieve_cycle_distributions(Queries.AUTO_GRID)
+                if display_cycle_contributions
+                else self._retrieve_point_distributions(Queries.AUTO_GRID)
+            )
 
             sorted_distributions = dict(
                 sorted(
                     {
                         team: distribution
-                        for team, distribution in zip(teams, st.session_state[distribution_key])
+                        for team, distribution in zip(teams, auto_distributions)
                     }.items(),
                     key=lambda pair: pair[1].median(),
                     reverse=True
@@ -153,24 +173,18 @@ class EventManager(PageManager):
         # Display event-wide graph surrounding each team and their cycle/point contributions in teleop.
         with teleop_cycles_col:
             variable_key = f"teleop_cycles_col_{type_of_graph}"
-            distribution_key = f"teleop_distributions_{type_of_graph}"
 
-            # Use session state to cache teams' data
-            if not st.session_state.get(distribution_key):
-                st.session_state[distribution_key] = [
-                    (
-                        self.calculated_stats.cycles_by_match(team, Queries.TELEOP_GRID)
-                        if display_cycle_contributions
-                        else self.calculated_stats.points_contributed_by_match(team, Queries.TELEOP_GRID)
-                    )
-                    for team in teams
-                ]
+            teleop_distributions = (
+                self._retrieve_cycle_distributions(Queries.TELEOP_GRID)
+                if display_cycle_contributions
+                else self._retrieve_point_distributions(Queries.TELEOP_GRID)
+            )
 
             sorted_distributions = dict(
                 sorted(
                     {
                         team: distribution
-                        for team, distribution in zip(teams, st.session_state[distribution_key])
+                        for team, distribution in zip(teams, teleop_distributions)
                     }.items(),
                     key=lambda pair: pair[1].median(),
                     reverse=True
