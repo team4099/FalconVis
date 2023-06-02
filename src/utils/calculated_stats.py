@@ -2,6 +2,7 @@
 
 from typing import Callable
 
+import numpy as np
 from numpy import percentile
 from pandas import DataFrame, Series
 
@@ -25,10 +26,11 @@ class CalculatedStats:
         """
         return self.points_contributed_by_match(team).mean()
 
-    def points_contributed_by_match(self, team: int) -> Series:
+    def points_contributed_by_match(self, team: int, type_of_grid: str = "") -> Series:
         """Returns the points contributed by match for a team.
 
         :param team: The team number to calculate the points contributed over the matches they played.
+        :param type_of_grid: Optional argument defining which mode to return the total points for (auto/teleop).
         :return: A Series containing the points contributed by said team per match.
         """
         team_data = scouting_data_for_team(team, self.data)
@@ -43,6 +45,9 @@ class CalculatedStats:
         auto_mobility_points = team_data[Queries.LEFT_COMMUNITY].apply(
             lambda left_community: Criteria.MOBILITY_CRITERIA[left_community] * 3
         )
+        auto_charge_station_points = team_data[Queries.AUTO_CHARGING_STATE].apply(
+            lambda charging_state: Criteria.AUTO_CHARGE_POINTAGE.get(charging_state, 0)
+        )
 
         teleop_grid_points = team_data[Queries.TELEOP_GRID].apply(
             lambda grid_data: sum([
@@ -56,7 +61,18 @@ class CalculatedStats:
             lambda charging_state: Criteria.ENDGAME_POINTAGE.get(charging_state, 0)
         )
 
-        return auto_grid_points + auto_mobility_points + teleop_grid_points + endgame_points
+        if type_of_grid == Queries.AUTO_GRID:
+            return auto_grid_points + auto_mobility_points + auto_charge_station_points
+        elif type_of_grid == Queries.TELEOP_GRID:
+            return teleop_grid_points
+
+        return (
+            auto_grid_points
+            + auto_mobility_points
+            + auto_charge_station_points
+            + teleop_grid_points
+            + endgame_points
+        )
 
     # Cycle calculation methods
     def average_cycles(self, team: int, type_of_grid: str) -> float:
@@ -68,6 +84,16 @@ class CalculatedStats:
         """
         return self.cycles_by_match(team, type_of_grid).mean()
 
+    def average_cycles_for_height(self, team: int, type_of_grid: str, height: str) -> float:
+        """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
+
+        :param team: The team number to calculate the average cycles for.
+        :param type_of_grid: The mode to calculate said cycles for (autonomous/teleop)
+        :param height: The height to return cycles by match for (Low/Mid/High).
+        :return: A float representing the average cycles for said team in the mode specified.
+        """
+        return self.cycles_by_height_per_match(team, type_of_grid, height).mean()
+
     def cycles_by_match(self, team: int, type_of_grid: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) in a match
 
@@ -78,6 +104,47 @@ class CalculatedStats:
         team_data = scouting_data_for_team(team, self.data)
         return team_data[type_of_grid].apply(
             lambda grid_data: len(grid_data.split("|"))
+        )
+
+    def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
+        """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
+
+        :param team: The team number to calculate the cycles by height per match for.
+        :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
+        :param height: The height to return cycles by match for (Low/Mid/High).
+        :return: A series containing the cycles per match for the mode specified.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        return team_data[type_of_grid].apply(
+            lambda grid_data: len([
+                game_piece for game_piece in grid_data.split("|")
+                if game_piece and game_piece[1] == height
+            ])
+        )
+
+    def cycles_by_game_piece_per_match(self, team: int, type_of_grid: str, game_piece: str) -> Series:
+        """Returns the cycles for a certain game piece across matches.
+
+        :param team: The team number to calculate the cycles by game piece per match for.
+        :param type_of_grid: The type of mode to calculate the game piece cycles for (autonomous/teleop).
+        :param game_piece: The type of game piece to count cycles for.
+        :return: A series containing the cycles per match for the game piece specified.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        game_piece_positions = (
+            {"1", "3", "4", "6", "7", "9"}
+            if game_piece == Queries.CONE
+            else {"2", "5", "8"}
+        )
+
+        return team_data[type_of_grid].apply(
+            lambda grid_data: len([
+                cycle for cycle in grid_data.split("|")
+                if cycle and (
+                        cycle[0] in game_piece_positions
+                        or cycle[2:] == game_piece
+                )
+            ])
         )
 
     # Accuracy methods
@@ -159,3 +226,23 @@ class CalculatedStats:
         :return: A float representing the IQR.
         """
         return percentile(dataset, 75) - percentile(dataset, 25)
+
+    def cartesian_product(
+        self,
+        dataset_x: list,
+        dataset_y: list,
+        dataset_z: list,
+        reduce_with_sum: bool = False
+    ) -> np.ndarray:
+        """Creates a cartesian product (permutations of each element in the three datasets).
+
+        :param dataset_x: A dataset containing x values.
+        :param dataset_y: A dataset containing y values.
+        :param dataset_z: A dataset containing z values.
+        :param reduce_with_sum: Whether or not to add up the cartesian product for each tuple yielded.
+        :return: A list containing the cartesian products or the sum of it if `reduce_with_sum` is True.
+        """
+        return np.array([
+            (x + y + z if reduce_with_sum else (x, y, z))
+            for x in dataset_x for y in dataset_y for z in dataset_z
+        ])
