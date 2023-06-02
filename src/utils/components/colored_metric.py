@@ -14,6 +14,7 @@ def colored_metric(
     background_color: str = "#OE1117",
     opacity: float = 1.0,
     threshold: float | None = None,
+    invert_threshold: bool = False,
     value_formatter: Callable = None,
     border_color: str | None = None,
     border_opacity: float | None = None,
@@ -28,6 +29,7 @@ def colored_metric(
     :param background_color: A hex code representing the background color of the metric.
     :param opacity: The opacity of the metric if a background color exists.
     :param threshold: If a threshold exists, change the background color to denote whether the metric "passes" a threshold.
+    :param invert_threshold: Determines whether or not to invert the threshold (greater than threshold = red)
     :param value_formatter: Optional argument that formats the metric value passed in.
     :param border_color: A hex code representing the color of the border attached to the metric.
     :param border_opacity: The opacity of the border if it exists.
@@ -37,11 +39,19 @@ def colored_metric(
     """
     # Set background color based on threshold
     if threshold is not None and metric_value >= threshold:
-        background_color = "#052e16"
-        opacity = 0.5
-    elif threshold is not None and metric_value < threshold:
-        background_color = "#450a0a"
-        opacity = 0.5
+        if (
+            metric_value >= threshold and not invert_threshold
+            or metric_value <= threshold and invert_threshold
+        ):
+            background_color = "#052e16"
+            opacity = 0.5
+    elif threshold is not None:
+        if (
+            metric_value < threshold and not invert_threshold
+            or metric_value > threshold and invert_threshold
+        ):
+            background_color = "#450a0a"
+            opacity = 0.5
 
     # Style card to use background color if border color isn't defined
     if border_color is None:
