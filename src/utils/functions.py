@@ -34,6 +34,7 @@ def retrieve_scouting_data() -> DataFrame:
 
 
 # Cache for longer because match schedule is relatively constant.
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE * 4)
 def retrieve_match_schedule() -> DataFrame:
     """Retrieves the match schedule for the current event using TBA."""
     tba_instance = TBA(
