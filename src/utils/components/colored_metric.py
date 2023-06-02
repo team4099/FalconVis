@@ -40,15 +40,15 @@ def colored_metric(
     # Set background color based on threshold
     if threshold is not None and metric_value >= threshold:
         if (
-            metric_value >= threshold and not invert_threshold
-            or metric_value <= threshold and invert_threshold
+            (metric_value >= threshold and not invert_threshold)
+            or (metric_value <= threshold and invert_threshold)
         ):
             background_color = "#052e16"
             opacity = 0.5
     elif threshold is not None:
         if (
-            metric_value < threshold and not invert_threshold
-            or metric_value > threshold and invert_threshold
+            (metric_value < threshold and not invert_threshold)
+            or (metric_value > threshold and invert_threshold)
         ):
             background_color = "#450a0a"
             opacity = 0.5
