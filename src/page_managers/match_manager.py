@@ -40,7 +40,29 @@ class MatchManager(PageManager):
         :return: Returns a 2D list with the lists being the three teams for the Red and Blue alliances.
         """
         match_schedule = retrieve_match_schedule()
-        match_chosen = st.selectbox(
+
+        # Create columns to make the input section more structured.
+        filter_teams_col, match_selector_col = st.columns(2)
+
+        filter_by_team_number = str(
+            filter_teams_col.selectbox(
+                "Filter Matches by Team Number",
+                ["—"] + retrieve_team_list()
+            )
+        )
+
+        if filter_by_team_number != "—":
+            # Filter through matches where the selected team plays in.
+            match_schedule = match_schedule[
+                match_schedule["red_alliance"].apply(
+                    lambda alliance: ",".join(map(str, alliance))
+                ).str.contains(filter_by_team_number)
+                | match_schedule["blue_alliance"].apply(
+                    lambda alliance: ",".join(map(str, alliance))
+                ).str.contains(filter_by_team_number)
+            ]
+
+        match_chosen = match_selector_col.selectbox(
             "Choose Match",
             match_schedule["match_key"]
         )
