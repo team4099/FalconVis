@@ -103,7 +103,7 @@ def _create_longform_df(
         value_name=y_axis_title
     )
 
-
+  
 # Wrapper around `st.plotly_chart` for attaching a configuration making graphs static.
 def plotly_chart(fig: Figure, use_container_width: bool = True, **kwargs) -> None:
     """A wrapper around `st.plotly_chart` for plotting Plotly figures.
@@ -202,7 +202,7 @@ def line_graph(
         y=y_axis_label,
         title=title
     ).update_traces(
-        line_color=GeneralConstants.PRIMARY_COLOR if color is None else color
+        marker_color=(GeneralConstants.PRIMARY_COLOR if color is None else color)
     )
 
 
@@ -211,7 +211,7 @@ def multi_line_graph(
     x: list,
     y: list,
     x_axis_label: str = "x",
-    y_axis_label: list = [""],
+    y_axis_label: list = ["y"],
     y_axis_title: str = "y",
     title: str = ""
 ) -> Figure:
@@ -229,8 +229,6 @@ def multi_line_graph(
         y=y_axis_title,
         color="Legend",
         title=title
-    ).update_xaxes(
-        type="category"
     )
 
 
