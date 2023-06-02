@@ -5,9 +5,12 @@ from numpy import mean
 
 from .page_manager import PageManager
 from utils import (
+    box_plot,
     CalculatedStats,
     colored_metric,
     GeneralConstants,
+    GraphType,
+    plotly_chart,
     Queries, 
     retrieve_team_list, 
     retrieve_scouting_data
@@ -16,6 +19,8 @@ from utils import (
 
 class EventManager(PageManager):
     """The page manager for the `Event` page."""
+
+    TEAMS_TO_SPLIT_BY = 10  # Number of teams to split the plots by.
 
     def __init__(self):
         self.calculated_stats = CalculatedStats(
@@ -67,3 +72,149 @@ class EventManager(PageManager):
                 border_opacity=0.5,
             )
 
+    def generate_event_graphs(self, type_of_graph: str) -> None:
+        """Create event-wide graphs.
+
+        :param type_of_graph: The type of graphs to display (cycle contribution/point contribution).
+        """
+        display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+        teams = retrieve_team_list()
+        auto_cycles_col, teleop_cycles_col = st.columns(2, gap="large")
+
+        # Display event-wide graph surrounding each team and their cycle/point contributions in autonomous.
+        with auto_cycles_col:
+            variable_key = f"auto_cycles_col_{type_of_graph}"
+            distribution_key = f"auto_distributions_{type_of_graph}"
+
+            # TODO: Use @cache_data rather than session state to cache teams' data
+            if not st.session_state.get(distribution_key):
+                st.session_state[distribution_key] = [
+                    (
+                        self.calculated_stats.cycles_by_match(team, Queries.AUTO_GRID)
+                        if display_cycle_contributions
+                        else self.calculated_stats.points_contributed_by_match(team, Queries.AUTO_GRID)
+                    )
+                    for team in teams
+                ]
+
+            sorted_distributions = dict(
+                sorted(
+                    {
+                        team: distribution
+                        for team, distribution in zip(teams, st.session_state[distribution_key])
+                    }.items(),
+                    key=lambda pair: pair[1].median(),
+                    reverse=True
+                )
+            )
+
+            teams = list(sorted_distributions.keys())
+            auto_distributions = list(sorted_distributions.values())
+
+            if not st.session_state.get(variable_key):
+                st.session_state[variable_key] = 0
+
+            plotly_chart(
+                box_plot(
+                    teams[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    auto_distributions[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    x_axis_label="Teams",
+                    y_axis_label=f"{'Cycle' if display_cycle_contributions else 'Point'} Distribution",
+                    title=f"{'Cycle' if display_cycle_contributions else 'Point'} Contributions in Autonomous"
+                ).update_layout(
+                    showlegend=False
+                )
+            )
+
+            previous_col, next_col = st.columns(2)
+
+            if previous_col.button(
+                f"Previous {self.TEAMS_TO_SPLIT_BY} Teams",
+                use_container_width=True,
+                key=f"prevAuto{type_of_graph}",
+                disabled=(st.session_state[variable_key] - self.TEAMS_TO_SPLIT_BY < 0)
+            ):
+                st.session_state[variable_key] -= self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+            if next_col.button(
+                f"Next {self.TEAMS_TO_SPLIT_BY} Teams",
+                use_container_width=True,
+                key=f"nextAuto{type_of_graph}",
+                disabled=(st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY >= len(teams))
+            ):
+                st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+        # Display event-wide graph surrounding each team and their cycle/point contributions in teleop.
+        with teleop_cycles_col:
+            variable_key = f"teleop_cycles_col_{type_of_graph}"
+            distribution_key = f"teleop_distributions_{type_of_graph}"
+
+            # Use session state to cache teams' data
+            if not st.session_state.get(distribution_key):
+                st.session_state[distribution_key] = [
+                    (
+                        self.calculated_stats.cycles_by_match(team, Queries.TELEOP_GRID)
+                        if display_cycle_contributions
+                        else self.calculated_stats.points_contributed_by_match(team, Queries.TELEOP_GRID)
+                    )
+                    for team in teams
+                ]
+
+            sorted_distributions = dict(
+                sorted(
+                    {
+                        team: distribution
+                        for team, distribution in zip(teams, st.session_state[distribution_key])
+                    }.items(),
+                    key=lambda pair: pair[1].median(),
+                    reverse=True
+                )
+            )
+
+            teams = list(sorted_distributions.keys())
+            teleop_distributions = list(sorted_distributions.values())
+
+            if not st.session_state.get(variable_key):
+                st.session_state[variable_key] = 0
+
+            plotly_chart(
+                box_plot(
+                    teams[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    teleop_distributions[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    x_axis_label="Teams",
+                    y_axis_label=f"{'Cycle' if display_cycle_contributions else 'Point'} Distribution",
+                    title=f"{'Cycle' if display_cycle_contributions else 'Point'} Contributions in Teleop"
+                ).update_layout(
+                    showlegend=False
+                )
+            )
+
+            previous_col, next_col = st.columns(2)
+
+            if previous_col.button(
+                    f"Previous {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"prevTele{type_of_graph}",
+                    disabled=(st.session_state[variable_key] - self.TEAMS_TO_SPLIT_BY < 0)
+            ):
+                st.session_state[variable_key] -= self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+            if next_col.button(
+                    f"Next {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"nextTele{type_of_graph}",
+                    disabled=(st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY >= len(teams))
+            ):
+                st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()

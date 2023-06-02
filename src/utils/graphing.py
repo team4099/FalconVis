@@ -159,7 +159,11 @@ def box_plot(
     # Use graph objects in order to be able to individually color candlesticks.
     fig = Figure()
 
-    for x_data, y_data, color in zip(x, y, (color_sequence if color_sequence else [None] * len(y))):
+    for x_data, y_data, color in zip(
+        x,
+        y,
+        (color_sequence if color_sequence else [GeneralConstants.PRIMARY_COLOR] * len(y))
+    ):
         fig.add_trace(
             Box(
                 y=y_data,
