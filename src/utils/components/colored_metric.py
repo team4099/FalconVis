@@ -44,7 +44,7 @@ def colored_metric(
             or (metric_value <= threshold and invert_threshold)
         ):
             background_color = "#052e16"
-            opacity = 0.5:
+            opacity = 0.5
   
         if (
             (metric_value < threshold and not invert_threshold)
