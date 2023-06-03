@@ -123,7 +123,7 @@ class EventManager(PageManager):
                         team: distribution
                         for team, distribution in zip(teams, auto_distributions)
                     }.items(),
-                    key=lambda pair: pair[1].median(),
+                    key=lambda pair: (pair[1].median(), pair[1].max()),
                     reverse=True
                 )
             )
@@ -186,7 +186,7 @@ class EventManager(PageManager):
                         team: distribution
                         for team, distribution in zip(teams, teleop_distributions)
                     }.items(),
-                    key=lambda pair: pair[1].median(),
+                    key=lambda pair: (pair[1].median(), pair[1].max()),
                     reverse=True
                 )
             )
