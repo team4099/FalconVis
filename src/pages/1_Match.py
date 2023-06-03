@@ -3,8 +3,7 @@
 import streamlit as st
 
 from page_managers import MatchManager
-from streamlit_toggle import toggle
-
+from utils import GraphType
 
 
 # Configuration for Streamlit
@@ -32,6 +31,28 @@ if __name__ == '__main__':
 
     with comparison_tab:
         st.write("### :red[Red] vs. :blue[Blue] Graphs")
+
+        # Generate the match prediction dashboard that give a rough overview of the two alliances.
+        match_manager.generate_match_prediction_dashboard(*teams_selected)
+
+        # Create cycle contribution and point contribution tabs for the different types of graphs
+        cycle_contribution_breakdown_tab, point_contribution_breakdown_tab = st.tabs(
+            ["📈 Cycle Contribution Breakdown", "🧮 Point Contribution Breakdown"]
+        )
+
+        # Plot cycle contribution graphs
+        with cycle_contribution_breakdown_tab:
+            match_manager.generate_match_prediction_graphs(
+                *teams_selected,
+                type_of_graph=GraphType.CYCLE_CONTRIBUTIONS
+            )
+
+        # Plot point contribution graphs
+        with point_contribution_breakdown_tab:
+            match_manager.generate_match_prediction_graphs(
+                *teams_selected,
+                type_of_graph=GraphType.POINT_CONTRIBUTIONS
+            )
 
     with red_alliance_tab:
         st.write("### :red[Red] Alliance Graphs")
