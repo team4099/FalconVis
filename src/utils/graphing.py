@@ -97,7 +97,6 @@ def _create_longform_df(
         ]
     )
 
-
     resultant_df = resultant_df.melt(
         id_vars=x_axis_label,
         value_vars=y_axis_label,
@@ -105,6 +104,7 @@ def _create_longform_df(
         value_name=y_axis_title
     )
     return resultant_df
+
 
 def _create_multicolumn_df(
     x_axis: list,
@@ -121,7 +121,7 @@ def _create_multicolumn_df(
     :return: A multiple column DataFrame where the headers are the x-axis label and the y axis labels.
     """
     
-    rows  = []
+    rows = []
     for x, y in zip(x_axis, y_axis):
         row = [x]
         row.extend(y)
@@ -130,12 +130,9 @@ def _create_multicolumn_df(
     headers = [x_axis_label]
     headers.extend(y_axis_label)
 
-
     return DataFrame.from_dict(
-        [ {header:value for header, value in zip(headers, row)} for row in rows]     
+        [{header: value for header, value in zip(headers, row)} for row in rows]
     )
-    
-
 
   
 # Wrapper around `st.plotly_chart` for attaching a configuration making graphs static.
@@ -170,14 +167,14 @@ def bar_graph(
         data_df = _create_multicolumn_df(x, y, x_axis_label=x_axis_label, y_axis_label=[y_axis_label]+hover_data)
     else:
         data_df = _create_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
-    
+
     return px.bar(
         data_df,
         x=(y_axis_label if horizontal else x_axis_label),
         y=(x_axis_label if horizontal else y_axis_label),
         title=title,
         orientation=("h" if horizontal else "v"),
-        hover_data = hover_data,
+        hover_data=hover_data,
         color_discrete_sequence=[
             GeneralConstants.PRIMARY_COLOR if color is None else color
         ]
@@ -254,7 +251,8 @@ def multi_line_graph(
     x_axis_label: str = "x",
     y_axis_label: list = ["y"],
     y_axis_title: str = "y",
-    title: str = ""
+    title: str = "",
+    color_map: dict | None = None
 ) -> Figure:
     data_df = _create_longform_df(
         x,
@@ -268,7 +266,8 @@ def multi_line_graph(
         x=x_axis_label,
         y=y_axis_title,
         color="Legend",
-        title=title
+        title=title,
+        color_discrete_map=color_map
     ).update_traces(
         line=dict(width=4)
     )

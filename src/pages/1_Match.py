@@ -3,8 +3,7 @@
 import streamlit as st
 
 from page_managers import MatchManager
-from utils import GraphType
-
+from utils import GeneralConstants, GraphType
 
 # Configuration for Streamlit
 st.set_page_config(
@@ -20,9 +19,6 @@ if __name__ == '__main__':
 
     # Generate the input section of the `Match` page.
     teams_selected = match_manager.generate_input_section()
-
-
-    display_points = st.checkbox(label="Display Point Total", )
 
     # Tabs to switch between the Comparison Graphs/Red Alliance/Blue Alliance
     comparison_tab, red_alliance_tab, blue_alliance_tab = st.tabs(
@@ -56,9 +52,62 @@ if __name__ == '__main__':
 
     with red_alliance_tab:
         st.write("### :red[Red] Alliance Graphs")
-        match_manager.generate_graphs(teams_selected[0], display_points)
 
+        red_auto_tab, red_teleop_tab = st.tabs(
+            ["🤖 Autonomous", "🎮 Teleop"]
+        )
+
+        with red_auto_tab:
+            red_auto_cycle_tab, red_auto_points_tab = st.tabs(
+                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+            )
+
+            with red_auto_cycle_tab:
+                match_manager.generate_autonomous_graphs(
+                    teams_selected[0],
+                    type_of_graph=GraphType.CYCLE_CONTRIBUTIONS,
+                    color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
+                )
+
+            with red_auto_points_tab:
+                match_manager.generate_autonomous_graphs(
+                    teams_selected[0],
+                    type_of_graph=GraphType.POINT_CONTRIBUTIONS,
+                    color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
+                )
+
+        with red_teleop_tab:
+            red_teleop_cycle_tab, red_teleop_points_tab = st.tabs(
+                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+            )
 
     with blue_alliance_tab:
         st.write("### :blue[Blue] Alliance Graphs")
-        match_manager.generate_graphs(teams_selected[1], display_points)
+
+        blue_auto_tab, blue_teleop_tab = st.tabs(
+            ["🤖 Autonomous", "🎮 Teleop"]
+        )
+
+        with blue_auto_tab:
+            blue_auto_cycle_tab, blue_auto_points_tab = st.tabs(
+                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+            )
+
+            with blue_auto_cycle_tab:
+                match_manager.generate_autonomous_graphs(
+                    teams_selected[1],
+                    type_of_graph=GraphType.CYCLE_CONTRIBUTIONS,
+                    color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
+                )
+
+            with blue_auto_points_tab:
+                match_manager.generate_autonomous_graphs(
+                    teams_selected[1],
+                    type_of_graph=GraphType.POINT_CONTRIBUTIONS,
+                    color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
+                )
+
+        with blue_teleop_tab:
+            blue_teleop_cycle_tab, blue_teleop_points_tab = st.tabs(
+                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+            )

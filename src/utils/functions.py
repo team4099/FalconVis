@@ -88,3 +88,4 @@ def retrieve_team_list() -> list:
             scouting_data["TeamNumber"]
         )
     )
+

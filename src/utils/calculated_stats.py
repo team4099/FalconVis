@@ -74,6 +74,27 @@ class CalculatedStats:
             + endgame_points
         )
 
+    def classify_autos_by_match(self, team: int) -> Series:
+        """Classifies each auto mode performed by a team.
+        As of now, this method only classifies grid placement (cable cover/charge station/loading zone).
+
+        :return: A series containing grid placements indicating where the team started.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        positions_to_placements = {
+            "1": Queries.LEFT, "2": Queries.LEFT, "3": Queries.RIGHT,
+            "4": Queries.COOP, "5": Queries.COOP, "6": Queries.COOP,
+            "7": Queries.RIGHT, "8": Queries.RIGHT, "9": Queries.RIGHT
+        }
+
+        return team_data[Queries.AUTO_GRID].apply(
+            lambda grid_data: (
+                positions_to_placements[grid_data[0]]
+                if grid_data
+                else Queries.LEFT
+            )
+        )
+
     # Cycle calculation methods
     def average_cycles(self, team: int, type_of_grid: str) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
@@ -105,43 +126,6 @@ class CalculatedStats:
         return team_data[type_of_grid].apply(
             lambda grid_data: len(grid_data) if type(grid_data) is list else len(grid_data.split("|"))
         )
-    
-    def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
-        """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
-
-        :param team: The team number to calculate the cycles by match for.
-        :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
-        :param height: The height to return cycles by match for (Low/Mid/High).
-        :return: A series containing the cycles per match for the mode specified.
-        """
-        team_data = scouting_data_for_team(team, self.data)
-        return team_data[type_of_grid].apply(
-            lambda grid_data: len([
-                game_piece for game_piece in grid_data.split("|")
-                if game_piece and game_piece[1] == height
-            ])
-        )
-    
-    def cycles_by_game_piece_per_match(self, team: int, type_of_grid: str) -> Series:
-        """Returns the cycles for a certain mode (autonomous/teleop) and game piece(cone/cube) in a match
-
-        :param team: The team number to calculate the cycles by match for.
-        :param type_of_grid: The mode and game piece to return cycles by match for (autonomous_cone/autonomous_cube/teleop_cone/teleop_cube).
-        :return: A series containing the cycles per match for the mode specified.
-        """
-        team_data = scouting_data_for_team(team, self.data)
-        return team_data[type_of_grid].apply(
-            lambda game_piece_data: len(game_piece_data)
-        )
-    
-    def cycles_by_game_piece_average(self, team: int, type_of_grid: str) -> Series:
-        """Returns the average cycles for a certain mode (autonomous/teleop) and game piece(cone/cube) 
-
-        :param team: The team number to calculate the cycles by match for.
-        :param type_of_grid: The mode and game piece to return cycles by match for (autonomous_cone/autonomous_cube/teleop_cone/teleop_cube).
-        :return: A series containing the cycles per match for the mode specified.
-        """
-        return self.cycles_by_game_piece_per_match(team, type_of_grid).mean()
 
     def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) and height in a match

@@ -23,15 +23,8 @@ class GeneralConstants:
     AVERAGE_FOUL_RATE = 1.06
 
     # Color sequences
-    TEAM_GOLD_GRADIENT = [
-        "#EFAE09",
-        "#F1B828",
-        "#F5CC65",
-        "#F7D784",
-        "#F9E1A3",
-        "#FBEBC2",
-        "#FDF5E0"
-    ]
+    RED_ALLIANCE_GRADIENT = ["#731111", "#b04949", "#ed8282"]
+    BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1"]
 
     # Colors
     DARK_RED = "#450a0a"
@@ -89,6 +82,11 @@ class Queries:
     # Alliance constants
     RED_ALLIANCE = "red"
     BLUE_ALLIANCE = "blue"
+
+    # Grid placements
+    LEFT = "left"
+    COOP = "coop"
+    RIGHT = "right"
     
 
 class Criteria:
@@ -115,6 +113,9 @@ class Criteria:
     }
     SUCCESSFUL_ENGAGE_CRITERIA = {
         "Engage": 1
+    }
+    SUCCESSFUL_DOCK_CRITERIA = {
+        "Dock": 1
     }
 
     # Teleop Criteria
