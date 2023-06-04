@@ -302,3 +302,11 @@ class CalculatedStats:
             (x + y + z if reduce_with_sum else (x, y, z))
             for x in dataset_x for y in dataset_y for z in dataset_z
         ])
+
+    def driving_index(self, team: int) -> float:
+        """Determines how fast a team is based on multiplying their teleop cycles by their driver rating.
+
+        :param team: The team number to calculate a driving index for.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        return self.cycles_by_match(team, Queries.TELEOP_GRID).mean() * team_data[Queries.DRIVER_RATING].mean()

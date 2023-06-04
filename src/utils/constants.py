@@ -68,7 +68,8 @@ class Queries:
 
     TELEOP_GRID = "TeleopGrid"
     ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
-    CUMULATIVE_GRID = "CumulativeGrid"
+
+    DRIVER_RATING = "DriverRating"
 
     # Constants for different heights
     LOW = "L"

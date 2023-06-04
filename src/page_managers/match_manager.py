@@ -382,6 +382,53 @@ class MatchManager(PageManager):
                 )
             )
 
+    def generate_alliance_dashboard(self, team_numbers: list[int], color_gradient: list[str]) -> None:
+        """Generates an alliance dashboard in the `Match` page.
+
+        :param team_numbers: The teams to generate the alliance dashboard for.
+        :param color_gradient: The color gradient to use for graphs, depending on the alliance.
+        :return:
+        """
+        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col = st.columns(3)
+
+        fastest_cyclers = sorted(
+            {
+                team: self.calculated_stats.driving_index(team) for team in team_numbers
+            }.items(),
+            key=lambda pair: pair[1],
+            reverse=True
+        )
+
+        # Colored metric displaying the fastest cycler in the alliance
+        with fastest_cycler_col:
+            colored_metric(
+                "Fastest Cycler",
+                fastest_cyclers[0][0],
+                background_color=color_gradient[0],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the second fastest cycler in the alliance
+        with second_fastest_cycler_col:
+            colored_metric(
+                "Second Fastest Cycler",
+                fastest_cyclers[1][0],
+                background_color=color_gradient[1],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the slowest cycler in the alliance
+        with slowest_cycler_col:
+            colored_metric(
+                "Slowest Cycler",
+                fastest_cyclers[2][0],
+                background_color=color_gradient[2],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
     def generate_autonomous_graphs(
         self,
         team_numbers: list[int],

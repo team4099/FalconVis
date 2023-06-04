@@ -53,6 +53,12 @@ if __name__ == '__main__':
     with red_alliance_tab:
         st.write("### :red[Red] Alliance Graphs")
 
+        # Generate alliance dashboard
+        match_manager.generate_alliance_dashboard(
+            teams_selected[0],
+            color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
+        )
+
         red_auto_tab, red_teleop_tab = st.tabs(
             ["🤖 Autonomous", "🎮 Teleop"]
         )
@@ -83,6 +89,12 @@ if __name__ == '__main__':
 
     with blue_alliance_tab:
         st.write("### :blue[Blue] Alliance Graphs")
+
+        # Generate alliance dashboard
+        match_manager.generate_alliance_dashboard(
+            teams_selected[1],
+            color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
+        )
 
         blue_auto_tab, blue_teleop_tab = st.tabs(
             ["🤖 Autonomous", "🎮 Teleop"]
