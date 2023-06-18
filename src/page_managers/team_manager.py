@@ -178,7 +178,7 @@ class TeamManager(PageManager, ContainsMetrics):
             colored_metric(
                 "Auto Engage Accuracy",
                 auto_engage_accuracy,
-                threshold=75.0,
+                threshold=0.75,
                 value_formatter=lambda value: f"{value:.1%}"
             )
 

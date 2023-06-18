@@ -435,7 +435,7 @@ class MatchManager(PageManager):
         type_of_graph: str,
         color_gradient: list[str]
     ) -> None:
-        """Generates the graphs for the `Match` page.
+        """Generates the autonomous graphs for the `Match` page.
 
         :param team_numbers: The teams to generate the graphs for.
         :param type_of_graph: The type of graph to make (cycle contributions/point contributions).
@@ -622,4 +622,57 @@ class MatchManager(PageManager):
                     ),
                     color_map=dict(zip(team_numbers, color_gradient))
                 )
+            )
+
+    def generate_teleop_graphs(
+        self,
+        team_numbers: list[int],
+        type_of_graph: str,
+        color_gradient: list[str]
+    ) -> None:
+        """Generates the teleop graphs for the `Match` page.
+
+        :param team_numbers: The teams to generate the graphs for.
+        :param type_of_graph: The type of graph to make (cycle contributions/point contributions).
+        :param color_gradient: The color gradient to use for graphs, depending on the alliance.
+        :return:
+        """
+        display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+
+        teleop_cycles_by_level_col, teleop_game_piece_breakdown_col = st.columns(2)
+        teleop_cycles_over_time_col, teleop_cycles_distribution_col = st.columns(2)
+
+        # Graph the teleop cycles per team by level (High/Mid/Low)
+        with teleop_cycles_by_level_col:
+            cycles_by_height = []
+
+            for height in (Queries.HIGH, Queries.MID, Queries.LOW):
+                cycles_by_height.append([
+                    self.calculated_stats.average_cycles_for_height(
+                        team,
+                        Queries.TELEOP_GRID,
+                        height
+                    ) * (1 if display_cycle_contributions else Criteria.TELEOP_GRID_POINTAGE[height])
+                    for team in team_numbers
+                ])
+
+            plotly_chart(
+                stacked_bar_graph(
+                    team_numbers,
+                    cycles_by_height,
+                    x_axis_label="Teams",
+                    y_axis_label=["High", "Mid", "Low"],
+                    y_axis_title="",
+                    color_map=dict(
+                        zip(
+                            ["High", "Mid", "Low"],
+                            color_gradient
+                        )
+                    ),
+                    title=(
+                        "Average Cycles by Height"
+                        if display_cycle_contributions
+                        else "Average Points Contributed by Height"
+                    )
+                ).update_layout(xaxis={"categoryorder": "total descending"})
             )
