@@ -117,26 +117,23 @@ class EventManager(PageManager):
                 else self._retrieve_point_distributions(Queries.AUTO_GRID)
             )
 
-            sorted_distributions = dict(
+            auto_sorted_distributions = dict(
                 sorted(
-                    {
-                        team: distribution
-                        for team, distribution in zip(teams, auto_distributions)
-                    }.items(),
+                    zip(teams, auto_distributions),
                     key=lambda pair: (pair[1].median(), pair[1].mean()),
                     reverse=True
                 )
             )
 
-            teams = list(sorted_distributions.keys())
-            auto_distributions = list(sorted_distributions.values())
+            auto_sorted_teams = list(auto_sorted_distributions.keys())
+            auto_distributions = list(auto_sorted_distributions.values())
 
             if not st.session_state.get(variable_key):
                 st.session_state[variable_key] = 0
 
             plotly_chart(
                 box_plot(
-                    teams[
+                    auto_sorted_teams[
                         st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
                     auto_distributions[
@@ -180,26 +177,23 @@ class EventManager(PageManager):
                 else self._retrieve_point_distributions(Queries.TELEOP_GRID)
             )
 
-            sorted_distributions = dict(
+            teleop_sorted_distributions = dict(
                 sorted(
-                    {
-                        team: distribution
-                        for team, distribution in zip(teams, teleop_distributions)
-                    }.items(),
+                    zip(teams, teleop_distributions),
                     key=lambda pair: (pair[1].median(), pair[1].mean()),
                     reverse=True
                 )
             )
 
-            teams = list(sorted_distributions.keys())
-            teleop_distributions = list(sorted_distributions.values())
+            teleop_sorted_teams = list(teleop_sorted_distributions.keys())
+            teleop_distributions = list(teleop_sorted_distributions.values())
 
             if not st.session_state.get(variable_key):
                 st.session_state[variable_key] = 0
 
             plotly_chart(
                 box_plot(
-                    teams[
+                    teleop_sorted_teams[
                         st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
                     teleop_distributions[
