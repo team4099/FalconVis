@@ -676,3 +676,108 @@ class MatchManager(PageManager):
                     )
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
+
+        # Graph the breakdown of game pieces by each team
+        with teleop_game_piece_breakdown_col:
+            cones_scored_by_team = [
+                self.calculated_stats.cycles_by_game_piece_per_match(
+                    team,
+                    Queries.TELEOP_GRID,
+                    Queries.CONE
+                ).sum()
+                for team in team_numbers
+            ]
+            cubes_scored_by_team = [
+                self.calculated_stats.cycles_by_game_piece_per_match(
+                    team,
+                    Queries.TELEOP_GRID,
+                    Queries.CUBE
+                ).sum()
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    team_numbers,
+                    [cones_scored_by_team, cubes_scored_by_team],
+                    x_axis_label="Teams",
+                    y_axis_label=["Total # of Cones Scored", "Total # of Cubes Scored"],
+                    y_axis_title="",
+                    color_map=dict(
+                        zip(
+                            ["Total # of Cones Scored", "Total # of Cubes Scored"],
+                            [GeneralConstants.CONE_COLOR, GeneralConstants.CUBE_COLOR]
+                        )
+                    ),
+                    title="Game Piece Breakdown by Team"
+                ).update_layout(xaxis={"categoryorder": "total descending"})
+            )
+
+        # Box plot showing the distribution of cycles
+        with teleop_cycles_distribution_col:
+            cycles_by_team = [
+                (
+                    self.calculated_stats.cycles_by_match(team, Queries.TELEOP_GRID)
+                    if display_cycle_contributions
+                    else self.calculated_stats.points_contributed_by_match(team, Queries.TELEOP_GRID)
+                )
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                box_plot(
+                    team_numbers,
+                    cycles_by_team,
+                    x_axis_label="Teams",
+                    y_axis_label=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Distribution of Teleop Cycles"
+                        if display_cycle_contributions
+                        else "Distribution of Points Contributed During Teleop"
+                    ),
+                    show_underlying_data=True,
+                    color_sequence=color_gradient
+                )
+            )
+
+        # Plot cycles over time
+        with teleop_cycles_over_time_col:
+            cycles_by_team = [
+                (
+                    self.calculated_stats.cycles_by_match(team, Queries.TELEOP_GRID)
+                    if display_cycle_contributions
+                    else self.calculated_stats.points_contributed_by_match(team, Queries.TELEOP_GRID)
+                )
+                for team in team_numbers
+            ]
+            max_data_points = len(max(cycles_by_team, key=len))
+
+            # Populate missing data points with None
+            cycles_by_team = [
+                list(distribution) + [None] * (max_data_points - len(distribution))
+                for distribution in cycles_by_team
+            ]
+
+            plotly_chart(
+                multi_line_graph(
+                    range(max_data_points),
+                    cycles_by_team,
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed in Teleop Over Time"
+                    ),
+                    color_map=dict(zip(team_numbers, color_gradient))
+                )
+            )
