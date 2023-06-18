@@ -74,6 +74,27 @@ class CalculatedStats:
             + endgame_points
         )
 
+    def classify_autos_by_match(self, team: int) -> Series:
+        """Classifies each auto mode performed by a team.
+        As of now, this method only classifies grid placement (cable cover/charge station/loading zone).
+
+        :return: A series containing grid placements indicating where the team started.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        positions_to_placements = {
+            "1": Queries.LEFT, "2": Queries.LEFT, "3": Queries.RIGHT,
+            "4": Queries.COOP, "5": Queries.COOP, "6": Queries.COOP,
+            "7": Queries.RIGHT, "8": Queries.RIGHT, "9": Queries.RIGHT
+        }
+
+        return team_data[Queries.AUTO_GRID].apply(
+            lambda grid_data: (
+                positions_to_placements[grid_data[0]]
+                if grid_data
+                else Queries.LEFT
+            )
+        )
+
     # Cycle calculation methods
     def average_cycles(self, team: int, type_of_grid: str) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
@@ -103,7 +124,7 @@ class CalculatedStats:
         """
         team_data = scouting_data_for_team(team, self.data)
         return team_data[type_of_grid].apply(
-            lambda grid_data: len(grid_data.split("|"))
+            lambda grid_data: len(grid_data) if type(grid_data) is list else len(grid_data.split("|"))
         )
 
     def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
@@ -171,6 +192,41 @@ class CalculatedStats:
             Queries.AUTO_GRID
         ) + auto_missed_by_match  # Adding auto missed in order to get an accurate % (2 scored + 1 missed = 33%)
         return 1 - (auto_missed_by_match / auto_cycles_by_match)
+    
+    def auto_total_attempted_charge(self, team_number: int) -> int:
+        """Calculates the total times a team attempted to charge
+
+        :param team_number: The team to determine the auto accuracy per match for.
+        :return: the total times a team attempted to charge
+        """
+        attempted_charges = self.stat_per_match(team_number, Queries.AUTO_ENGAGE_ATTEMPTED).apply(
+            lambda state: int(state == "Engage") 
+        ).sum()
+
+        successful_charges = self.auto_total_successful_charge(team_number)
+
+        return successful_charges if attempted_charges < successful_charges else attempted_charges
+        
+
+    def auto_total_successful_charge(self, team_number: int) -> int:
+        """Calculates the total times a team successfully charged
+
+        :param team_number: The team to determine the auto accuracy per match for.
+        :return: the total times a team successfully charged
+        """
+        return self.stat_per_match(team_number, Queries.AUTO_CHARGING_STATE).apply(
+            lambda state: int(state == "Engage") 
+        ).sum()
+    
+    def auto_engage_success_rate(self, team_number: int) -> float:
+        """Calculates the successrate a team has for auto engaging
+
+        :param team_number: The team to determine the auto accuracy per match for.
+        :return: value from 0 to 1 that represent the percent succesrate, rounded to 3 decimal places
+        """
+        return round(self.auto_total_successful_charge(team_number) / self.auto_total_attempted_charge(team_number), 3)
+        
+        
 
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:
@@ -246,3 +302,11 @@ class CalculatedStats:
             (x + y + z if reduce_with_sum else (x, y, z))
             for x in dataset_x for y in dataset_y for z in dataset_z
         ])
+
+    def driving_index(self, team: int) -> float:
+        """Determines how fast a team is based on multiplying their teleop cycles by their driver rating.
+
+        :param team: The team number to calculate a driving index for.
+        """
+        team_data = scouting_data_for_team(team, self.data)
+        return self.cycles_by_match(team, Queries.TELEOP_GRID).mean() * team_data[Queries.DRIVER_RATING].mean()
