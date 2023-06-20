@@ -19,21 +19,28 @@ class CalculatedStats:
         self.data = data
 
     # Point contribution methods
-    def average_points_contributed(self, team: int) -> float:
+    def average_points_contributed(self, team_number: int) -> float:
         """Returns the average points contributed by a team.
 
-        :param team: The team number to calculate the average points contributed for.
-        """
-        return self.points_contributed_by_match(team).mean()
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
 
-    def points_contributed_by_match(self, team: int, type_of_grid: str = "") -> Series:
+        :param team_number: The team number to calculate the average points contributed for.
+        """
+        return self.points_contributed_by_match(team_number).mean()
+
+    def points_contributed_by_match(self, team_number: int, type_of_grid: str = "") -> Series:
         """Returns the points contributed by match for a team.
 
-        :param team: The team number to calculate the points contributed over the matches they played.
+        - Used for custom graphs with one team.
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
+
+        :param team_number: The team number to calculate the points contributed over the matches they played.
         :param type_of_grid: Optional argument defining which mode to return the total points for (auto/teleop).
         :return: A Series containing the points contributed by said team per match.
         """
-        team_data = scouting_data_for_team(team, self.data)
+        team_data = scouting_data_for_team(team_number, self.data)
 
         auto_grid_points = team_data[Queries.AUTO_GRID].apply(
             lambda grid_data: sum([
@@ -74,13 +81,13 @@ class CalculatedStats:
             + endgame_points
         )
 
-    def classify_autos_by_match(self, team: int) -> Series:
+    def classify_autos_by_match(self, team_number: int) -> Series:
         """Classifies each auto mode performed by a team.
         As of now, this method only classifies grid placement (cable cover/charge station/loading zone).
 
         :return: A series containing grid placements indicating where the team started.
         """
-        team_data = scouting_data_for_team(team, self.data)
+        team_data = scouting_data_for_team(team_number, self.data)
         positions_to_placements = {
             "1": Queries.LEFT, "2": Queries.LEFT, "3": Queries.RIGHT,
             "4": Queries.COOP, "5": Queries.COOP, "6": Queries.COOP,
@@ -96,46 +103,60 @@ class CalculatedStats:
         )
 
     # Cycle calculation methods
-    def average_cycles(self, team: int, type_of_grid: str) -> float:
+    def average_cycles(self, team_number: int, type_of_grid: str) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
 
-        :param team: The team number to calculate the average cycles for.
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
+
+        :param team_number: The team number to calculate the average cycles for.
         :param type_of_grid: The mode to calculate said cycles for (autonomous/teleop)
         :return: A float representing the average cycles for said team in the mode specified.
         """
-        return self.cycles_by_match(team, type_of_grid).mean()
+        return self.cycles_by_match(team_number, type_of_grid).mean()
 
-    def average_cycles_for_height(self, team: int, type_of_grid: str, height: str) -> float:
+    def average_cycles_for_height(self, team_number: int, type_of_grid: str, height: str) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
 
-        :param team: The team number to calculate the average cycles for.
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
+
+        :param team_number: The team number to calculate the average cycles for.
         :param type_of_grid: The mode to calculate said cycles for (autonomous/teleop)
         :param height: The height to return cycles by match for (Low/Mid/High).
         :return: A float representing the average cycles for said team in the mode specified.
         """
-        return self.cycles_by_height_per_match(team, type_of_grid, height).mean()
+        return self.cycles_by_height_per_match(team_number, type_of_grid, height).mean()
 
-    def cycles_by_match(self, team: int, type_of_grid: str) -> Series:
+    def cycles_by_match(self, team_number: int, type_of_grid: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) in a match
 
-        :param team: The team number to calculate the cycles by match for.
+        - Used for custom graphs with one team.
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
+
+        :param team_number: The team number to calculate the cycles by match for.
         :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
         :return: A series containing the cycles per match for the mode specified.
         """
-        team_data = scouting_data_for_team(team, self.data)
+        team_data = scouting_data_for_team(team_number, self.data)
         return team_data[type_of_grid].apply(
             lambda grid_data: len(grid_data) if type(grid_data) is list else len(grid_data.split("|"))
         )
 
-    def cycles_by_height_per_match(self, team: int, type_of_grid: str, height: str) -> Series:
+    def cycles_by_height_per_match(self, team_number: int, type_of_grid: str, height: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
 
-        :param team: The team number to calculate the cycles by height per match for.
+        - Used for custom graphs with one team.
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
+
+        :param team_number: The team number to calculate the cycles by height per match for.
         :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
         :param height: The height to return cycles by match for (Low/Mid/High).
         :return: A series containing the cycles per match for the mode specified.
         """
-        team_data = scouting_data_for_team(team, self.data)
+        team_data = scouting_data_for_team(team_number, self.data)
         return team_data[type_of_grid].apply(
             lambda grid_data: len([
                 game_piece for game_piece in grid_data.split("|")
@@ -143,15 +164,19 @@ class CalculatedStats:
             ])
         )
 
-    def cycles_by_game_piece_per_match(self, team: int, type_of_grid: str, game_piece: str) -> Series:
+    def cycles_by_game_piece_per_match(self, team_number: int, type_of_grid: str, game_piece: str) -> Series:
         """Returns the cycles for a certain game piece across matches.
 
-        :param team: The team number to calculate the cycles by game piece per match for.
+        - Used for custom graphs with one team.
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
+
+        :param team_number: The team number to calculate the cycles by game piece per match for.
         :param type_of_grid: The type of mode to calculate the game piece cycles for (autonomous/teleop).
         :param game_piece: The type of game piece to count cycles for.
         :return: A series containing the cycles per match for the game piece specified.
         """
-        team_data = scouting_data_for_team(team, self.data)
+        team_data = scouting_data_for_team(team_number, self.data)
         game_piece_positions = (
             {"1", "3", "4", "6", "7", "9"}
             if game_piece == Queries.CONE
@@ -172,6 +197,9 @@ class CalculatedStats:
     def average_auto_accuracy(self, team_number: int) -> float:
         """Returns the average auto accuracy of a team (wrapper around `auto_accuracy_by_match`).
 
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
+
         :param team_number: The team to determine the average auto accuracy for.
         :return: A float representing a percentage of the average auto accuracy of said team.
         """
@@ -179,6 +207,10 @@ class CalculatedStats:
 
     def auto_accuracy_by_match(self, team_number: int) -> Series:
         """Returns the auto accuracy of a team by match.
+
+        - Used for custom graphs with one team.
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
 
         :param team_number: The team to determine the auto accuracy per match for.
         :return: A series containing the auto accuracy by match for said team.
@@ -192,41 +224,6 @@ class CalculatedStats:
             Queries.AUTO_GRID
         ) + auto_missed_by_match  # Adding auto missed in order to get an accurate % (2 scored + 1 missed = 33%)
         return 1 - (auto_missed_by_match / auto_cycles_by_match)
-    
-    def auto_total_attempted_charge(self, team_number: int) -> int:
-        """Calculates the total times a team attempted to charge
-
-        :param team_number: The team to determine the auto accuracy per match for.
-        :return: the total times a team attempted to charge
-        """
-        attempted_charges = self.stat_per_match(team_number, Queries.AUTO_ENGAGE_ATTEMPTED).apply(
-            lambda state: int(state == "Engage") 
-        ).sum()
-
-        successful_charges = self.auto_total_successful_charge(team_number)
-
-        return successful_charges if attempted_charges < successful_charges else attempted_charges
-        
-
-    def auto_total_successful_charge(self, team_number: int) -> int:
-        """Calculates the total times a team successfully charged
-
-        :param team_number: The team to determine the auto accuracy per match for.
-        :return: the total times a team successfully charged
-        """
-        return self.stat_per_match(team_number, Queries.AUTO_CHARGING_STATE).apply(
-            lambda state: int(state == "Engage") 
-        ).sum()
-    
-    def auto_engage_success_rate(self, team_number: int) -> float:
-        """Calculates the successrate a team has for auto engaging
-
-        :param team_number: The team to determine the auto accuracy per match for.
-        :return: value from 0 to 1 that represent the percent succesrate, rounded to 3 decimal places
-        """
-        return round(self.auto_total_successful_charge(team_number) / self.auto_total_attempted_charge(team_number), 3)
-        
-        
 
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:
@@ -242,35 +239,35 @@ class CalculatedStats:
         return percentile(dataset, quantile * 100)
 
     # General methods
-    def average_stat(self, team: int, stat: str, criteria: dict | None = None) -> float:
+    def average_stat(self, team_number: int, stat: str, criteria: dict | None = None) -> float:
         """Calculates the average statistic for a team (wrapper around `stat_per_match`).
 
-        :param team: The team number to calculate said statistic for.
+        :param team_number: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
-        :param criteria: An optional riteria used to determine what the weightage of the statistic is.
+        :param criteria: An optional criteria used to determine what the weightage of the statistic is.
         :return: A float representing the "average statistic".
         """
-        return self.stat_per_match(team, stat, criteria).mean()
+        return self.stat_per_match(team_number, stat, criteria).mean()
 
-    def cumulative_stat(self, team: int, stat: str, criteria: dict | None = None) -> int:
+    def cumulative_stat(self, team_number: int, stat: str, criteria: dict | None = None) -> int:
         """Calculates a cumulative stat for a team (wrapper around `stat_per_match`).
 
-        :param team: The team number to calculate said statistic for.
+        :param team_number: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
         :param criteria: An optional criteria used to determine what the weightage of the statistic is.
         :return: A float representing the "cumulative statistic".
         """
-        return self.stat_per_match(team, stat, criteria).sum()
+        return self.stat_per_match(team_number, stat, criteria).sum()
 
-    def stat_per_match(self, team: int, stat: str, criteria: dict | None = None) -> Series:
+    def stat_per_match(self, team_number: int, stat: str, criteria: dict | None = None) -> Series:
         """Calculates a statistic over time as specified for a team.
 
-        :param team: The team number to calculate said statistic for.
+        :param team_number: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
         :param criteria: An optional criteria used to determine what the weightage of the statistic is.
         :return: A series representing the statistic for the team for each match.
         """
-        team_data = scouting_data_for_team(team, self.data)
+        team_data = scouting_data_for_team(team_number, self.data)
         return team_data[stat].apply(
             lambda datum: criteria.get(datum, 0) if criteria is not None else datum
         )
@@ -303,10 +300,13 @@ class CalculatedStats:
             for x in dataset_x for y in dataset_y for z in dataset_z
         ])
 
-    def driving_index(self, team: int) -> float:
+    def driving_index(self, team_number: int) -> float:
         """Determines how fast a team is based on multiplying their teleop cycles by their driver rating.
+
+        - Used for custom graphs with three teams.
+        - Used for custom graphs with a full event.
 
         :param team: The team number to calculate a driving index for.
         """
-        team_data = scouting_data_for_team(team, self.data)
-        return self.cycles_by_match(team, Queries.TELEOP_GRID).mean() * team_data[Queries.DRIVER_RATING].mean()
+        team_data = scouting_data_for_team(team_number, self.data)
+        return self.cycles_by_match(team_number, Queries.TELEOP_GRID).mean() * team_data[Queries.DRIVER_RATING].mean()
