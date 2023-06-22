@@ -88,6 +88,11 @@ class Queries:
     LEFT = "left"
     COOP = "coop"
     RIGHT = "right"
+
+    # Custom graph keywords
+    ONE_TEAM_KEYWORD = "Used for custom graphs with one team."
+    THREE_TEAMS_KEYWORD = "Used for custom graphs with three teams."
+    FULL_EVENT_KEYWORD = "Used for custom graphs with a full event."
     
 
 class Criteria:
