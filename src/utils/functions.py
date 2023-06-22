@@ -1,6 +1,7 @@
 """Defines utility functions that are later used in FalconVis."""
 
 from re import search
+from typing import Any
 
 import streamlit as st
 from pandas import DataFrame
@@ -10,11 +11,31 @@ from tbapy import TBA
 from .constants import EventSpecificConstants, GeneralConstants, Queries
 
 __all__ = [
+    "populate_missing_data",
     "retrieve_match_schedule",
     "retrieve_team_list",
     "retrieve_scouting_data",
     "scouting_data_for_team"
 ]
+
+
+def populate_missing_data(distributions: list[list], sentinel: Any = None) -> tuple[range, list]:
+    """Populates missing data points when plotting multiple distributions.
+
+    :param distributions: A list containing different distributions that are to be populated.
+    :param sentinel: The value to append to distributions with missing data points (in this case, None).
+    :return: A range showing the length of the distribution and a list where all the distributions have equal lengths.
+    """
+    max_data_points = len(max(distributions, key=len))
+
+    # Populate missing data points with None
+    return (
+        range(max_data_points),
+        [
+            list(distribution) + [sentinel] * (max_data_points - len(distribution))
+            for distribution in distributions
+        ]
+    )
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)

@@ -22,8 +22,8 @@ class CalculatedStats:
     def average_points_contributed(self, team_number: int) -> float:
         """Returns the average points contributed by a team.
 
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Bar graph
 
         :param team_number: The team number to calculate the average points contributed for.
         """
@@ -32,12 +32,13 @@ class CalculatedStats:
     def points_contributed_by_match(self, team_number: int, type_of_grid: str = "") -> Series:
         """Returns the points contributed by match for a team.
 
-        - Used for custom graphs with one team.
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Line graph
+        - Box plot
+        - Multi line graph
 
         :param team_number: The team number to calculate the points contributed over the matches they played.
-        :param type_of_grid: Optional argument defining which mode to return the total points for (auto/teleop).
+        :param type_of_grid: Optional argument defining which mode to return the total points for (AutoGrid/TeleopGrid)
         :return: A Series containing the points contributed by said team per match.
         """
         team_data = scouting_data_for_team(team_number, self.data)
@@ -106,11 +107,11 @@ class CalculatedStats:
     def average_cycles(self, team_number: int, type_of_grid: str) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
 
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Bar graph
 
         :param team_number: The team number to calculate the average cycles for.
-        :param type_of_grid: The mode to calculate said cycles for (autonomous/teleop)
+        :param type_of_grid: The mode to calculate said cycles for (AutoGrid/TeleopGrid)
         :return: A float representing the average cycles for said team in the mode specified.
         """
         return self.cycles_by_match(team_number, type_of_grid).mean()
@@ -118,12 +119,12 @@ class CalculatedStats:
     def average_cycles_for_height(self, team_number: int, type_of_grid: str, height: str) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
 
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Bar graph
 
         :param team_number: The team number to calculate the average cycles for.
-        :param type_of_grid: The mode to calculate said cycles for (autonomous/teleop)
-        :param height: The height to return cycles by match for (Low/Mid/High).
+        :param type_of_grid: The mode to calculate said cycles for (AutoGrid/TeleopGrid)
+        :param height: The height to return cycles by match for (H/M/L)
         :return: A float representing the average cycles for said team in the mode specified.
         """
         return self.cycles_by_height_per_match(team_number, type_of_grid, height).mean()
@@ -131,12 +132,13 @@ class CalculatedStats:
     def cycles_by_match(self, team_number: int, type_of_grid: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) in a match
 
-        - Used for custom graphs with one team.
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Line graph
+        - Box plot
+        - Multi line graph
 
         :param team_number: The team number to calculate the cycles by match for.
-        :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
+        :param type_of_grid: The mode to return cycles by match for (AutoGrid/TeleopGrid)
         :return: A series containing the cycles per match for the mode specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
@@ -147,13 +149,14 @@ class CalculatedStats:
     def cycles_by_height_per_match(self, team_number: int, type_of_grid: str, height: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
 
-        - Used for custom graphs with one team.
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Line graph
+        - Box plot
+        - Multi line graph
 
         :param team_number: The team number to calculate the cycles by height per match for.
-        :param type_of_grid: The mode to return cycles by match for (autonomous/teleop).
-        :param height: The height to return cycles by match for (Low/Mid/High).
+        :param type_of_grid: The mode to return cycles by match for (AutoGrid/TeleopGrid)
+        :param height: The height to return cycles by match for (H/M/L)
         :return: A series containing the cycles per match for the mode specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
@@ -167,13 +170,14 @@ class CalculatedStats:
     def cycles_by_game_piece_per_match(self, team_number: int, type_of_grid: str, game_piece: str) -> Series:
         """Returns the cycles for a certain game piece across matches.
 
-        - Used for custom graphs with one team.
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Line graph
+        - Box plot
+        - Multi line graph
 
         :param team_number: The team number to calculate the cycles by game piece per match for.
-        :param type_of_grid: The type of mode to calculate the game piece cycles for (autonomous/teleop).
-        :param game_piece: The type of game piece to count cycles for.
+        :param type_of_grid: The type of mode to calculate the game piece cycles for (AutoGrid/TeleopGrid)
+        :param game_piece: The type of game piece to count cycles for (cone/cube)
         :return: A series containing the cycles per match for the game piece specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
@@ -197,8 +201,8 @@ class CalculatedStats:
     def average_auto_accuracy(self, team_number: int) -> float:
         """Returns the average auto accuracy of a team (wrapper around `auto_accuracy_by_match`).
 
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Bar graph
 
         :param team_number: The team to determine the average auto accuracy for.
         :return: A float representing a percentage of the average auto accuracy of said team.
@@ -208,9 +212,10 @@ class CalculatedStats:
     def auto_accuracy_by_match(self, team_number: int) -> Series:
         """Returns the auto accuracy of a team by match.
 
-        - Used for custom graphs with one team.
-        - Used for custom graphs with three teams.
-        - Used for custom graphs with a full event.
+        The following custom graphs are supported with this function:
+        - Line graph
+        - Box plot
+        - Multi line graph
 
         :param team_number: The team to determine the auto accuracy per match for.
         :return: A series containing the auto accuracy by match for said team.
@@ -306,7 +311,7 @@ class CalculatedStats:
         - Used for custom graphs with three teams.
         - Used for custom graphs with a full event.
 
-        :param team: The team number to calculate a driving index for.
+        :param team_number: The team number to calculate a driving index for.
         """
         team_data = scouting_data_for_team(team_number, self.data)
         return self.cycles_by_match(team_number, Queries.TELEOP_GRID).mean() * team_data[Queries.DRIVER_RATING].mean()

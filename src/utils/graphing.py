@@ -163,8 +163,13 @@ def bar_graph(
     color: str | None = None,
     hover_data: list = None
 ) -> Figure:
+    """
+    - Used for custom graphs with one team.
+    - Used for custom graphs with three teams.
+    - Used for custom graphs with a full event.
+    """
     if hover_data:
-        data_df = _create_multicolumn_df(x, y, x_axis_label=x_axis_label, y_axis_label=[y_axis_label]+hover_data)
+        data_df = _create_multicolumn_df(x, y, x_axis_label=x_axis_label, y_axis_label=[y_axis_label] + hover_data)
     else:
         data_df = _create_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
 
@@ -193,6 +198,11 @@ def box_plot(
     show_underlying_data: bool = False,
     color_sequence: list | None = None
 ):
+    """
+    - Used for custom graphs with one team.
+    - Used for custom graphs with three teams.
+    - Used for custom graphs with a full event.
+    """
     # Use graph objects in order to be able to individually color candlesticks.
     fig = Figure()
 
@@ -232,6 +242,9 @@ def line_graph(
     title: str = "",
     color: str | None = None
 ) -> Figure:
+    """
+    - Used for custom graphs with one team.
+    """
     data_df = _create_df(x, y, x_axis_label=x_axis_label, y_axis_label=y_axis_label)
     return px.line(
         data_df,
@@ -254,6 +267,10 @@ def multi_line_graph(
     title: str = "",
     color_map: dict | None = None
 ) -> Figure:
+    """
+    - Used for custom graphs with three teams.
+    - Used for custom graphs with a full event.
+    """
     data_df = _create_longform_df(
         x,
         y,
@@ -283,7 +300,6 @@ def stacked_bar_graph(
     title: str = "",
     color_map: dict | None = None
 ) -> Figure:
-    
     data_df = _create_longform_df(
         x,
         y,

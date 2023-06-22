@@ -17,6 +17,7 @@ from utils import (
     GraphType,
     multi_line_graph,
     plotly_chart,
+    populate_missing_data,
     Queries,
     retrieve_match_schedule,
     retrieve_team_list,
@@ -651,18 +652,10 @@ class MatchManager(PageManager):
                 )
                 for team in team_numbers
             ]
-            max_data_points = len(max(cycles_by_team, key=len))
-
-            # Populate missing data points with None
-            cycles_by_team = [
-                list(distribution) + [None] * (max_data_points - len(distribution))
-                for distribution in cycles_by_team
-            ]
 
             plotly_chart(
                 multi_line_graph(
-                    range(max_data_points),
-                    cycles_by_team,
+                    *populate_missing_data(cycles_by_team),
                     x_axis_label="Match Index",
                     y_axis_label=team_numbers,
                     y_axis_title=(
@@ -809,18 +802,10 @@ class MatchManager(PageManager):
                 )
                 for team in team_numbers
             ]
-            max_data_points = len(max(cycles_by_team, key=len))
-
-            # Populate missing data points with None
-            cycles_by_team = [
-                list(distribution) + [None] * (max_data_points - len(distribution))
-                for distribution in cycles_by_team
-            ]
 
             plotly_chart(
                 multi_line_graph(
-                    range(max_data_points),
-                    cycles_by_team,
+                    *populate_missing_data(cycles_by_team),
                     x_axis_label="Match Index",
                     y_axis_label=team_numbers,
                     y_axis_title=(
