@@ -4,7 +4,6 @@ import streamlit as st
 from page_managers import PicklistManager
 from utils import retrieve_scouting_data
 import pandas as pd
-from st_aggrid import AgGrid, GridOptionsBuilder
 
 # Configuration for Streamlit
 st.set_page_config(
@@ -32,22 +31,21 @@ if __name__ == '__main__':
         if row.TeamNumber not in teamsList:
             teamsList.append(row.TeamNumber)
 
-    autoGridDf = pd.DataFrame({'Team Number': [], 'Auto Cycles': [], 'Teleop Cycles': []})
+    gridDf = pd.DataFrame({'Team Number': [], 'Auto Cycles': [], 'Teleop Cycles': []})
 
     for i in teamsList:
        new = [i, picklist_manager.calculated_stats.average_cycles(i, "AutoGrid"), picklist_manager.calculated_stats.average_cycles(i, "TeleopGrid")]
-       autoGridDf.loc[len(autoGridDf)] = new
-    autoGridDf = autoGridDf.sort_values(by=['Auto Cycles'], ascending=False)
+       gridDf.loc[len(gridDf)] = new
+    gridDf = gridDf.sort_values(by=['Auto Cycles'], ascending=False)
 
     if("Average Teleop Cycles" not in fields_selected):
-        autoGridDf = autoGridDf.drop(['Teleop Cycles'], axis=1)
+        gridDf = gridDf.drop(['Teleop Cycles'], axis=1)
     if("Average Auto Cycles" not in fields_selected):
-            autoGridDf = autoGridDf.drop(['Auto Cycles'], axis=1)
+            gridDf = gridDf.drop(['Auto Cycles'], axis=1)
 
-    grid_return = AgGrid(autoGridDf, key='df')
-    df = grid_return["data"]
+    grid_return = st.data_editor(gridDf)
 
-    csv = convert_df(df)
+    csv = convert_df(grid_return)
 
     st.download_button(
        "Press to Download",
