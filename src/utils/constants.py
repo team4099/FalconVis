@@ -23,9 +23,10 @@ class GeneralConstants:
     AVERAGE_FOUL_RATE = 1.06
 
     # Color sequences
-    RED_ALLIANCE_GRADIENT = ["#731111", "#b04949", "#ed8282", "#f5b3b3"]
-    BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1", "#a8c1e3"]
-
+    RED_ALLIANCE_GRADIENT = ["#731111", "#b04949", "#ed8282"]
+    BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1"]
+    GOLD_GRADIENT = ["#ffbd4d", "#ff9000", "#dd5f00"]
+    LEVEL_GRADIENT = ["#f44a53", "#ff8800", "#f4c717"]
     # Colors
     DARK_RED = "#450a0a"
     DARK_BLUE = "#172554"
@@ -76,6 +77,8 @@ class Queries:
     ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
 
     DRIVER_RATING = "DriverRating"
+    DEFENSE_RATING = "DefenseRating"
+    DISABLE = "Disable"
 
     # Constants for different heights
     LOW = "L"

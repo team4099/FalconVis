@@ -229,6 +229,30 @@ class CalculatedStats:
             Queries.AUTO_GRID
         ) + auto_missed_by_match  # Adding auto missed in order to get an accurate % (2 scored + 1 missed = 33%)
         return 1 - (auto_missed_by_match / auto_cycles_by_match)
+    
+    def average_driver_rating(self, team_number: int) -> float:
+        """Returns the average driver rating of a team
+
+        :param team_number: The team to determine the driver rating for.
+        :return: A float representing the average driver rating of said team.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].mean()
+    
+    def average_defense_rating(self, team_number: int) -> float:
+        """Returns the average defense rating of a team
+
+        :param team_number: The team to determine the defense rating for.
+        :return: A float representing the average defense rating of said team.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.DEFENSE_RATING].mean()
+    
+    def disables_by_team(self, team_number: int) -> float:
+        """Returns a series of data representing the teams disables
+
+        :param team_number: The team to find disable data for.
+        :return: A series with the teams disable data.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.DISABLE]
 
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:
