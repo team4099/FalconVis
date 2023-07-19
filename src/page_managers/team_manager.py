@@ -16,6 +16,7 @@ from utils import (
     plotly_chart,
     Queries,
     retrieve_team_list,
+    retrieve_pit_scouting_data,
     retrieve_scouting_data,
     scouting_data_for_team,
     stacked_bar_graph
@@ -29,6 +30,7 @@ class TeamManager(PageManager, ContainsMetrics):
         self.calculated_stats = CalculatedStats(
             retrieve_scouting_data()
         )
+        self.pit_scouting_data = retrieve_pit_scouting_data()
 
     def generate_input_section(self) -> int:
         """Creates the input section for the `Teams` page.
@@ -47,7 +49,7 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :param team_number: The team number to calculate the metrics for.
         """
-        points_contributed_col, auto_cycle_col, teleop_cycle_col, mobility_col = st.columns(4)
+        points_contributed_col, drivetrain_col, auto_cycle_col, teleop_cycle_col = st.columns(4)
         iqr_col, auto_engage_col, auto_engage_accuracy_col, auto_accuracy_col = st.columns(4)
 
         # Metric for avg. points contributed
@@ -63,6 +65,22 @@ class TeamManager(PageManager, ContainsMetrics):
                 "Average Points Contributed",
                 round(average_points_contributed, 2),
                 threshold=points_contributed_for_percentile
+            )
+
+        # Metric for drivetrain
+        with drivetrain_col:
+            try:
+                drivetrain = self.pit_scouting_data[
+                    self.pit_scouting_data["Team Number"] == team_number
+                ].iloc[0]["Drivetrain"].split("/")[0]  # The splitting at / is used to shorten the drivetrain type.
+            except IndexError:
+                drivetrain = "—"
+
+            colored_metric(
+                "Drivetrain Type",
+                drivetrain,
+                background_color="#052e16",
+                opacity=0.5
             )
 
         # Metric for average auto cycles
@@ -95,29 +113,6 @@ class TeamManager(PageManager, ContainsMetrics):
                 "Average Teleop Cycles",
                 round(average_teleop_cycles, 2),
                 threshold=teleop_cycles_for_percentile
-            )
-
-        # Metric for avg. mobility (%)
-        with mobility_col:
-            average_mobility = self.calculated_stats.average_stat(
-                team_number,
-                Queries.LEFT_COMMUNITY,
-                Criteria.MOBILITY_CRITERIA
-            )
-            mobility_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.average_stat(
-                    team,
-                    Queries.LEFT_COMMUNITY,
-                    Criteria.MOBILITY_CRITERIA
-                )
-            )
-
-            colored_metric(
-                "Average Mobility (%)",
-                round(average_mobility, 2),
-                threshold=mobility_for_percentile,
-                value_formatter=lambda value: f"{value:.1%}"
             )
 
         # Metric for IQR of points contributed (consistency)

@@ -20,6 +20,7 @@ from utils import (
     populate_missing_data,
     Queries,
     retrieve_match_schedule,
+    retrieve_pit_scouting_data,
     retrieve_team_list,
     retrieve_scouting_data,
     scouting_data_for_team,
@@ -33,6 +34,7 @@ class MatchManager(PageManager):
 
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
+        self.pit_scouting_data = retrieve_pit_scouting_data()
 
     def generate_input_section(self) -> list[list, list]:
         """Creates the input section for the `Match` page.
@@ -445,7 +447,30 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col = st.columns(3)
+        if self.pit_scouting_data is not None:
+            fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col, tolerance_col = st.columns(4)
+
+            # Colored metric that displays the tolerance when engaging on the charge station.
+            with tolerance_col:
+                total_width = 0
+
+                for team in team_numbers:
+                    try:
+                        total_width += self.pit_scouting_data[
+                            self.pit_scouting_data["Team Number"] == team
+                        ].iloc[0]["Drivetrain Width"] / 12
+                    except IndexError:
+                        print(f"{team} has no pit scouting data.")  # For debugging purposes when looking at logs.
+
+                colored_metric(
+                    "Tolerance When Engaging (ft.)",
+                    f"{GeneralConstants.CHARGE_STATION_LENGTH - total_width:.1f}",
+                    background_color=color_gradient[3],
+                    opacity=0.4,
+                    border_opacity=0.9
+                )
+        else:
+            fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col = st.columns(3)
 
         fastest_cyclers = sorted(
             {
