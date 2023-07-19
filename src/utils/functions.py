@@ -1,10 +1,10 @@
 """Defines utility functions that are later used in FalconVis."""
-
+from io import StringIO
 from re import search
 from typing import Any
 
 import streamlit as st
-from pandas import DataFrame
+from pandas import DataFrame, read_csv
 from requests import get
 from tbapy import TBA
 
@@ -13,6 +13,7 @@ from .constants import EventSpecificConstants, GeneralConstants, Queries
 __all__ = [
     "populate_missing_data",
     "retrieve_match_schedule",
+    "retrieve_pit_scouting_data",
     "retrieve_team_list",
     "retrieve_scouting_data",
     "scouting_data_for_team"
@@ -52,6 +53,20 @@ def retrieve_scouting_data() -> DataFrame:
     )
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
+
+
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+def retrieve_pit_scouting_data() -> DataFrame | None:
+    """Retrieves the latest pit scouting data from team4099/ScoutingAppData on GitHub based on the current event.
+
+    :return: A dataframe containing the scouting data from an event.
+    """
+    response = get(EventSpecificConstants.PIT_SCOUTING_URL)
+
+    if response.status_code == 200:
+        return read_csv(
+            StringIO(response.text)
+        )
 
 
 # Cache for longer because match schedule is relatively constant.

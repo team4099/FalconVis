@@ -23,8 +23,8 @@ class GeneralConstants:
     AVERAGE_FOUL_RATE = 1.06
 
     # Color sequences
-    RED_ALLIANCE_GRADIENT = ["#731111", "#b04949", "#ed8282"]
-    BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1"]
+    RED_ALLIANCE_GRADIENT = ["#731111", "#b04949", "#ed8282", "#f5b3b3"]
+    BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1", "#a8c1e3"]
 
     # Colors
     DARK_RED = "#450a0a"
@@ -35,12 +35,18 @@ class GeneralConstants:
     CONE_COLOR = PRIMARY_COLOR
     CUBE_COLOR = "#4F46E5"
 
+    # Game-specific constants
+    CHARGE_STATION_LENGTH = 8  # In feet
+
 
 class EventSpecificConstants:
     """Constants specific to an event."""
 
-    EVENT_CODE = "2023chcmp"
+    EVENT_CODE = "2023new"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
+    PIT_SCOUTING_URL = (
+        f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
+    )
 
 
 class GraphType(Enum):
