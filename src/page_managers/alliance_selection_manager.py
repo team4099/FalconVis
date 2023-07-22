@@ -20,6 +20,7 @@ from utils import (
     populate_missing_data,
     Queries,
     retrieve_match_schedule,
+    retrieve_pit_scouting_data,
     retrieve_team_list,
     retrieve_scouting_data,
     scouting_data_for_team,
@@ -33,6 +34,7 @@ class AllianceSelectionManager(PageManager):
 
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
+        self.pit_scouting_data = retrieve_pit_scouting_data()
 
     def generate_input_section(self) -> list[list, list]:
         """Creates the input section for the `Match` page.
@@ -458,6 +460,52 @@ class AllianceSelectionManager(PageManager):
                 opacity=0.4,
                 border_opacity=0.9
             )
+    
+    def generate_drivetrain_dashboard(self, team_numbers: list[int], color_gradient: list[str]) -> None:
+        """Generates an drivetrain dashboard in the `Alliance Selection` page.
+
+        :param team_numbers: The teams to generate the drivetrain dashboard for.
+        :param color_gradient: The color gradient to use for graphs.
+        :return:
+        """
+
+        team1_col, team2_col, team3_col = st.columns(3)
+
+        drivetrain_data = [
+            self.pit_scouting_data[
+                            self.pit_scouting_data["Team Number"] == team
+                        ].iloc[0]["Drivetrain"]
+             for team in team_numbers]
+
+        # Colored metric displaying the fastest cycler in the alliance
+        with team1_col:
+            colored_metric(
+                "Team " + str(team_numbers[0]) + " Drivetrain:",
+                drivetrain_data[0],
+                background_color=color_gradient[0],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the second fastest cycler in the alliance
+        with team2_col:
+            colored_metric(
+                "Team " + str(team_numbers[1]) + " Drivetrain:",
+                drivetrain_data[1],
+                background_color=color_gradient[1],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the slowest cycler in the alliance
+        with team3_col:
+            colored_metric(
+                "Team " + str(team_numbers[2]) + " Drivetrain:",
+                drivetrain_data[2],
+                background_color=color_gradient[2],
+                opacity=0.4,
+                border_opacity=0.9
+            )
 
     def generate_autonomous_graphs(
         self,
@@ -772,6 +820,7 @@ class AllianceSelectionManager(PageManager):
         """
 
         driver_rating_col, defense_rating_col = st.columns(2)
+        disables_col, drivetrain_width_col = st.columns(2)
 
         with driver_rating_col:
             driver_ratings = [
@@ -805,20 +854,38 @@ class AllianceSelectionManager(PageManager):
                 )
             )
 
-        disables_by_team = [
-                self.calculated_stats.disables_by_team(team) for team in team_numbers
+        with disables_col:
+
+            disables_by_team = [
+                    self.calculated_stats.disables_by_team(team) for team in team_numbers
+                ]
+
+            plotly_chart(
+                    multi_line_graph(
+                        *populate_missing_data(disables_by_team),
+                        x_axis_label="Match Index",
+                        y_axis_label=team_numbers,
+                        y_axis_title="Disabled",
+                        title=(
+                            "Disables Over Time"
+                        ),
+                        color_map=dict(zip(team_numbers, color_gradient))
+                    )
+                )
+        
+        with drivetrain_width_col:
+            drivetrain_widths = [
+                self.calculated_stats.drivetrain_width_by_team(team) for team in team_numbers
             ]
 
-        plotly_chart(
-                multi_line_graph(
-                    *populate_missing_data(disables_by_team),
-                    x_axis_label="Match Index",
-                    y_axis_label=team_numbers,
-                    y_axis_title="Disabled",
-                    title=(
-                        "Disables Over Time"
-                    ),
-                    color_map=dict(zip(team_numbers, color_gradient))
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    drivetrain_widths,
+                    x_axis_label="Teams",
+                    y_axis_label="Drivetrain Width",
+                    title="Drivetrain Width",
+                    color=color_gradient[1]
                 )
             )
 

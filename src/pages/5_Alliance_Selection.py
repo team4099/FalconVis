@@ -74,3 +74,8 @@ if __name__ == '__main__':
             teams_selected,
             color_gradient=GeneralConstants.GOLD_GRADIENT
         )
+
+    alliance_selection_manager.generate_drivetrain_dashboard(
+        teams_selected,
+        color_gradient=GeneralConstants.GOLD_GRADIENT
+    )

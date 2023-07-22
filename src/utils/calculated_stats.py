@@ -7,7 +7,7 @@ from numpy import percentile
 from pandas import DataFrame, Series
 
 from .constants import Criteria, Queries
-from .functions import scouting_data_for_team, retrieve_team_list
+from .functions import scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
 
 __all__ = ["CalculatedStats"]
 
@@ -253,6 +253,17 @@ class CalculatedStats:
         :return: A series with the teams disable data.
         """
         return scouting_data_for_team(team_number, self.data)[Queries.DISABLE]
+    
+    def drivetrain_width_by_team(self, team_number: int) -> float:
+        """Returns a float representing the teams drivetrain width
+
+        :param team_number: The team to find disable data for.
+        :return: A float with the team drivtrain width in inches
+        """
+        pit_scouting_data = retrieve_pit_scouting_data()
+        return pit_scouting_data[
+                            pit_scouting_data["Team Number"] == team_number
+                        ].iloc[0]["Drivetrain Width"]
 
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:
