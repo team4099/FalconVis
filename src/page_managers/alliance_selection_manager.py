@@ -29,8 +29,8 @@ from utils import (
 )
 
 
-class MatchManager(PageManager):
-    """The page manager for the `Match` page."""
+class AllianceSelectionManager(PageManager):
+    """The page manager for the `Alliance Selection` page."""
 
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
@@ -73,59 +73,33 @@ class MatchManager(PageManager):
         return [*match_info["red_alliance"], *match_info["blue_alliance"]]
 
     def generate_hypothetical_input_section(self) -> list[list, list]:
-        """Creates the input section for the `Hypothetical Match` page.
+        """Creates the input section for the `Alliance Selection` page.
 
-        Creates six dropdowns to choose teams for each alliance separately.
+        Creates 3 dropdowns to choose teams
 
-        :return: Returns a 2D list with the lists being the three teams for the Red and Blue alliances.
+        :return: List with 3 choices
         """
         team_list = retrieve_team_list()
 
-        # Create the separate columns for submitting teams.
-        red_alliance_form, blue_alliance_form = st.columns(2, gap="medium")
-
         # Create the different dropdowns to choose the three teams for Red Alliance.
-        with red_alliance_form:
-            red_1_col, red_2_col, red_3_col = st.columns(3)
-            red_1 = red_1_col.selectbox(
-                ":red[Red 1]",
-                team_list,
-                index=0
-            )
-            red_2 = red_2_col.selectbox(
-                ":red[Red 2]",
-                team_list,
-                index=1
-            )
-            red_3 = red_3_col.selectbox(
-                ":red[Red 3]",
-                team_list,
-                index=2
-            )
+        team_1_col, team_2_col, team_3_col = st.columns(3)
+        team_1 = team_1_col.selectbox(
+            "team 1",
+            team_list,
+            index=0
+        )
+        team_2 = team_2_col.selectbox(
+            "team 2",
+            team_list,
+            index=1
+        )
+        team_3 = team_3_col.selectbox(
+            "team 3",
+            team_list,
+            index=2
+        )
 
-        # Create the different dropdowns to choose the three teams for Blue Alliance.
-        with blue_alliance_form:
-            blue_1_col, blue_2_col, blue_3_col = st.columns(3)
-            blue_1 = blue_1_col.selectbox(
-                ":blue[Blue 1]",
-                team_list,
-                index=3
-            )
-            blue_2 = blue_2_col.selectbox(
-                ":blue[Blue 2]",
-                team_list,
-                index=4
-            )
-            blue_3 = blue_3_col.selectbox(
-                ":blue[Blue 3]",
-                team_list,
-                index=5
-            )
-
-        return [
-            [red_1, red_2, red_3],
-            [blue_1, blue_2, blue_3]
-        ]
+        return [team_1, team_2, team_3]
 
     def generate_match_prediction_dashboard(
         self, red_alliance: list[int], blue_alliance: list[int]
@@ -447,30 +421,7 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        if self.pit_scouting_data is not None:
-            fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col, tolerance_col = st.columns(4)
-
-            # Colored metric that displays the tolerance when engaging on the charge station.
-            with tolerance_col:
-                total_width = 0
-
-                for team in team_numbers:
-                    try:
-                        total_width += self.pit_scouting_data[
-                            self.pit_scouting_data["Team Number"] == team
-                        ].iloc[0]["Drivetrain Width"] / 12
-                    except IndexError:
-                        print(f"{team} has no pit scouting data.")  # For debugging purposes when looking at logs.
-
-                colored_metric(
-                    "Tolerance When Engaging (ft.)",
-                    f"{GeneralConstants.CHARGE_STATION_LENGTH - total_width:.1f}",
-                    background_color=color_gradient[3],
-                    opacity=0.4,
-                    border_opacity=0.9
-                )
-        else:
-            fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col = st.columns(3)
+        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col = st.columns(3)
 
         fastest_cyclers = sorted(
             {
@@ -509,6 +460,52 @@ class MatchManager(PageManager):
                 opacity=0.4,
                 border_opacity=0.9
             )
+    
+    def generate_drivetrain_dashboard(self, team_numbers: list[int], color_gradient: list[str]) -> None:
+        """Generates an drivetrain dashboard in the `Alliance Selection` page.
+
+        :param team_numbers: The teams to generate the drivetrain dashboard for.
+        :param color_gradient: The color gradient to use for graphs.
+        :return:
+        """
+
+        team1_col, team2_col, team3_col = st.columns(3)
+
+        drivetrain_data = [
+            self.pit_scouting_data[
+                            self.pit_scouting_data["Team Number"] == team
+                        ].iloc[0]["Drivetrain"]
+             for team in team_numbers]
+
+        # Colored metric displaying the fastest cycler in the alliance
+        with team1_col:
+            colored_metric(
+                "Team " + str(team_numbers[0]) + " Drivetrain:",
+                drivetrain_data[0],
+                background_color=color_gradient[0],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the second fastest cycler in the alliance
+        with team2_col:
+            colored_metric(
+                "Team " + str(team_numbers[1]) + " Drivetrain:",
+                drivetrain_data[1],
+                background_color=color_gradient[1],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the slowest cycler in the alliance
+        with team3_col:
+            colored_metric(
+                "Team " + str(team_numbers[2]) + " Drivetrain:",
+                drivetrain_data[2],
+                background_color=color_gradient[2],
+                opacity=0.4,
+                border_opacity=0.9
+            )
 
     def generate_autonomous_graphs(
         self,
@@ -530,64 +527,26 @@ class MatchManager(PageManager):
 
         # Determine the best auto configuration for an alliance.
         with auto_configuration_col:
-            teams_sorted_by_point_contribution = dict(
-                sorted(
-                    {
-                        team: (
-                            self.calculated_stats.cycles_by_match(team, Queries.AUTO_GRID)
-                            if display_cycle_contributions
-                            else self.calculated_stats.points_contributed_by_match(team, Queries.AUTO_GRID)
-                        )
-                        for team in team_numbers
-                    }.items(),
-                    key=lambda pair: pair[1].max(),
-                    reverse=True
-                )
-            )
-
-            # Y values of plot
-            points_by_grid = {}
-            full_grid = [Queries.LEFT, Queries.COOP, Queries.RIGHT]
-            grids_occupied = set()
-
-            for team, point_contributions in teams_sorted_by_point_contribution.items():
-                grid_placements = self.calculated_stats.classify_autos_by_match(team)
-                autos_sorted = sorted(
-                    zip(point_contributions, grid_placements),
-                    key=lambda pair: pair[0],
-                    reverse=True
-                )
-
-                for auto_pointage, grid in autos_sorted:
-                    if grid not in grids_occupied:
-                        points_by_grid[team] = (auto_pointage, grid)
-                        grids_occupied.add(grid)
-                        break
-                else:
-                    # Add a placeholder in the worst-case scenario
-                    placeholder_grid = next(iter(set(full_grid).difference(grids_occupied)))
-                    points_by_grid[team] = (point_contributions.max(), placeholder_grid)
-                    grids_occupied.add(placeholder_grid)
-
-            # Sort points by grid in order to go from left to right (left, coop, right).
-            points_by_grid = dict(
-                sorted(
-                    points_by_grid.items(),
-                    key=lambda pair: full_grid.index(pair[1][1])
-                )
-            )
+            average_auto_cycles_by_team = [
+                (
+                    self.calculated_stats.cycles_by_match(team, Queries.AUTO_GRID)
+                    if display_cycle_contributions
+                    else self.calculated_stats.points_contributed_by_match(team, Queries.AUTO_GRID)
+                ).mean()
+                for team in team_numbers
+            ]
 
             plotly_chart(
                 bar_graph(
-                    list(points_by_grid.keys()),
-                    [value[0] for value in points_by_grid.values()],
-                    x_axis_label="Teams (Left, Coop, Right)",
+                    team_numbers,
+                    average_auto_cycles_by_team,
+                    x_axis_label="Teams",
                     y_axis_label=(
                         "Cycles in Auto"
                         if display_cycle_contributions
                         else "Points Scored in Auto"
                     ),
-                    title="Best Auto Configuration",
+                    title="Average Auto Contribution",
                     color=color_gradient[1]
                 )
             )
@@ -846,3 +805,88 @@ class MatchManager(PageManager):
                     color_map=dict(zip(team_numbers, color_gradient))
                 )
             )
+    
+    def generate_rating_graphs(
+        self,
+        team_numbers: list[int],
+        color_gradient: list[str]
+    ) -> None:
+        """Generates the teleop graphs for the `Match` page.
+
+        :param team_numbers: The teams to generate the graphs for.
+        :param type_of_graph: The type of graph to make (cycle contributions/point contributions).
+        :param color_gradient: The color gradient to use for graphs, depending on the alliance.
+        :return:
+        """
+
+        driver_rating_col, defense_rating_col = st.columns(2)
+        disables_col, drivetrain_width_col = st.columns(2)
+
+        with driver_rating_col:
+            driver_ratings = [
+                self.calculated_stats.average_driver_rating(team) for team in team_numbers
+            ]
+
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    driver_ratings,
+                    x_axis_label="Teams",
+                    y_axis_label="Driver Rating",
+                    title="Driver Rating",
+                    color=color_gradient[1]
+                )
+            )
+
+        with defense_rating_col:
+            defense_ratings = [
+                self.calculated_stats.average_defense_rating(team) for team in team_numbers
+            ]
+
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    defense_ratings,
+                    x_axis_label="Teams",
+                    y_axis_label="Defense Rating",
+                    title="Defense Rating",
+                    color=color_gradient[1]
+                )
+            )
+
+        with disables_col:
+
+            disables_by_team = [
+                    self.calculated_stats.disables_by_team(team) for team in team_numbers
+                ]
+
+            plotly_chart(
+                    multi_line_graph(
+                        *populate_missing_data(disables_by_team),
+                        x_axis_label="Match Index",
+                        y_axis_label=team_numbers,
+                        y_axis_title="Disabled",
+                        title=(
+                            "Disables Over Time"
+                        ),
+                        color_map=dict(zip(team_numbers, color_gradient))
+                    )
+                )
+        
+        with drivetrain_width_col:
+            drivetrain_widths = [
+                self.calculated_stats.drivetrain_width_by_team(team) for team in team_numbers
+            ]
+
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    drivetrain_widths,
+                    x_axis_label="Teams",
+                    y_axis_label="Drivetrain Width",
+                    title="Drivetrain Width",
+                    color=color_gradient[1]
+                )
+            )
+
+    
