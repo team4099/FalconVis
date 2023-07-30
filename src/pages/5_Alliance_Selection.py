@@ -8,8 +8,8 @@ from utils import GeneralConstants, GraphType
 # Configuration for Streamlit
 st.set_page_config(
     layout="wide",
-    page_title="Hypothetical Match",
-    page_icon="🤔",
+    page_title="Alliance Selection",
+    page_icon="🤭",
 )
 alliance_selection_manager = AllianceSelectionManager()
 
@@ -17,9 +17,8 @@ if __name__ == '__main__':
     # Write the title of the page.
     st.write("# Alliance Selection Dashboard")
 
-    # Generate the input section of the `Match` page.
-    teams_selected = alliance_selection_manager.generate_hypothetical_input_section()
-
+    # Generate the input section of the `Alliance Selection` page.
+    teams_selected = alliance_selection_manager.generate_input_section()
 
     # Generate alliance dashboard
     alliance_selection_manager.generate_alliance_dashboard(
@@ -51,6 +50,11 @@ if __name__ == '__main__':
             )
 
     with teleop_tab:
+        alliance_selection_manager.generate_drivetrain_dashboard(
+            teams_selected,
+            color_gradient=GeneralConstants.GOLD_GRADIENT
+        )
+
         teleop_cycle_tab, teleop_points_tab = st.tabs(
             ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
         )
@@ -74,8 +78,3 @@ if __name__ == '__main__':
             teams_selected,
             color_gradient=GeneralConstants.GOLD_GRADIENT
         )
-
-    alliance_selection_manager.generate_drivetrain_dashboard(
-        teams_selected,
-        color_gradient=GeneralConstants.GOLD_GRADIENT
-    )
