@@ -381,7 +381,7 @@ class TeamManager(PageManager, ContainsMetrics):
         sentiment = SentimentIntensityAnalyzer()
         positivity_scores = []
         scouting_data = scouting_data_for_team(team_number)
-        notes_col, metrics_col = st.columns(2)
+        notes_col, metrics_col = st.columns(2, gap="medium")
 
         notes_by_match = dict(
             zip(scouting_data[Queries.MATCH_KEY], scouting_data[Queries.TELEOP_NOTES])
