@@ -70,6 +70,9 @@ class Queries:
     MATCH_KEY = "MatchKey"
     MATCH_NUMBER = "MatchNumber"
     TEAM_NUMBER = "TeamNumber"
+    SCOUT_ID = "ScoutId"
+    ALLIANCE = "Alliance"
+    DRIVER_STATION = "DriverStation"
 
     AUTO_GRID = "AutoGrid"
     AUTO_MISSED = "AutoMissed"
