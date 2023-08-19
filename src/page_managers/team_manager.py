@@ -1,12 +1,14 @@
 """Creates the `TeamManager` class used to set up the Teams page and its graphs."""
+import re
 
 import streamlit as st
+from annotated_text import annotated_text
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 from .contains_metrics import ContainsMetrics
 from .page_manager import PageManager
 from utils import (
     bar_graph,
-    box_plot,
     CalculatedStats,
     colored_metric,
     Criteria,
@@ -365,4 +367,74 @@ class TeamManager(PageManager, ContainsMetrics):
                         "Total # of Cubes Scored": GeneralConstants.CUBE_COLOR  # Cube color
                     }
                 )
+            )
+
+    def display_qualitative_data(self, team_number: int) -> None:
+        """Displays the qualitative data onto the Teams page in a neat format.
+
+        :param team_number: The team number to display the qualitative data for.
+        """
+        # Constants for the methodology used to calculate the "sentiment scores"
+        ML_WEIGHT = 1
+        ESTIMATE_WEIGHT = 1
+
+        sentiment = SentimentIntensityAnalyzer()
+        positivity_scores = []
+        scouting_data = scouting_data_for_team(team_number)
+        notes_col, metrics_col = st.columns(2)
+
+        notes_by_match = dict(
+            zip(scouting_data[Queries.MATCH_KEY], scouting_data[Queries.TELEOP_NOTES])
+        )
+
+        with notes_col:
+            st.write("##### Notes")
+            st.markdown("<hr style='margin: 0px'/>", unsafe_allow_html=True)  # Hacky way to create a divider without whitespace
+
+            for match_key, notes in notes_by_match.items():
+                if notes.strip().replace("|", ""):
+                    notes_col.write(f"###### {match_key}")
+
+                    text_split_by_words = re.split(r"(\s+)", notes)
+                    annotated_words = []
+                    # Used to create a rough estimate of how positive the notes are. Positive terms have a weight of
+                    # one, while negative terms have a weight of negative one and neutral terms have a weight of zero.
+                    sentiment_scores = []
+
+                    for word in text_split_by_words:
+                        if not word.strip():
+                            annotated_words.append(word)
+                            continue
+
+                        if any(term in word.lower() for term in GeneralConstants.POSITIVE_TERMS):
+                            annotated_words.append((word, "", f"{GeneralConstants.LIGHT_GREEN}75"))
+                            sentiment_scores.append(1)
+                        elif any(term in word.lower() for term in GeneralConstants.NEGATIVE_TERMS):
+                            annotated_words.append((word, "", f"{GeneralConstants.LIGHT_RED}75"))
+                            sentiment_scores.append(-1)
+                        else:
+                            annotated_words.append(word)
+
+                    # A score given to the notes given that generates a "sentiment score", using
+                    # the English vocabulary to determine how positive a string of text is. The downside of this method
+                    # is that it won't catch negative terms in the context of a robot's performance, which is why
+                    # we weight it with our own estimate of the "sentiment" score.
+                    ml_generated_score = sentiment.polarity_scores(notes)["compound"]
+                    sentiment_estimate = sum(sentiment_scores) / (len(sentiment_scores) or 1)
+                    positivity_scores.append(
+                        (ml_generated_score * ML_WEIGHT + sentiment_estimate * ESTIMATE_WEIGHT) / 2
+                    )
+
+                    annotated_text(
+                        *annotated_words
+                    )
+                    st.markdown("<hr style='margin: 0px'/>", unsafe_allow_html=True)
+
+        with metrics_col:
+            st.write("##### Metrics")
+
+            colored_metric(
+                "Positivity Score of Notes",
+                round(sum(positivity_scores) / len(positivity_scores), 2),
+                threshold=0
             )
