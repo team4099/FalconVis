@@ -74,3 +74,93 @@ class IndividualSubmissionsManager(PageManager):
                 opacity=0.5,
                 background_color=GeneralConstants.PRIMARY_COLOR
             )
+
+    def display_autonomous_data(self, submission: DataFrame) -> None:
+        """Displays the autonomous data in an individual submission.
+
+        :param submission: The individual submission for a certain team.
+        """
+        auto_grid_col, auto_info_col_1, auto_info_col_2 = st.columns(3)
+
+        with auto_grid_col:
+            display_grid(
+                Queries.AUTO_GRID,
+                submission[Queries.ALLIANCE].iloc[0],
+                submission[Queries.AUTO_GRID].iloc[0].split("|")
+            )
+
+        # Split metrics into two different columns to make it easier to read
+        with auto_info_col_1:
+            colored_metric(
+                "Charge Station State",
+                submission[Queries.AUTO_CHARGING_STATE].iloc[0],
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )
+
+            colored_metric(
+                "Did They Attempt to Engage?",
+                "Yes" if submission[Queries.AUTO_ENGAGE_ATTEMPTED].iloc[0] == "Engage" else "No",
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )
+
+        with auto_info_col_2:
+            colored_metric(
+                "Game Pieces Missed",
+                submission[Queries.AUTO_MISSED].iloc[0],
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )
+
+            colored_metric(
+                "Did They Leave the Community?",
+                "Yes" if submission[Queries.LEFT_COMMUNITY].iloc[0] else "No",
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )
+
+    def display_teleop_data(self, submission: DataFrame) -> None:
+        """Displays the teleop data in an individual submission.
+
+        :param submission: The individual submission for a certain team.
+        """
+        teleop_grid_col, teleop_info_col_1, teleop_info_col_2 = st.columns(3)
+
+        with teleop_grid_col:
+            display_grid(
+                Queries.TELEOP_GRID,
+                submission[Queries.ALLIANCE].iloc[0],
+                submission[Queries.TELEOP_GRID].iloc[0].split("|")
+            )
+
+        # Split metrics into two different columns to make it easier to read
+        with teleop_info_col_1:
+            colored_metric(
+                "Final Charging Station State",
+                submission[Queries.ENDGAME_FINAL_CHARGE].iloc[0],
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )
+
+            colored_metric(
+                "Game Pieces Missed",
+                submission[Queries.TELEOP_MISSED].iloc[0],
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )
+
+        with teleop_info_col_2:
+            colored_metric(
+                "Did They Disable?",
+                "Yes" if submission[Queries.DISABLE].iloc[0] else "No",
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )
+
+            colored_metric(
+                "Were They Tippy?",
+                "Yes" if submission[Queries.TIPPY].iloc[0] else "No",
+                opacity=0.5,
+                background_color=GeneralConstants.PRIMARY_COLOR
+            )

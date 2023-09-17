@@ -17,15 +17,20 @@
 </head>
 
 <body>
-    <div class="flex flex-col justify-items items-center">
-        <div class="flex flex-row p-2.5 lg:p-5 gap-1.5 lg:gap-8 justify-items items-center">
-            {high_game_pieces}
-        </div>
-        <div class="flex flex-row p-2.5 lg:p-5 gap-1.5 lg:gap-8 justify-items items-center">
-            {mid_game_pieces}
-        </div>
-        <div class="flex flex-row p-2.5 lg:p-5 gap-1.5 lg:gap-8 justify-items items-center">
-            {low_game_pieces}
+    <div class="flex flex-col justify-center items-center bg-[#efae04]/30 w-full h-[{height}px] gap-2 rounded-lg border-l-[#efae04]/80 border-l-8 shadow-lg">
+        <h1 class="text-lg text-white">
+            {title}
+        </h1>
+        <div class="flex flex-col justify-items items-center">
+            <div class="flex flex-row p-2 lg:p-5 lg:gap-10 justify-items items-center">
+                {high_game_pieces}
+            </div>
+            <div class="flex flex-row p-2 lg:p-5 lg:gap-10 justify-items items-center">
+                {mid_game_pieces}
+            </div>
+            <div class="flex flex-row p-2 lg:p-5 lg:gap-10 justify-items items-center">
+                {low_game_pieces}
+            </div>
         </div>
     </div>
 </body>

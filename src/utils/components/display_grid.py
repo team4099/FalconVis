@@ -8,13 +8,15 @@ from utils.constants import Queries
 __all__ = ["display_grid"]
 
 
-def display_grid(alliance: str, grid_data: Series) -> None:
+def display_grid(type_of_grid: str, alliance: str, grid_data: Series, component_height: float = 282.5) -> None:
     """Creates a component used for match predictions to display the odds for a certain alliance at winning the match.
 
     In other words, creates a component that acts as a horizontal stacked bar chart.
 
+    :param type_of_grid: The grid type (autonomous/teleop).
     :param alliance: The alliance the team was on when scoring game pieces onto the grid.
     :param grid_data: The data on where the team scored.
+    :param component_height: The height of the component.
     :return:
     """
     with (
@@ -33,7 +35,9 @@ def display_grid(alliance: str, grid_data: Series) -> None:
         # Used to format the grid data into something readable for the program.
         cube_positions = {2, 5, 8}
         formatted_grid_data = {
-            "high_game_pieces": [None] * 9, "mid_game_pieces": [None] * 9, "low_game_pieces": [None] * 9
+            "high_game_pieces": [None] * 9,
+            "mid_game_pieces": [None] * 9,
+            "low_game_pieces": [None] * 9
         }
         height_to_keys = dict(zip(["H", "M", "L"], formatted_grid_data.keys()))
         for game_piece in grid_data:
@@ -61,7 +65,9 @@ def display_grid(alliance: str, grid_data: Series) -> None:
         # Generate component using HTML.
         html(
             html_content[0] + html_content[1].format(
-                **formatted_grid_data
+                **formatted_grid_data,
+                title="Autonomous Grid" if type_of_grid == Queries.AUTO_GRID else "Teleop Grid",
+                height=str(component_height)
             ),
-            height=200
+            height=component_height
         )

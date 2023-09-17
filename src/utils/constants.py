@@ -84,11 +84,13 @@ class Queries:
 
     TELEOP_GRID = "TeleopGrid"
     TELEOP_NOTES = "TeleopNotes"
+    TELEOP_MISSED="TeleopMissed"
     ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
 
     DRIVER_RATING = "DriverRating"
     DEFENSE_RATING = "DefenseRating"
     DISABLE = "Disable"
+    TIPPY = "Tippy"
 
     # Constants for different heights
     LOW = "L"

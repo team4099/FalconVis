@@ -18,10 +18,18 @@ if __name__ == '__main__':
 
     # Generate the input section of the `Individual Submissions` page.
     submission = individual_submissions_manager.generate_input_section()
-    misc_tab, auto_graphs_tab, teleop_graphs_tab, qualitative_tab = st.tabs(
+    misc_tab, auto_data_tab, teleop_data_tab, qualitative_tab = st.tabs(
         ["📊 Miscellaneous Data", "🤖 Autonomous Data", "🎮 Teleop + Endgame Data", "📝 Qualitative Data"]
     )
 
-    # Display miscellaneous data like the scout name,
+    # Display miscellaneous data like the scout name and alliance.
     with misc_tab:
         individual_submissions_manager.display_miscellaneous_data(submission)
+
+    # Display autonomous data like the number of cycles and the like.
+    with auto_data_tab:
+        individual_submissions_manager.display_autonomous_data(submission)
+
+    # Display teleop data
+    with teleop_data_tab:
+        individual_submissions_manager.display_teleop_data(submission)
