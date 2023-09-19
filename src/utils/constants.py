@@ -7,6 +7,7 @@ __all__ = [
     "EventSpecificConstants",
     "GeneralConstants",
     "GraphType",
+    "NoteScoutingQueries",
     "Queries"
 ]
 
@@ -45,6 +46,9 @@ class EventSpecificConstants:
 
     EVENT_CODE = "2023new"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
+    NOTE_SCOUTING_URL = (
+        f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
+    )
     PIT_SCOUTING_URL = (
         f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
     )
@@ -102,7 +106,14 @@ class Queries:
     ONE_TEAM_KEYWORD = "Used for custom graphs with one team."
     THREE_TEAMS_KEYWORD = "Used for custom graphs with three teams."
     FULL_EVENT_KEYWORD = "Used for custom graphs with a full event."
-    
+
+
+class NoteScoutingQueries:
+    """Constants specific to fields in the note scouting data."""
+
+    AUTO_GRID = "AutoPieces"
+    TELEOP_GRID = "TeleopPieces"
+
 
 class Criteria:
     """Criteria used in `CalculatedStats`."""
