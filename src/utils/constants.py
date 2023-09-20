@@ -112,6 +112,10 @@ class NoteScoutingQueries:
     """Constants specific to fields in the note scouting data."""
 
     AUTO_GRID = "AutoPieces"
+    AUTO_ENGAGED = "AutoEngaged"
+    AUTO_INTAKE_ACCURACY = "AutoIntakeAccuracy"
+    AUTO_DRIVING_SKILLS = "AutoDrivingSkills"
+
     TELEOP_GRID = "TeleopPieces"
 
 
@@ -124,7 +128,7 @@ class Criteria:
         Queries.MID: 4,
         Queries.HIGH: 6
     }
-    MOBILITY_CRITERIA = {
+    BOOLEAN_CRITERIA = {
         0: 0,
         "false": 0,
         1: 1,

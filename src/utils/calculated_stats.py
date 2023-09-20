@@ -48,7 +48,7 @@ class CalculatedStats(BaseCalculatedStats):
             ])
         )
         auto_mobility_points = team_data[Queries.LEFT_COMMUNITY].apply(
-            lambda left_community: Criteria.MOBILITY_CRITERIA[left_community] * 3
+            lambda left_community: Criteria.BOOLEAN_CRITERIA[left_community] * 3
         )
         auto_charge_station_points = team_data[Queries.AUTO_CHARGING_STATE].apply(
             lambda charging_state: Criteria.AUTO_CHARGE_POINTAGE.get(charging_state, 0)

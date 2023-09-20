@@ -49,6 +49,10 @@ class BaseCalculatedStats:
         """
         return self.stat_per_match(team_number, stat, criteria).sum()
 
+    def matches_played(self, team_number: int) -> int:
+        """Returns the number of matches a team played."""
+        return len(scouting_data_for_team(team_number, self.data))
+
     def stat_per_match(self, team_number: int, stat: str, criteria: dict | None = None) -> Series:
         """Calculates a statistic over time as specified for a team.
 

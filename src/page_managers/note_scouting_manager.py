@@ -45,7 +45,8 @@ class NoteScoutingManager(PageManager):
 
         :param team_number: The team number selected to generate the graphs for.
         """
-        average_cycles_col, _ = st.columns(2)
+        average_cycles_col, times_engaged_col = st.columns(2)
+        intaking_accuracy_col, obstacle_avoidance_col = st.columns(2)
 
         # Metric containing the average autonomous cycles
         with average_cycles_col:
@@ -62,4 +63,72 @@ class NoteScoutingManager(PageManager):
                 "Average Auto Cycles",
                 round(average_cycles, 2),
                 threshold=average_cycles_for_percentile
+            )
+
+        # Metric containing the total number of times a team engaged.
+        with times_engaged_col:
+            times_engaged = self.calculated_stats.cumulative_stat(
+                team_number,
+                NoteScoutingQueries.AUTO_ENGAGED,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_engaged_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(
+                    team,
+                    NoteScoutingQueries.AUTO_ENGAGED,
+                    Criteria.BOOLEAN_CRITERIA
+                )
+            )
+
+            colored_metric(
+                "# of Times Engaged",
+                times_engaged,
+                threshold=times_engaged_for_percentile
+            )
+
+        # Metric containing the accuracy of the robot when it comes to intaking.
+        with intaking_accuracy_col:
+            auto_intaking_accuracy = self.calculated_stats.cumulative_stat(
+                team_number,
+                NoteScoutingQueries.AUTO_INTAKE_ACCURACY,
+                Criteria.BOOLEAN_CRITERIA
+            ) / (self.calculated_stats.matches_played(team_number) or 1)
+
+            auto_intaking_accuracy_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(
+                    team,
+                    NoteScoutingQueries.AUTO_INTAKE_ACCURACY,
+                    Criteria.BOOLEAN_CRITERIA
+                ) / (self.matches_played(team_number) or 1)
+            )
+
+            colored_metric(
+                "Intaking Accuracy (%)",
+                auto_intaking_accuracy,
+                threshold=auto_intaking_accuracy_for_percentile,
+                value_formatter=lambda value: f"{value:.1%}"
+            )
+
+        # Metric displaying the obstacle avoidance skills of the robot during autonomous.
+        with obstacle_avoidance_col:
+            average_obstacle_avoidance = self.calculated_stats.cumulative_stat(
+                team_number,
+                NoteScoutingQueries.AUTO_DRIVING_SKILLS,
+                Criteria.BOOLEAN_CRITERIA
+            ) / (self.calculated_stats.matches_played(team_number) or 1) * 5
+            average_obstacle_avoidance_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(
+                    team,
+                    NoteScoutingQueries.AUTO_DRIVING_SKILLS,
+                    Criteria.BOOLEAN_CRITERIA
+                ) / (self.matches_played(team_number) or 1) * 5
+            )
+
+            colored_metric(
+                "Obstacle Avoidance Rating (1-5)",
+                round(average_obstacle_avoidance, 1),
+                threshold=average_obstacle_avoidance_for_percentile
             )
