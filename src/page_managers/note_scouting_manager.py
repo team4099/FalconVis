@@ -168,6 +168,9 @@ class NoteScoutingManager(PageManager):
         :param team_number: The team number selected to generate the graphs for.
         """
         average_cycles_col, times_disabled_col, tippy_col, driver_rating_col = st.columns(4)
+        path_col, intaking_location_col, intake_speed_col = st.columns(3)
+        aligning_speed_col, community_col, intaking_game_pieces_col = st.columns(3)
+
         matches_played = self.calculated_stats.matches_played(team_number)
 
         # Metric containing the average teleop cycles
@@ -267,4 +270,109 @@ class NoteScoutingManager(PageManager):
                 average_driver_rating,
                 threshold=average_driver_rating_for_percentile,
                 value_formatter=lambda value: f"{NoteScoutingQueries.classify_driver_rating_from_decimal(value)} ({value})"
+            )
+
+        # Graph representing which path a team often took between the community and the loading zone.
+        with path_col:
+            plotly_chart(
+                bar_graph(
+                    NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.TELEOP_PATH],
+                    self.calculated_stats.occurrences_of_choices(
+                        team_number,
+                        NoteScoutingQueries.TELEOP_PATH,
+                        NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.TELEOP_PATH]
+                    ),
+                    y_axis_label="# of Selections",
+                    title="Which path did they take between the community & substation?",
+                    color=GeneralConstants.SHORT_RED_TO_GREEN_GRADIENT
+                ).update_layout(yaxis_range=(0, matches_played))
+            )
+
+        # Graph representing where a team often intook from.
+        with intaking_location_col:
+            plotly_chart(
+                bar_graph(
+                    NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.TELEOP_INTAKING_LOCATION],
+                    self.calculated_stats.occurrences_of_choices(
+                        team_number,
+                        NoteScoutingQueries.TELEOP_INTAKING_LOCATION,
+                        NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.TELEOP_INTAKING_LOCATION]
+                    ),
+                    y_axis_label="# of Selections",
+                    title="Where did they intake from?",
+                    color=GeneralConstants.GOLD_GRADIENT
+                ).update_layout(yaxis_range=(0, matches_played))
+            )
+
+        # Graph representing how fast a team was at intaking from loading zone.
+        with intake_speed_col:
+            plotly_chart(
+                bar_graph(
+                    NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.LOADING_ZONE_SPEED],
+                    self.calculated_stats.occurrences_of_choices(
+                        team_number,
+                        NoteScoutingQueries.LOADING_ZONE_SPEED,
+                        NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.LOADING_ZONE_SPEED]
+                    ),
+                    y_axis_label="# of Selections",
+                    title="How fast were they at intaking from loading zone?",
+                    color=GeneralConstants.RED_TO_GREEN_GRADIENT
+                ).update_layout(yaxis_range=(0, matches_played))
+            )
+
+        # Graph representing how fast a team was at aligning onto the nodes when scoring.
+        with aligning_speed_col:
+            plotly_chart(
+                bar_graph(
+                    NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.TELEOP_ALIGNING_SPEED],
+                    self.calculated_stats.occurrences_of_choices(
+                        team_number,
+                        NoteScoutingQueries.TELEOP_ALIGNING_SPEED,
+                        NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.TELEOP_ALIGNING_SPEED]
+                    ),
+                    y_axis_label="# of Selections",
+                    title="How fast were they when lining up to score?",
+                    color=GeneralConstants.SHORT_RED_TO_GREEN_GRADIENT
+                ).update_layout(yaxis_range=(0, matches_played))
+            )
+
+        # Graph representing how well a team entered/exited the community.
+        with community_col:
+            plotly_chart(
+                bar_graph(
+                    NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.COMMUNITY_DRIVING_SKILLS],
+                    self.calculated_stats.occurrences_of_choices(
+                        team_number,
+                        NoteScoutingQueries.COMMUNITY_DRIVING_SKILLS,
+                        NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.COMMUNITY_DRIVING_SKILLS]
+                    ),
+                    y_axis_label="# of Selections",
+                    title="How did they enter/exit the community?",
+                    color=GeneralConstants.SHORT_RED_TO_GREEN_GRADIENT
+                ).update_layout(yaxis_range=(0, matches_played))
+            )
+
+        # Graph representing how fast a team was at intaking cones/cubes.
+        with intaking_game_pieces_col:
+            plotly_chart(
+                stacked_bar_graph(
+                    NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.CONE_INTAKING_SKILLS],
+                    [
+                        self.calculated_stats.occurrences_of_choices(
+                            team_number,
+                            NoteScoutingQueries.CONE_INTAKING_SKILLS,
+                            NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.CONE_INTAKING_SKILLS]
+                        ),
+                        self.calculated_stats.occurrences_of_choices(
+                            team_number,
+                            NoteScoutingQueries.CUBE_INTAKING_SKILLS,
+                            NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.CUBE_INTAKING_SKILLS]
+                        )
+                    ],
+                    x_axis_label="",
+                    y_axis_label=["Cones", "Cubes"],
+                    y_axis_title="# of Selections",
+                    title="How good were they with intaking/holding game pieces?",
+                    color_map={"Cones": GeneralConstants.CONE_COLOR, "Cubes": GeneralConstants.CUBE_COLOR}
+                ).update_layout(yaxis_range=(0, matches_played))
             )

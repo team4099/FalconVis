@@ -121,14 +121,34 @@ class NoteScoutingQueries:
     AUTO_SCORING_ACCURACY = "AutoScoringAccuracy"
 
     TELEOP_GRID = "TeleopPieces"
+    TELEOP_PATH = "TeleopPath"
+    TELEOP_ALIGNING_SPEED = "TeleopAligningSpeed"
+    TELEOP_INTAKING_LOCATION = "TeleopIntakingLocation"
+    COMMUNITY_DRIVING_SKILLS = "TeleopCommunitySkill"
+
     DISABLED = "Disabled"
     TIPPY = "Tippy"
     DRIVER_RATING = "DriverRating"
+    CONE_INTAKING_SKILLS = "ConeIntakingSkill"
+    CUBE_INTAKING_SKILLS = "CubeIntakingSkill"
+    LOADING_ZONE_SPEED = "SubstationSpeed"
 
     CHOICE_NAMES = {
         AUTO_STARTING_POSITION: ["Cable protector side", "Charging station", "Loading zone side"],
         AUTO_SCORING_ACCURACY: ["Lousy", "Poor", "Okay", "Decent", "Great"],
-        DRIVER_RATING: ["Very Poor", "Poor", "Average", "Fluid", "Very Fluid"]
+        DRIVER_RATING: ["Very Poor", "Poor", "Average", "Fluid", "Very Fluid"],
+        TELEOP_PATH: [
+            "No specific path",
+            "Cable protector side to loading zone",
+            "Over the charging station to loading zone",
+            "No cable protector side to loading zone"
+        ],
+        TELEOP_ALIGNING_SPEED: ["Very Slow", "Slow", "Fast", "Quick"],
+        COMMUNITY_DRIVING_SKILLS: ["Very Poor", "Poor", "Well", "Smoothly"],
+        TELEOP_INTAKING_LOCATION: ["Ground", "Single substation", "Double substation"],
+        CONE_INTAKING_SKILLS: ["Very Poor", "Poor", "Average", "Good", "Very Good"],
+        CUBE_INTAKING_SKILLS: ["Very Poor", "Poor", "Average", "Good", "Very Good"],
+        LOADING_ZONE_SPEED: ["Very Poor", "Poor", "Average", "Good", "Very Good"],
     }
 
     @staticmethod
