@@ -35,3 +35,18 @@ class CalculatedQualitativeStats(BaseCalculatedStats):
         :return: A float representing the average cycles put up per match.
         """
         return self.cycles_by_match(team_number, type_of_grid).mean()
+
+    # Miscellaneous methods
+    def occurrences_of_choices(self, team_number: int, query: str, choices: list[str]) -> list[int]:
+        """Given a list of strings, look for the occurrences of each string in the list for a given query.
+        Primary use is for qualitative data.
+
+        :param team_number: The team number to look at the scouting data for.
+        :param query: The query that acts a 'haystack' for searching for the needles.
+        :param choices: The list containing the strings to search for, being the 'needles'.
+        :return: A list of integers representing the occurrences of each choice."""
+        team_data = scouting_data_for_team(team_number, self.data)
+        return [
+            len(team_data[query][team_data[query] == choice])
+            for choice in choices
+        ]

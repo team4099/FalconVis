@@ -28,6 +28,9 @@ class GeneralConstants:
     BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1", "#a8c1e3"]
     GOLD_GRADIENT = ["#ffbd4d", "#ff9000", "#dd5f00"]
     LEVEL_GRADIENT = ["#f44a53", "#ff8800", "#f4c717"]
+    RED_TO_GREEN_GRADIENT = ["#ffb6b3", "#ffd5d4", "#e7f1e8", "#bde7bd", "#77dd76"]
+    SHORT_RED_TO_GREEN_GRADIENT = ["#ffb6b3", "#ffd5d4", "#bde7bd", "#77dd76"]
+
     # Colors
     DARK_RED = "#450a0a"
     DARK_BLUE = "#172554"
@@ -110,13 +113,40 @@ class Queries:
 
 class NoteScoutingQueries:
     """Constants specific to fields in the note scouting data."""
-
     AUTO_GRID = "AutoPieces"
     AUTO_ENGAGED = "AutoEngaged"
     AUTO_INTAKE_ACCURACY = "AutoIntakeAccuracy"
     AUTO_DRIVING_SKILLS = "AutoDrivingSkills"
+    AUTO_STARTING_POSITION = "AutoStartingPosition"
+    AUTO_SCORING_ACCURACY = "AutoScoringAccuracy"
 
     TELEOP_GRID = "TeleopPieces"
+    DISABLED = "Disabled"
+    TIPPY = "Tippy"
+    DRIVER_RATING = "DriverRating"
+
+    CHOICE_NAMES = {
+        AUTO_STARTING_POSITION: ["Cable protector side", "Charging station", "Loading zone side"],
+        AUTO_SCORING_ACCURACY: ["Lousy", "Poor", "Okay", "Decent", "Great"],
+        DRIVER_RATING: ["Very Poor", "Poor", "Average", "Fluid", "Very Fluid"]
+    }
+
+    @staticmethod
+    def classify_driver_rating_from_decimal(rating: float) -> str:
+        """Returns the corresponding name for the driver rating based on the rating passed in (like 4.2 -> Very Fluid).
+
+        :param rating: A float representing the rating that should be converted.
+        """
+        if rating >= 4.5:
+            return "Very Fluid"
+        elif 4 <= rating < 4.5:
+            return "Fluid"
+        elif 3 <= rating < 4:
+            return "Average"
+        elif 2 <= rating < 3:
+            return "Poor"
+        elif 1 <= rating < 2:
+            return "Very Poor"
 
 
 class Criteria:
