@@ -15,18 +15,13 @@ if __name__ == '__main__':
     # Write the title of the page.
     st.write("# Note Scouting")
 
-    # Create two tabs for the Note Scouting page.
-    team_tab, match_tab = st.tabs(["🤖 Team", "🏁 Match"])
+    team_number = note_scouting_manager.generate_team_input_section()
+    auto_tab, teleop_tab = st.tabs(["🤖 Autonomous", "🎮 Teleop"])
 
-    # Create the two tabs for the Team tab.
-    with team_tab:
-        team_number = note_scouting_manager.generate_team_input_section()
-        auto_tab, teleop_tab = st.tabs(["🤖 Autonomous", "🎮 Teleop"])
+    # Generate the metrics and bar plots for the Autonomous section in the Team page.
+    with auto_tab:
+        note_scouting_manager.generate_team_autonomous_graphs(team_number)
 
-        # Generate the metrics and bar plots for the Autonomous section in the Team page.
-        with auto_tab:
-            note_scouting_manager.generate_team_autonomous_graphs(team_number)
-
-        # Generate the metrics and bar plots for the Teleop section in the Team page.
-        with teleop_tab:
-            note_scouting_manager.generate_team_teleop_graphs(team_number)
+    # Generate the metrics and bar plots for the Teleop section in the Team page.
+    with teleop_tab:
+        note_scouting_manager.generate_team_teleop_graphs(team_number)
