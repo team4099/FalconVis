@@ -145,9 +145,19 @@ def retrieve_team_list(scouting_data: DataFrame | None = None, from_note_scoutin
     # Filter out empty team numbers
     scouting_data = scouting_data[scouting_data["TeamNumber"] != ""]
 
-    return sorted(
-        set(
-            scouting_data["TeamNumber"]
+    try:
+        return sorted(
+            set(
+                scouting_data["TeamNumber"]
+            )
         )
-    )
+    except TypeError:  # B-Bots included
+        return sorted(
+            set(
+                scouting_data["TeamNumber"]
+            ),
+            key=lambda value: (
+                value if isinstance(value, int) else 10000  # Make B-Bots last
+            )
+        )
 

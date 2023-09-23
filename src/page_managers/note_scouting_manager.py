@@ -239,7 +239,7 @@ class NoteScoutingManager(PageManager):
         with driver_rating_col:
             average_driver_rating = sum(
                 [
-                    times_noted * idx + 1
+                    times_noted * (idx + 1)
                     for idx, times_noted in enumerate(
                         self.calculated_stats.occurrences_of_choices(
                             team_number,
@@ -283,9 +283,16 @@ class NoteScoutingManager(PageManager):
                         NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.TELEOP_PATH]
                     ),
                     y_axis_label="# of Selections",
-                    title="Which path did they take between the community & substation?",
+                    title="What path did they take between the community & substation?",
                     color=GeneralConstants.SHORT_RED_TO_GREEN_GRADIENT
-                ).update_layout(yaxis_range=(0, matches_played))
+                ).update_layout(
+                    xaxis=dict(
+                        tickmode='array',
+                        tickvals=[0, 1, 2, 3],
+                        ticktext=["N/A", "Bump side", "Charging station", "No bump side"]
+                    ),
+                    yaxis_range=(0, matches_played)
+                )
             )
 
         # Graph representing where a team often intook from.
