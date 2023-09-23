@@ -49,9 +49,15 @@ def retrieve_scouting_data() -> DataFrame:
     scouting_data = DataFrame.from_dict(
         get(EventSpecificConstants.URL).json()
     )
-    scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
-        lambda match_key: int(search(r"\d+", match_key).group(0))
-    )
+
+    try:
+        scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
+            lambda match_key: int(search(r"\d+", match_key).group(0))
+        )
+    except KeyError:  # No scouting data.
+        st.exception(
+            ValueError("The only pages available for Colosseum Clash are 'Note Scouting' and 'Picklist'.")
+        )
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 

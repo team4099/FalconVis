@@ -37,13 +37,13 @@ if __name__ == '__main__':
         auto_cycle_contrib_tab, auto_point_contrib_tab = st.tabs(
             ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
         )
-        
+
         with auto_cycle_contrib_tab:
             team_manager.generate_autonomous_graphs(
                 team_number,
                 type_of_graph=GraphType.CYCLE_CONTRIBUTIONS
             )
-        
+
         with auto_point_contrib_tab:
             team_manager.generate_autonomous_graphs(
                 team_number,
@@ -69,4 +69,3 @@ if __name__ == '__main__':
                 team_number,
                 type_of_graph=GraphType.POINT_CONTRIBUTIONS
             )
-            
