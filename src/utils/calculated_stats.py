@@ -47,7 +47,7 @@ class CalculatedStats:
             lambda grid_data: sum([
                 Criteria.AUTO_GRID_POINTAGE[game_piece[1]]
                 for game_piece in grid_data.split("|")
-                if game_piece
+                if game_piece and game_piece != "None"
             ])
         )
         auto_mobility_points = team_data[Queries.LEFT_COMMUNITY].apply(
