@@ -75,8 +75,7 @@ def retrieve_note_scouting_data() -> DataFrame:
         scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
             lambda match_key: int(search(r"\d+", match_key).group(0))
         )
-
-    return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
+        return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
