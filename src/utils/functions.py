@@ -71,7 +71,7 @@ def retrieve_note_scouting_data() -> DataFrame:
     scouting_data = DataFrame.from_dict(
         get(EventSpecificConstants.NOTE_SCOUTING_URL).json()
     )
-    if scouting_data != None:
+    if not scouting_data.empty:
         scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
             lambda match_key: int(search(r"\d+", match_key).group(0))
         )
