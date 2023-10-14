@@ -151,7 +151,8 @@ def retrieve_team_list(scouting_data: DataFrame | None = None, from_note_scoutin
         scouting_data = retrieve_note_scouting_data() if from_note_scouting_data else retrieve_scouting_data()
 
     # Filter out empty team numbers
-    scouting_data = scouting_data[scouting_data["TeamNumber"] != ""]
+    if not scouting_data.empty:
+        scouting_data = scouting_data[scouting_data["TeamNumber"] != ""]
 
     try:
         return sorted(
