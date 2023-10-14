@@ -77,6 +77,8 @@ def retrieve_note_scouting_data() -> DataFrame:
         )
         return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 
+    return DataFrame()
+
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_pit_scouting_data() -> DataFrame | None:
@@ -138,7 +140,7 @@ def scouting_data_for_team(
     ]
 
 
-def retrieve_team_list(scouting_data: DataFrame | None = None, from_note_scouting_data: bool = False) -> list:
+def retrieve_team_list(scouting_data: DataFrame | None = None, from_note_scouting_data: bool = True) -> list:
     """Retrieves the team list at the current event via the scouting data.
 
     :param scouting_data: An optional argument allowing the user to pass in the scouting data if already retrieved.
