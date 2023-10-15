@@ -15,39 +15,35 @@ note_scouting_manager = NoteScoutingManager()
 
 if __name__ == '__main__':
     # Write the title of the page.
-    st.write("# Picklist")
+    st.write("# Picklist and Notes")
 
-    # Generate the input section of the `Picklist` page.
-    fields_selected = picklist_manager.generate_input_section()
+    col1, col2 = st.columns(2)
 
-    # Generate the picklist using the fields selected.
-    generated_picklist = picklist_manager.generate_picklist(fields_selected)
+    with col1:
+        # Generate the input section of the `Picklist` page.
+        fields_selected = picklist_manager.generate_input_section()
 
-    returned_dataframe = st.dataframe(generated_picklist)
+        # Generate the picklist using the fields selected.
+        generated_picklist = picklist_manager.generate_picklist(fields_selected)
 
-    st.download_button(
-       "Press to Download",
-       generated_picklist.to_csv(index=False),
-       "Picklist.csv",
-       "text/csv",
-       key='download-csv'
-    )
+        returned_dataframe = st.dataframe(generated_picklist)
 
-    st.write("# Note Scouting")
+        st.download_button(
+           "Press to Download",
+           generated_picklist.to_csv(index=False),
+           "Picklist.csv",
+           "text/csv",
+           key='download-csv'
+        )
 
-    team_number = note_scouting_manager.generate_team_input_section()
-    auto_tab, teleop_tab = st.tabs(["🤖 Autonomous", "🎮 Teleop"])
+    with col2:
+        team_number = note_scouting_manager.generate_team_input_section()
+        auto_tab, teleop_tab = st.tabs(["🤖 Autonomous", "🎮 Teleop"])
 
-    # Generate the metrics and bar plots for the Autonomous section in the Team page.
-    with auto_tab:
-        note_scouting_manager.generate_team_autonomous_graphs(team_number)
+        # Generate the metrics and bar plots for the Autonomous section in the Team page.
+        with auto_tab:
+            note_scouting_manager.generate_team_autonomous_graphs(team_number)
 
-    # Generate the metrics and bar plots for the Teleop section in the Team page.
-    with teleop_tab:
-        note_scouting_manager.generate_team_teleop_graphs(team_number)
-
-
-
-
-
-
+        # Generate the metrics and bar plots for the Teleop section in the Team page.
+        with teleop_tab:
+            note_scouting_manager.generate_team_teleop_graphs(team_number)
