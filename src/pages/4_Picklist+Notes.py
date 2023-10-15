@@ -33,6 +33,8 @@ if __name__ == '__main__':
        key='download-csv'
     )
 
+    st.write("# Note Scouting")
+
     team_number = note_scouting_manager.generate_team_input_section()
     auto_tab, teleop_tab = st.tabs(["🤖 Autonomous", "🎮 Teleop"])
 
