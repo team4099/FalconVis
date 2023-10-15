@@ -1,6 +1,5 @@
 """Creates the page for viewing note scouting data in FalconVis."""
-
-"""import streamlit as st
+import streamlit as st
 from page_managers import NoteScoutingManager
 
 # Configuration for Streamlit
@@ -24,4 +23,4 @@ if __name__ == '__main__':
 
     # Generate the metrics and bar plots for the Teleop section in the Team page.
     with teleop_tab:
-        note_scouting_manager.generate_team_teleop_graphs(team_number)"""
+        note_scouting_manager.generate_team_teleop_graphs(team_number)

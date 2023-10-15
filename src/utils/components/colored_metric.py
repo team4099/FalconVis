@@ -1,4 +1,5 @@
 """Creates a component to display colored metrics."""
+from __future__ import annotations
 
 from typing import Any, Callable
 from streamlit.components.v1 import html
