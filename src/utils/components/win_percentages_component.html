@@ -1,6 +1,21 @@
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              fontFamily: {
+                sans: ['Inter']
+              }
+            }
+          }
+        }
+    </script>
 </head>
+
 <body>
     <div class="flex flex-row justify-items-center">
         <div class="flex items-center bg-red-950 w-[{red}%] h-10 {z-red} rounded-l-lg whitespace-nowrap">

@@ -35,6 +35,8 @@ class GeneralConstants:
     DARK_RED = "#450a0a"
     DARK_BLUE = "#172554"
     DARK_GREEN = "#052e16"
+    LIGHT_RED = "#ff7276"
+    LIGHT_GREEN = "#00873e"
 
     # Game piece colors
     CONE_COLOR = PRIMARY_COLOR
@@ -42,6 +44,10 @@ class GeneralConstants:
 
     # Game-specific constants
     CHARGE_STATION_LENGTH = 8  # In feet
+
+    # Qualitative data constants
+    POSITIVE_TERMS = {"consistent", "speed", "good", "cycle", "fast", "score", "well"}
+    NEGATIVE_TERMS = {"can't", "disable", "foul", "bad", "drop", "stuck", "poor", "missed", "slow", "only", "tip", "broke", "struggle", "bug"}
 
 
 class EventSpecificConstants:
@@ -71,6 +77,9 @@ class Queries:
     MATCH_KEY = "MatchKey"
     MATCH_NUMBER = "MatchNumber"
     TEAM_NUMBER = "TeamNumber"
+    SCOUT_ID = "ScoutId"
+    ALLIANCE = "Alliance"
+    DRIVER_STATION = "DriverStation"
 
     AUTO_GRID = "AutoGrid"
     AUTO_MISSED = "AutoMissed"
@@ -81,11 +90,14 @@ class Queries:
     AUTO_CUBES = "AutoCubes"
 
     TELEOP_GRID = "TeleopGrid"
+    TELEOP_NOTES = "TeleopNotes"
+    TELEOP_MISSED="TeleopMissed"
     ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
 
     DRIVER_RATING = "DriverRating"
     DEFENSE_RATING = "DefenseRating"
     DISABLE = "Disable"
+    TIPPY = "Tippy"
 
     # Constants for different heights
     LOW = "L"

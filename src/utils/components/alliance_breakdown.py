@@ -27,7 +27,9 @@ def alliance_breakdown(
         defense_svg = defense_svg_file.read()
         offense_svg = offense_svg_file.read()
 
-        html_template = html_file.read().format(
+        # Split by two newlines to prevent the formatting from catching the scripts as something to format.
+        html_content = html_file.read().split("\n\n")
+        html_template = html_content[0] + html_content[1].format(
             background_color=(
                 "#450a0a" if alliance == "red" else "#172554"  # Dark red/blue constants
             ),
