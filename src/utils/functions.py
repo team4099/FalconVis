@@ -14,6 +14,7 @@ __all__ = [
     "populate_missing_data",
     "retrieve_match_schedule",
     "retrieve_pit_scouting_data",
+    "retrieve_note_scouting_data",
     "retrieve_team_list",
     "retrieve_scouting_data",
     "scouting_data_for_team"
@@ -48,11 +49,35 @@ def retrieve_scouting_data() -> DataFrame:
     scouting_data = DataFrame.from_dict(
         get(EventSpecificConstants.URL).json()
     )
-    scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
-        lambda match_key: int(search(r"\d+", match_key).group(0))
-    )
+
+    try:
+        scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
+            lambda match_key: int(search(r"\d+", match_key).group(0))
+        )
+    except KeyError:  # No scouting data.
+        st.exception(
+            ValueError("The only pages available for Colosseum Clash are 'Note Scouting' and 'Picklist'.")
+        )
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
+
+
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+def retrieve_note_scouting_data() -> DataFrame:
+    """Retrieves the latest note scouting data from team4099/ScoutingAppData on GitHub based on the current event.
+
+    :return: A dataframe containing the scouting data from an event.
+    """
+    scouting_data = DataFrame.from_dict(
+        get(EventSpecificConstants.NOTE_SCOUTING_URL).json()
+    )
+    if not scouting_data.empty:
+        scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
+            lambda match_key: int(search(r"\d+", match_key).group(0))
+        )
+        return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
+
+    return DataFrame()
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
@@ -95,33 +120,52 @@ def retrieve_match_schedule() -> DataFrame:
     )
 
 
-def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = None) -> DataFrame:
+def scouting_data_for_team(
+    team_number: int,
+    scouting_data: DataFrame | None = None,
+    from_note_scouting_data: bool = False
+) -> DataFrame:
     """Retrieves the submissions within the scouting data for a certain team.
 
     :param team_number: The number of the team to retrieve the submissions for.
     :param scouting_data: An optional argument allowing the user to pass in the scouting data if already retrieved.
+    :param from_note_scouting_data: A flag representing whether to pull from the note scouting data.
     :return: A dataframe containing th submissions within the scouting data for the team passed in.
     """
     if scouting_data is None:
-        scouting_data = retrieve_scouting_data()
+        scouting_data = retrieve_note_scouting_data() if from_note_scouting_data else retrieve_scouting_data()
 
     return scouting_data[
         scouting_data["TeamNumber"] == team_number
     ]
 
 
-def retrieve_team_list() -> list:
+def retrieve_team_list(scouting_data: DataFrame | None = None, from_note_scouting_data: bool = True) -> list:
     """Retrieves the team list at the current event via the scouting data.
 
+    :param scouting_data: An optional argument allowing the user to pass in the scouting data if already retrieved.
+    :param from_note_scouting_data: A flag representing whether to pull from the note scouting data.
     :return: A list containing the teams at the current event.
     """
-    scouting_data = retrieve_scouting_data()
+    if scouting_data is None:
+        scouting_data = retrieve_note_scouting_data() if from_note_scouting_data else retrieve_scouting_data()
+
     # Filter out empty team numbers
     scouting_data = scouting_data[scouting_data["TeamNumber"] != ""]
 
-    return sorted(
-        set(
-            scouting_data["TeamNumber"]
+    try:
+        return sorted(
+            set(
+                scouting_data["TeamNumber"]
+            )
         )
-    )
+    except TypeError:  # B-Bots included
+        return sorted(
+            set(
+                scouting_data["TeamNumber"]
+            ),
+            key=lambda value: (
+                value if isinstance(value, int) else 10000  # Make B-Bots last
+            )
+        )
 

@@ -6,7 +6,7 @@ import streamlit as st
 from pandas import DataFrame
 
 from .page_manager import PageManager
-from utils import CalculatedStats, Queries, retrieve_scouting_data, retrieve_team_list
+from utils import CalculatedQualitativeStats, Criteria, NoteScoutingQueries, retrieve_note_scouting_data, retrieve_team_list
 
 
 class PicklistManager(PageManager):
@@ -14,21 +14,48 @@ class PicklistManager(PageManager):
     TRUNCATE_AT_DIGIT = 2  # Round the decimal to two places
 
     def __init__(self):
-        self.calculated_stats = CalculatedStats(
-            retrieve_scouting_data()
+        self.calculated_stats = CalculatedQualitativeStats(
+            retrieve_note_scouting_data()
         )
-        self.teams = retrieve_team_list()
+        self.teams = retrieve_team_list(from_note_scouting_data=True)
 
         # Requested stats is used to define the stats wanted in the picklist generation.
         self.requested_stats = {
             "Average Auto Cycles": partial(
                 self.calculated_stats.average_cycles,
-                type_of_grid=Queries.AUTO_GRID
+                type_of_grid=NoteScoutingQueries.AUTO_GRID
             ),
             "Average Teleop Cycles": partial(
                 self.calculated_stats.average_cycles,
-                type_of_grid=Queries.TELEOP_GRID
-            )
+                type_of_grid=NoteScoutingQueries.TELEOP_GRID
+            ),
+            "Times Engaged": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=NoteScoutingQueries.AUTO_ENGAGED,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "Times Disabled": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=NoteScoutingQueries.DISABLED,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "Tippiness": lambda team_number: self.calculated_stats.cumulative_stat(
+                team_number,
+                stat=NoteScoutingQueries.DISABLED,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ) / (self.calculated_stats.matches_played(team_number) or 1) * 5,
+            "Driver Rating": lambda team_number: sum(
+                [
+                    times_noted * (idx + 1)
+                    for idx, times_noted in enumerate(
+                        self.calculated_stats.occurrences_of_choices(
+                            team_number,
+                            NoteScoutingQueries.DRIVER_RATING,
+                            NoteScoutingQueries.CHOICE_NAMES[NoteScoutingQueries.DRIVER_RATING]
+                        )
+                    )
+                ]
+            ) / (self.calculated_stats.matches_played(team_number) or 1)
         }
 
     def generate_input_section(self) -> list[list, list]:
