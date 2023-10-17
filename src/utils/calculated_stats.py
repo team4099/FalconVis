@@ -43,30 +43,26 @@ class CalculatedStats:
         """
         team_data = scouting_data_for_team(team_number, self.data)
 
-        auto_grid_points = team_data[Queries.AUTO_GRID].apply(
-            lambda grid_data: sum([
-                Criteria.AUTO_GRID_POINTAGE[game_piece[1]]
-                for game_piece in grid_data.split("|")
-                if game_piece
-            ])
+        auto_grid_points = (
+            team_data[Queries.AUTO_HIGH] * 6
+            + team_data[Queries.AUTO_MID] * 4
+            + team_data[Queries.AUTO_LOW] * 3
         )
-        auto_mobility_points = team_data[Queries.LEFT_COMMUNITY].apply(
-            lambda left_community: Criteria.MOBILITY_CRITERIA[left_community] * 3
-        )
-        auto_charge_station_points = team_data[Queries.AUTO_CHARGING_STATE].apply(
+        auto_mobility_points = 3  # At BOB, just assume mobility since it tends to happen
+        auto_charge_station_points = team_data[Queries.AUTO_ENGAGE_SUCCESSFUL].apply(
             lambda charging_state: Criteria.AUTO_CHARGE_POINTAGE.get(charging_state, 0)
         )
 
-        teleop_grid_points = team_data[Queries.TELEOP_GRID].apply(
-            lambda grid_data: sum([
-                Criteria.TELEOP_GRID_POINTAGE[game_piece[1]]
-                for game_piece in grid_data.split("|")
-                if game_piece
-            ])
-        )
-
-        endgame_points = team_data[Queries.ENDGAME_FINAL_CHARGE].apply(
-            lambda charging_state: Criteria.ENDGAME_POINTAGE.get(charging_state, 0)
+        teleop_grid_points = (
+            team_data[Queries.TELEOP_CONES].apply(
+                lambda grid_data: sum([
+                    Criteria.TELEOP_GRID_POINTAGE[game_piece] for game_piece in grid_data
+                ])
+            ) + team_data[Queries.TELEOP_CUBES].apply(
+                lambda grid_data: sum([
+                    Criteria.TELEOP_GRID_POINTAGE[game_piece] for game_piece in grid_data
+                ])
+            )
         )
 
         if type_of_grid == Queries.AUTO_GRID:
@@ -79,28 +75,6 @@ class CalculatedStats:
             + auto_mobility_points
             + auto_charge_station_points
             + teleop_grid_points
-            + endgame_points
-        )
-
-    def classify_autos_by_match(self, team_number: int) -> Series:
-        """Classifies each auto mode performed by a team.
-        As of now, this method only classifies grid placement (cable cover/charge station/loading zone).
-
-        :return: A series containing grid placements indicating where the team started.
-        """
-        team_data = scouting_data_for_team(team_number, self.data)
-        positions_to_placements = {
-            "1": Queries.LEFT, "2": Queries.LEFT, "3": Queries.RIGHT,
-            "4": Queries.COOP, "5": Queries.COOP, "6": Queries.COOP,
-            "7": Queries.RIGHT, "8": Queries.RIGHT, "9": Queries.RIGHT
-        }
-
-        return team_data[Queries.AUTO_GRID].apply(
-            lambda grid_data: (
-                positions_to_placements[grid_data[0]]
-                if grid_data
-                else Queries.LEFT
-            )
         )
 
     # Cycle calculation methods
@@ -142,9 +116,11 @@ class CalculatedStats:
         :return: A series containing the cycles per match for the mode specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
-        return team_data[type_of_grid].apply(
-            lambda grid_data: len(grid_data) if type(grid_data) is list else len(grid_data.split("|"))
-        )
+
+        if type_of_grid == Queries.AUTO_GRID:
+            return team_data[Queries.AUTO_HIGH] + team_data[Queries.AUTO_MID] + team_data[Queries.AUTO_LOW]
+        else:
+            return team_data[Queries.TELEOP_CONES].apply(len) + team_data[Queries.TELEOP_CUBES].apply(len)
 
     def cycles_by_height_per_match(self, team_number: int, type_of_grid: str, height: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
@@ -160,14 +136,25 @@ class CalculatedStats:
         :return: A series containing the cycles per match for the mode specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
-        return team_data[type_of_grid].apply(
-            lambda grid_data: len([
-                game_piece for game_piece in grid_data.split("|")
-                if game_piece and game_piece[1] == height
-            ])
-        )
 
-    def cycles_by_game_piece_per_match(self, team_number: int, type_of_grid: str, game_piece: str) -> Series:
+        if type_of_grid == Queries.AUTO_GRID:
+            height_to_query = {
+                Queries.HIGH: Queries.AUTO_HIGH,
+                Queries.MID: Queries.AUTO_MID,
+                Queries.LOW: Queries.AUTO_LOW
+            }
+            return team_data[height_to_query[height]]
+        else:
+            return (
+                team_data[Queries.TELEOP_CONES].apply(
+                    lambda grid_data: grid_data.count(height)
+                )
+                + team_data[Queries.TELEOP_CUBES].apply(
+                    lambda grid_data: grid_data.count(height)
+                )
+            )
+
+    def teleop_cycles_by_game_piece_per_match(self, team_number: int, game_piece: str) -> Series:
         """Returns the cycles for a certain game piece across matches.
 
         The following custom graphs are supported with this function:
@@ -176,26 +163,11 @@ class CalculatedStats:
         - Multi line graph
 
         :param team_number: The team number to calculate the cycles by game piece per match for.
-        :param type_of_grid: The type of mode to calculate the game piece cycles for (AutoGrid/TeleopGrid)
         :param game_piece: The type of game piece to count cycles for (cone/cube)
         :return: A series containing the cycles per match for the game piece specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
-        game_piece_positions = (
-            {"1", "3", "4", "6", "7", "9"}
-            if game_piece == Queries.CONE
-            else {"2", "5", "8"}
-        )
-
-        return team_data[type_of_grid].apply(
-            lambda grid_data: len([
-                cycle for cycle in grid_data.split("|")
-                if cycle and (
-                        cycle[0] in game_piece_positions
-                        or cycle[2:] == game_piece
-                )
-            ])
-        )
+        return team_data[Queries.TELEOP_CONES if game_piece == Queries.CONE else Queries.TELEOP_CUBES].apply(len)
 
     # Accuracy methods
     def average_auto_accuracy(self, team_number: int) -> float:
@@ -261,9 +233,13 @@ class CalculatedStats:
         :return: A float with the team drivtrain width in inches
         """
         pit_scouting_data = retrieve_pit_scouting_data()
-        return pit_scouting_data[
-                            pit_scouting_data["Team Number"] == team_number
-                        ].iloc[0]["Drivetrain Width"]
+
+        if pit_scouting_data is not None:
+            return pit_scouting_data[
+                pit_scouting_data["Team Number"] == team_number
+            ].iloc[0]["Drivetrain Width"]
+        else:
+            return 0.0
 
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:

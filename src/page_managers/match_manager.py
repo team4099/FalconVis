@@ -312,8 +312,8 @@ class MatchManager(PageManager):
         with game_piece_breakdown_col:
             game_piece_breakdown = [
                 [
-                    self.calculated_stats.cycles_by_game_piece_per_match(
-                        team, Queries.TELEOP_GRID, game_piece
+                    self.calculated_stats.teleop_cycles_by_game_piece_per_match(
+                        team, game_piece
                     ).sum()
                     for team in combined_teams
                 ]
@@ -547,11 +547,14 @@ class MatchManager(PageManager):
 
             # Y values of plot
             points_by_grid = {}
-            full_grid = [Queries.LEFT, Queries.COOP, Queries.RIGHT]
+            full_grid = [Queries.CABLE_COVER, Queries.CHARGE_STATION, Queries.LOADING_ZONE]
             grids_occupied = set()
 
             for team, point_contributions in teams_sorted_by_point_contribution.items():
-                grid_placements = self.calculated_stats.classify_autos_by_match(team)
+                grid_placements = self.calculated_stats.stat_per_match(
+                    team,
+                    Queries.STARTING_POSITION
+                )
                 autos_sorted = sorted(
                     zip(point_contributions, grid_placements),
                     key=lambda pair: pair[0],
@@ -581,7 +584,7 @@ class MatchManager(PageManager):
                 bar_graph(
                     list(points_by_grid.keys()),
                     [value[0] for value in points_by_grid.values()],
-                    x_axis_label="Teams (Left, Coop, Right)",
+                    x_axis_label="Teams (Cable Cover, Charge Station, Loading Zone)",
                     y_axis_label=(
                         "Cycles in Auto"
                         if display_cycle_contributions
@@ -597,16 +600,8 @@ class MatchManager(PageManager):
             successful_engages_by_team = [
                 self.calculated_stats.cumulative_stat(
                     team,
-                    Queries.AUTO_CHARGING_STATE,
-                    Criteria.SUCCESSFUL_ENGAGE_CRITERIA
-                )
-                for team in team_numbers
-            ]
-            successful_docks_by_team = [
-                self.calculated_stats.cumulative_stat(
-                    team,
-                    Queries.AUTO_CHARGING_STATE,
-                    Criteria.SUCCESSFUL_DOCK_CRITERIA
+                    Queries.AUTO_ENGAGE_SUCCESSFUL,
+                    Criteria.BOOLEAN_CRITERIA
                 )
                 for team in team_numbers
             ]
@@ -614,21 +609,21 @@ class MatchManager(PageManager):
                 self.calculated_stats.cumulative_stat(
                     team,
                     Queries.AUTO_ENGAGE_ATTEMPTED,
-                    Criteria.AUTO_ATTEMPT_CRITERIA
-                ) - successful_docks_by_team[idx] - successful_engages_by_team[idx]
+                    Criteria.BOOLEAN_CRITERIA
+                ) - successful_engages_by_team[idx]
                 for idx, team in enumerate(team_numbers)
             ]
 
             plotly_chart(
                 stacked_bar_graph(
                     team_numbers,
-                    [missed_attempts_by_team, successful_docks_by_team, successful_engages_by_team],
+                    [missed_attempts_by_team, successful_engages_by_team],
                     x_axis_label="Teams",
-                    y_axis_label=["# of Missed Engages", "# of Docks", "# of Engages"],
+                    y_axis_label=["# of Missed Engages", "# of Engages"],
                     y_axis_title="",
                     color_map=dict(
                         zip(
-                            ["# of Missed Engages", "# of Docks", "# of Engages"],
+                            ["# of Missed Engages", "# of Engages"],
                             color_gradient
                         )
                     ),
@@ -753,17 +748,15 @@ class MatchManager(PageManager):
         # Graph the breakdown of game pieces by each team
         with teleop_game_piece_breakdown_col:
             cones_scored_by_team = [
-                self.calculated_stats.cycles_by_game_piece_per_match(
+                self.calculated_stats.teleop_cycles_by_game_piece_per_match(
                     team,
-                    Queries.TELEOP_GRID,
                     Queries.CONE
                 ).sum()
                 for team in team_numbers
             ]
             cubes_scored_by_team = [
-                self.calculated_stats.cycles_by_game_piece_per_match(
+                self.calculated_stats.teleop_cycles_by_game_piece_per_match(
                     team,
-                    Queries.TELEOP_GRID,
                     Queries.CUBE
                 ).sum()
                 for team in team_numbers

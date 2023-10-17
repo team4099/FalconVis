@@ -49,7 +49,7 @@ class GeneralConstants:
 class EventSpecificConstants:
     """Constants specific to an event."""
 
-    EVENT_CODE = "2023new"
+    EVENT_CODE = "2023bob"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     PIT_SCOUTING_URL = (
         f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
@@ -74,17 +74,28 @@ class Queries:
     ALLIANCE = "Alliance"
     DRIVER_STATION = "DriverStation"
 
-    AUTO_GRID = "AutoGrid"
+    # Starting positions
+    STARTING_POSITION = "StartingPosition"
+    CABLE_COVER = "Cable Cover"
+    CHARGE_STATION = "Charge Station"
+    LOADING_ZONE = "Loading Zone"
+
+    AUTO_GRID = "AutoGrid"  # Only used as a parameter to signify the mode
+    AUTO_HIGH = "AutoHigh"
+    AUTO_MID = "AutoMid"
+    AUTO_LOW = "AutoLow"
     AUTO_MISSED = "AutoMissed"
     LEFT_COMMUNITY = "Mobile"
-    AUTO_ENGAGE_ATTEMPTED = "AutoAttemptedCharge"
-    AUTO_CHARGING_STATE = "AutoChargingState"
+    AUTO_ENGAGE_ATTEMPTED = "AutoEngageAttempted"
+    AUTO_ENGAGE_SUCCESSFUL = "AutoEngageSuccessful"
     AUTO_CONES = "AutoCones"
     AUTO_CUBES = "AutoCubes"
 
-    TELEOP_GRID = "TeleopGrid"
+    TELEOP_GRID = "TeleopGrid"  # Only used as a parameter to signify the mode
+    TELEOP_CONES = "TeleopCones"
+    TELEOP_CUBES = "TeleopCubes"
     TELEOP_NOTES = "TeleopNotes"
-    TELEOP_MISSED="TeleopMissed"
+    TELEOP_MISSED = "TeleopMissed"
     ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
 
     DRIVER_RATING = "DriverRating"
@@ -93,9 +104,9 @@ class Queries:
     TIPPY = "Tippy"
 
     # Constants for different heights
-    LOW = "L"
-    MID = "M"
-    HIGH = "H"
+    LOW = "Low"
+    MID = "Mid"
+    HIGH = "High"
 
     # Constants for different game pieces
     CONE = "cone"
@@ -120,29 +131,21 @@ class Criteria:
     """Criteria used in `CalculatedStats`."""
 
     # Autonomous criteria
-    AUTO_GRID_POINTAGE = {
-        Queries.LOW: 3,
-        Queries.MID: 4,
-        Queries.HIGH: 6
-    }
-    MOBILITY_CRITERIA = {
+    BOOLEAN_CRITERIA = {
         0: 0,
         "false": 0,
         1: 1,
         "true": 1
     }
     AUTO_CHARGE_POINTAGE = {
-        "Dock": 8,
-        "Engage": 12
+        "true": 12,
+        1: 12,
+        0: 0,
+        "false": 0
     }
-    AUTO_ATTEMPT_CRITERIA = {
-        "Engage": 1
-    }
-    SUCCESSFUL_ENGAGE_CRITERIA = {
-        "Engage": 1
-    }
-    SUCCESSFUL_DOCK_CRITERIA = {
-        "Dock": 1
+    ENGAGE_CRITERIA = {
+        "true": "Engage",
+        "false": "None"
     }
 
     # Teleop Criteria

@@ -42,6 +42,7 @@ class AllianceSelectionManager(PageManager):
         Creates 3 dropdowns to choose teams
 
         :return: List with 3 choices
+        :return: List with 3 choices
         """
         team_list = retrieve_team_list()
 
@@ -123,15 +124,20 @@ class AllianceSelectionManager(PageManager):
         team1_col, team2_col, team3_col = st.columns(3)
 
         drivetrain_data = [
-            self.pit_scouting_data[
-                            self.pit_scouting_data["Team Number"] == team
-                        ].iloc[0]["Drivetrain"]
-             for team in team_numbers]
+            (
+                self.pit_scouting_data[
+                    self.pit_scouting_data["Team Number"] == team
+                ].iloc[0]["Drivetrain"]
+                if self.pit_scouting_data is not None
+                else "—"
+            )
+            for team in team_numbers
+        ]
 
         # Colored metric displaying the fastest cycler in the alliance
         with team1_col:
             colored_metric(
-                "Team " + str(team_numbers[0]) + " Drivetrain:",
+                "Team " + str(team_numbers[0]) + " Drivetrain",
                 drivetrain_data[0],
                 background_color=color_gradient[0],
                 opacity=0.4,
@@ -141,7 +147,7 @@ class AllianceSelectionManager(PageManager):
         # Colored metric displaying the second fastest cycler in the alliance
         with team2_col:
             colored_metric(
-                "Team " + str(team_numbers[1]) + " Drivetrain:",
+                "Team " + str(team_numbers[1]) + " Drivetrain",
                 drivetrain_data[1],
                 background_color=color_gradient[1],
                 opacity=0.4,
@@ -151,7 +157,7 @@ class AllianceSelectionManager(PageManager):
         # Colored metric displaying the slowest cycler in the alliance
         with team3_col:
             colored_metric(
-                "Team " + str(team_numbers[2]) + " Drivetrain:",
+                "Team " + str(team_numbers[2]) + " Drivetrain",
                 drivetrain_data[2],
                 background_color=color_gradient[2],
                 opacity=0.4,
@@ -207,16 +213,8 @@ class AllianceSelectionManager(PageManager):
             successful_engages_by_team = [
                 self.calculated_stats.cumulative_stat(
                     team,
-                    Queries.AUTO_CHARGING_STATE,
-                    Criteria.SUCCESSFUL_ENGAGE_CRITERIA
-                )
-                for team in team_numbers
-            ]
-            successful_docks_by_team = [
-                self.calculated_stats.cumulative_stat(
-                    team,
-                    Queries.AUTO_CHARGING_STATE,
-                    Criteria.SUCCESSFUL_DOCK_CRITERIA
+                    Queries.AUTO_ENGAGE_SUCCESSFUL,
+                    Criteria.BOOLEAN_CRITERIA
                 )
                 for team in team_numbers
             ]
@@ -224,17 +222,17 @@ class AllianceSelectionManager(PageManager):
                 self.calculated_stats.cumulative_stat(
                     team,
                     Queries.AUTO_ENGAGE_ATTEMPTED,
-                    Criteria.AUTO_ATTEMPT_CRITERIA
-                ) - successful_docks_by_team[idx] - successful_engages_by_team[idx]
+                    Criteria.BOOLEAN_CRITERIA
+                ) - successful_engages_by_team[idx]
                 for idx, team in enumerate(team_numbers)
             ]
 
             plotly_chart(
                 stacked_bar_graph(
                     team_numbers,
-                    [missed_attempts_by_team, successful_docks_by_team, successful_engages_by_team],
+                    [missed_attempts_by_team, successful_engages_by_team],
                     x_axis_label="Teams",
-                    y_axis_label=["# of Missed Engages", "# of Docks", "# of Engages"],
+                    y_axis_label=["# of Missed Engages", "# of Engages"],
                     y_axis_title="",
                     color_map=dict(
                         zip(
@@ -363,17 +361,15 @@ class AllianceSelectionManager(PageManager):
         # Graph the breakdown of game pieces by each team
         with teleop_game_piece_breakdown_col:
             cones_scored_by_team = [
-                self.calculated_stats.cycles_by_game_piece_per_match(
+                self.calculated_stats.teleop_cycles_by_game_piece_per_match(
                     team,
-                    Queries.TELEOP_GRID,
                     Queries.CONE
                 ).sum()
                 for team in team_numbers
             ]
             cubes_scored_by_team = [
-                self.calculated_stats.cycles_by_game_piece_per_match(
+                self.calculated_stats.teleop_cycles_by_game_piece_per_match(
                     team,
-                    Queries.TELEOP_GRID,
                     Queries.CUBE
                 ).sum()
                 for team in team_numbers
@@ -470,8 +466,8 @@ class AllianceSelectionManager(PageManager):
         :return:
         """
 
-        driver_rating_col, defense_rating_col = st.columns(2)
         disables_col, drivetrain_width_col = st.columns(2)
+        driver_rating_col, = st.columns(1)
 
         with driver_rating_col:
             driver_ratings = [
@@ -489,24 +485,7 @@ class AllianceSelectionManager(PageManager):
                 )
             )
 
-        with defense_rating_col:
-            defense_ratings = [
-                self.calculated_stats.average_defense_rating(team) for team in team_numbers
-            ]
-
-            plotly_chart(
-                bar_graph(
-                    team_numbers,
-                    defense_ratings,
-                    x_axis_label="Teams",
-                    y_axis_label="Defense Rating",
-                    title="Defense Rating",
-                    color=color_gradient[1]
-                )
-            )
-
         with disables_col:
-
             disables_by_team = [
                     self.calculated_stats.disables_by_team(team) for team in team_numbers
                 ]

@@ -75,7 +75,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 drivetrain = self.pit_scouting_data[
                     self.pit_scouting_data["Team Number"] == team_number
                 ].iloc[0]["Drivetrain"].split("/")[0]  # The splitting at / is used to shorten the drivetrain type.
-            except IndexError:
+            except (TypeError, IndexError):
                 drivetrain = "—"
 
             colored_metric(
@@ -142,14 +142,14 @@ class TeamManager(PageManager, ContainsMetrics):
             total_auto_engage_attempts = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.AUTO_ENGAGE_ATTEMPTED,
-                Criteria.AUTO_ATTEMPT_CRITERIA
+                Criteria.BOOLEAN_CRITERIA
             )
             auto_engage_attempts_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
                 lambda self, team: self.cumulative_stat(
                     team,
                     Queries.AUTO_ENGAGE_ATTEMPTED,
-                    Criteria.AUTO_ATTEMPT_CRITERIA
+                    Criteria.BOOLEAN_CRITERIA
                 )
             )
 
@@ -163,8 +163,8 @@ class TeamManager(PageManager, ContainsMetrics):
         with auto_engage_accuracy_col:
             total_successful_engages = self.calculated_stats.cumulative_stat(
                 team_number,
-                Queries.AUTO_CHARGING_STATE,
-                Criteria.SUCCESSFUL_ENGAGE_CRITERIA
+                Queries.AUTO_ENGAGE_SUCCESSFUL,
+                Criteria.BOOLEAN_CRITERIA
             )
             auto_engage_accuracy = (
                 total_successful_engages / total_auto_engage_attempts
@@ -240,24 +240,19 @@ class TeamManager(PageManager, ContainsMetrics):
         with auto_engage_stats_col:
             total_successful_engages = self.calculated_stats.cumulative_stat(
                 team_number,
-                Queries.AUTO_CHARGING_STATE,
-                Criteria.SUCCESSFUL_ENGAGE_CRITERIA
-            )
-            total_successful_docks = self.calculated_stats.cumulative_stat(
-                team_number,
-                Queries.AUTO_CHARGING_STATE,
-                {"Dock": 1}
+                Queries.AUTO_ENGAGE_SUCCESSFUL,
+                Criteria.BOOLEAN_CRITERIA
             )
             total_missed_engages = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.AUTO_ENGAGE_ATTEMPTED,
-                Criteria.AUTO_ATTEMPT_CRITERIA
-            ) - total_successful_engages - total_successful_docks
+                Criteria.BOOLEAN_CRITERIA
+            ) - total_successful_engages
 
             plotly_chart(
                 bar_graph(
-                    x=["# of Successful Engages", "# of Successful Docks", "# of Missed Engages"],
-                    y=[total_successful_engages, total_successful_docks, total_missed_engages],
+                    x=["# of Successful Engages", "# of Missed Engages"],
+                    y=[total_successful_engages, total_missed_engages],
                     x_axis_label="",
                     y_axis_label="# of Occurences",
                     title="Auto Charge Station Statistics"
@@ -344,14 +339,12 @@ class TeamManager(PageManager, ContainsMetrics):
 
         # Stacked bar graph displaying the breakdown of cones and cubes in Teleop
         with breakdown_cycles_col:
-            total_cones_scored = self.calculated_stats.cycles_by_game_piece_per_match(
+            total_cones_scored = self.calculated_stats.teleop_cycles_by_game_piece_per_match(
                 team_number,
-                Queries.TELEOP_GRID,
                 Queries.CONE
             ).sum()
-            total_cubes_scored = self.calculated_stats.cycles_by_game_piece_per_match(
+            total_cubes_scored = self.calculated_stats.teleop_cycles_by_game_piece_per_match(
                 team_number,
-                Queries.TELEOP_GRID,
                 Queries.CUBE
             ).sum()
 
@@ -435,6 +428,6 @@ class TeamManager(PageManager, ContainsMetrics):
 
             colored_metric(
                 "Positivity Score of Notes",
-                round(sum(positivity_scores) / len(positivity_scores), 2),
+                round(sum(positivity_scores) / (len(positivity_scores) or 1), 2),
                 threshold=0
             )

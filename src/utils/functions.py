@@ -1,5 +1,6 @@
 """Defines utility functions that are later used in FalconVis."""
 from io import StringIO
+from json import load
 from re import search
 from typing import Any
 
@@ -78,21 +79,35 @@ def retrieve_match_schedule() -> DataFrame:
     )
     match_levels_to_order = {"qm": 0, "sf": 1, "f": 2}
 
-    event_matches = sorted(
-        tba_instance.event_matches(EventSpecificConstants.EVENT_CODE),
-        key=lambda match_info: (match_levels_to_order[match_info["comp_level"]], match_info["match_number"])
-    )
+    try:
+        event_matches = sorted(
+            tba_instance.event_matches(EventSpecificConstants.EVENT_CODE),
+            key=lambda match_info: (match_levels_to_order[match_info["comp_level"]], match_info["match_number"])
+        )
 
-    return DataFrame.from_dict(
-        [
-            {
-                "match_key": match["key"].replace(f"{EventSpecificConstants.EVENT_CODE}_", ""),
-                "red_alliance": [int(team[3:]) for team in match["alliances"]["red"]["team_keys"]],
-                "blue_alliance": [int(team[3:]) for team in match["alliances"]["blue"]["team_keys"]]
-            }
-            for match in event_matches
-        ]
-    )
+        return DataFrame.from_dict(
+            [
+                {
+                    "match_key": match["key"].replace(f"{EventSpecificConstants.EVENT_CODE}_", ""),
+                    "red_alliance": [int(team[3:]) for team in match["alliances"]["red"]["team_keys"]],
+                    "blue_alliance": [int(team[3:]) for team in match["alliances"]["blue"]["team_keys"]]
+                }
+                for match in event_matches
+            ]
+        )
+    except ValueError:  # TBA won't work
+        with open("./src/utils/match_schedule.json") as match_file:
+            match_schedule = load(match_file)
+            return DataFrame.from_dict(
+                [
+                    {
+                        "match_key": match_key,
+                        "red_alliance": [int(team[3:]) for team in alliances["red"]],
+                        "blue_alliance": [int(team[3:]) for team in alliances["blue"]]
+                    }
+                    for match_key, alliances in match_schedule.items()
+                ]
+            )
 
 
 def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = None) -> DataFrame:
