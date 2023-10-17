@@ -6,7 +6,7 @@ import streamlit as st
 from pandas import DataFrame
 
 from .page_manager import PageManager
-from utils import CalculatedStats, Queries, retrieve_scouting_data, retrieve_team_list
+from utils import CalculatedStats, Criteria, retrieve_scouting_data, retrieve_team_list, Queries
 
 
 class PicklistManager(PageManager):
@@ -28,7 +28,26 @@ class PicklistManager(PageManager):
             "Average Teleop Cycles": partial(
                 self.calculated_stats.average_cycles,
                 type_of_grid=Queries.TELEOP_GRID
-            )
+            ),
+            "Times Engaged": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=Queries.AUTO_ENGAGE_SUCCESSFUL,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "Times Disabled": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=Queries.DISABLE,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "Tippiness (1-5)": lambda team_number: self.calculated_stats.cumulative_stat(
+                team_number,
+                stat=Queries.TIPPY,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ) / (self.calculated_stats.matches_played(team_number) or 1) * 4 + 1,
+            "Driver Rating": lambda team_number: self.calculated_stats.cumulative_stat(
+                team_number,
+                stat=Queries.DRIVER_RATING
+            ) / (self.calculated_stats.matches_played(team_number) or 1)
         }
 
     def generate_input_section(self) -> list[list, list]:
