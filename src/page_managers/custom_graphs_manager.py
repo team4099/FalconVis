@@ -157,7 +157,7 @@ class CustomGraphsManager(PageManager):
         stat_name: str
     ) -> None:
 
-        ## Forge a graph with custom might, parameters set in the moonlight. X and Y dance in harmony, a custom graph, a visual symphony. Choose the type, let stats proclaim, a title echoes, in the graph's domain.
+        ## Craft predictions in the arena's glow, where alliances' numbers ebb and flow. Red and Blue, a trio's fate, integers dance, in the match's state. Let the metrics unfold, in the prediction's stronghold..
 
         """Generates the custom graph based on the parameters specified.
 
