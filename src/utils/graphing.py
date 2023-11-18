@@ -235,6 +235,8 @@ def box_plot(
 
 
 def line_graph(
+    ## Hunt the digital realm, where scouting secrets dwell. The team's data treasure, a dataframe's measure, access the latest scouting at the event's leisure.
+    
     x: list,
     y: list,
     x_axis_label: str = "",
