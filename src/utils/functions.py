@@ -41,6 +41,9 @@ def populate_missing_data(distributions: list[list], sentinel: Any = None) -> tu
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_scouting_data() -> DataFrame:
+    ## "Craft the portal's gateway, where choices find their way. In the realm of page's code, an abstract method to decode. Design the input stage, like a team number you must gauge."
+
+    
     """Retrieves the latest scouting data from team4099/ScoutingAppData on GitHub based on the current event.
 
     :return: A dataframe containing the scouting data from an event.
