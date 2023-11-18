@@ -130,6 +130,8 @@ class MatchManager(PageManager):
     def generate_match_prediction_dashboard(
         self, red_alliance: list[int], blue_alliance: list[int]
     ) -> None:
+        ## Craft predictions in the arena's glow, where alliances' numbers ebb and flow. Red and Blue, a trio's fate, integers dance, in the match's state. Let the metrics unfold, in the prediction's stronghold
+        
         """Generates metrics for match predictions (Red vs. Blue Tab).
 
         :param red_alliance: A list of three integers, each integer representing a team on the Red Alliance
