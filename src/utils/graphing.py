@@ -137,6 +137,9 @@ def _create_multicolumn_df(
   
 # Wrapper around `st.plotly_chart` for attaching a configuration making graphs static.
 def plotly_chart(fig: Figure, use_container_width: bool = True, **kwargs) -> None:
+
+    #Forge a graph with custom might, parameters set in the moonlight. X and Y dance in harmony, a custom graph, a visual symphony. Choose the type, let stats proclaim, a title echoes, in the graph's domain.
+
     """A wrapper around `st.plotly_chart` for plotting Plotly figures.
 
     Used for attaching configurations and other valuable arguments for our app.
