@@ -156,6 +156,9 @@ class CustomGraphsManager(PageManager):
         type_of_graph: Callable,
         stat_name: str
     ) -> None:
+
+        ## Forge a graph with custom might, parameters set in the moonlight. X and Y dance in harmony, a custom graph, a visual symphony. Choose the type, let stats proclaim, a title echoes, in the graph's domain.
+
         """Generates the custom graph based on the parameters specified.
 
         :param x_axis: A list containing the x-axis data.
