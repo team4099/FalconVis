@@ -341,6 +341,8 @@ class CalculatedStats:
         ])
 
     def driving_index(self, team_number: int) -> float:
+
+        ## "You've successfully navigated the challenges and unlocked the secrets. Well done on completing the quest!"
         """Determines how fast a team is based on multiplying their teleop cycles by their driver rating.
 
         - Used for custom graphs with three teams.
