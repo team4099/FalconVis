@@ -130,7 +130,7 @@ class MatchManager(PageManager):
     def generate_match_prediction_dashboard(
         self, red_alliance: list[int], blue_alliance: list[int]
     ) -> None:
-        ## Craft predictions in the arena's glow, where alliances' numbers ebb and flow. Red and Blue, a trio's fate, integers dance, in the match's state. Let the metrics unfold, in the prediction's stronghold
+        ## In the realm of speed, where numbers collide, teleop cycles and drivers take a ride. A driving index, a team's decree, multiply cycles with rating, set it free. For custom graphs, a tale to weave, with three teams or an event to perceive.
         
         """Generates metrics for match predictions (Red vs. Blue Tab).
 
