@@ -53,14 +53,8 @@ class GeneralConstants:
 class EventSpecificConstants:
     """Constants specific to an event."""
 
-    EVENT_CODE = "2023bob"
+    EVENT_CODE = "2022mockdata"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
-    NOTE_SCOUTING_URL = (
-        f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
-    )
-    PIT_SCOUTING_URL = (
-        f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
-    )
 
 
 class GraphType(Enum):
@@ -74,64 +68,41 @@ class Queries:
     """Constants specific to fields in the scouting data."""
 
     # Constants relating to fields
-    MATCH_KEY = "MatchKey"
-    MATCH_NUMBER = "MatchNumber"
-    TEAM_NUMBER = "TeamNumber"
-    SCOUT_ID = "ScoutId"
-    ALLIANCE = "Alliance"
-    DRIVER_STATION = "DriverStation"
+    MATCH_KEY = "match_key"
+    MATCH_NUMBER = "match_number"
+    TEAM_NUMBER = "team_number"
+    SCOUT_ID = "scout_id"
+    ALLIANCE = "alliance"
+    DRIVER_STATION = "driver_station"
 
-    # Starting positions
-    STARTING_POSITION = "StartingPosition"
-    CABLE_COVER = "Cable Cover"
-    CHARGE_STATION = "Charge Station"
-    LOADING_ZONE = "Loading Zone"
+    # Year specific data points
+    AUTO_UPPER_HUB = "auto_upper_hub"
+    AUTO_LOWER_HUB = "auto_lower_hub"
+    AUTO_MISSES = "auto_misses"
+    TAXIED = "taxied"
 
-    AUTO_GRID = "AutoGrid"  # Only used as a parameter to signify the mode
-    AUTO_HIGH = "AutoHigh"
-    AUTO_MID = "AutoMid"
-    AUTO_LOW = "AutoLow"
-    AUTO_MISSED = "AutoMissed"
-    LEFT_COMMUNITY = "Mobile"
-    AUTO_ENGAGE_ATTEMPTED = "AutoEngageAttempted"
-    AUTO_ENGAGE_SUCCESSFUL = "AutoEngageSuccessful"
-    AUTO_CONES = "AutoCones"
-    AUTO_CUBES = "AutoCubes"
+    TELEOP_LOWER_HUB = "teleop_lower_hub"
+    TELEOP_UPPER_HUB = "teleop_upper_hub"
+    TELEOP_MISSES = "teleop_misses"
 
-    TELEOP_GRID = "TeleopGrid"  # Only used as a parameter to signify the mode
-    TELEOP_CONES = "TeleopCones"
-    TELEOP_CUBES = "TeleopCubes"
-    TELEOP_NOTES = "TeleopNotes"
-    TELEOP_MISSED = "TeleopMissed"
-    ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
-
-    DRIVER_RATING = "DriverRating"
-    DEFENSE_RATING = "DefenseRating"
-    DISABLE = "Disable"
-    TIPPY = "Tippy"
-
-    # Constants for different heights
-    LOW = "Low"
-    MID = "Mid"
-    HIGH = "High"
-
-    # Constants for different game pieces
-    CONE = "cone"
-    CUBE = "cube"
+    FINAL_CLIMB_TYPE = "final_climb_type"
+    CLIMB_TIME = "climb_time"
+    DEFENSE_RATING = "defense_rating"
+    DEFENSE_PERCENT = "defense_pct"
+    COUNTER_DEFENSE_RATING = "counter_defense_rating"
+    COUNTER_DEFENSE_PERCENT = "counter_defense_pct"
 
     # Alliance constants
     RED_ALLIANCE = "red"
     BLUE_ALLIANCE = "blue"
 
-    # Grid placements
-    LEFT = "left"
-    COOP = "coop"
-    RIGHT = "right"
+    # Mode
+    AUTO = "auto"
+    TELEOP = "teleop"
 
-    # Custom graph keywords
-    ONE_TEAM_KEYWORD = "Used for custom graphs with one team."
-    THREE_TEAMS_KEYWORD = "Used for custom graphs with three teams."
-    FULL_EVENT_KEYWORD = "Used for custom graphs with a full event."
+    # Heights
+    UPPER_HUB = "upper_hub"
+    LOWER_HUB = "lower_hub"
 
 
 class NoteScoutingQueries:
@@ -202,27 +173,11 @@ class Criteria:
         1: 1,
         "true": 1
     }
-    AUTO_CHARGE_POINTAGE = {
-        "true": 12,
-        1: 12,
-        0: 0,
-        "false": 0
-    }
-    ENGAGE_CRITERIA = {
-        "true": "Engage",
-        "false": "None"
-    }
-
-    # Teleop Criteria
-    TELEOP_GRID_POINTAGE = {
-        Queries.LOW: 2,
-        Queries.MID: 3,
-        Queries.HIGH: 5
-    }
 
     # Endgame Criteria
     ENDGAME_POINTAGE = {
-        "Park": 2,
-        "Dock": 6,
-        "Engage": 10
+        "Low": 4,
+        "Mid": 6,
+        "High": 10,
+        "Traversal": 15
     }
