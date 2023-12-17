@@ -135,3 +135,8 @@ class CalculatedStats(BaseCalculatedStats):
             }
             return team_data[height_to_query[height]]
 
+    def climb_type_occurrences(self, team_number: int) -> list:
+        """Returns the different occurrences of each climb type (Low/Mid/High/Traversal) for a team."""
+        team_data = scouting_data_for_team(team_number, self.data)
+        return [len(team_data[team_data[Queries.FINAL_CLIMB_TYPE] == climb_type]) for climb_type in Queries.CLIMB_TYPES]
+
