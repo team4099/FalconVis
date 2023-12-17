@@ -29,3 +29,9 @@ if __name__ == '__main__':
 
         # Generate metrics (cards with information surrounding teams)
         team_manager.generate_metrics(team_number)
+
+    with teleop_graphs_tab:
+        st.write("### Teleop + Endgame Graphs")
+
+        # Generate the teleop graphs
+        team_manager.generate_teleop_graphs(team_number)
