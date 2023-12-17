@@ -104,6 +104,9 @@ class Queries:
     UPPER_HUB = "upper_hub"
     LOWER_HUB = "lower_hub"
 
+    # Different climb types   
+    CLIMB_TYPES = ["Low", "Mid", "High", "Traversal"]
+
 
 class NoteScoutingQueries:
     """Constants specific to fields in the note scouting data."""
