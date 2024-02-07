@@ -1,10 +1,10 @@
 """File that contains the class which calculates statistics for a team/event/for other purposes."""
-
+from functools import reduce
 from typing import Callable
 
 import numpy as np
 from numpy import percentile
-from pandas import DataFrame, Series
+from pandas import DataFrame, Series, isna
 
 from .constants import Criteria, Queries
 from .functions import scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
@@ -29,7 +29,7 @@ class CalculatedStats:
         """
         return self.points_contributed_by_match(team_number).mean()
 
-    def points_contributed_by_match(self, team_number: int, type_of_grid: str = "") -> Series:
+    def points_contributed_by_match(self, team_number: int, mode: str = "") -> Series:
         """Returns the points contributed by match for a team.
 
         The following custom graphs are supported with this function:
@@ -38,98 +38,85 @@ class CalculatedStats:
         - Multi line graph
 
         :param team_number: The team number to calculate the points contributed over the matches they played.
-        :param type_of_grid: Optional argument defining which mode to return the total points for (AutoGrid/TeleopGrid)
+        :param mode: Optional argument defining which mode to return the total points for (Auto/Teleop)
         :return: A Series containing the points contributed by said team per match.
         """
         team_data = scouting_data_for_team(team_number, self.data)
 
-        auto_grid_points = team_data[Queries.AUTO_GRID].apply(
-            lambda grid_data: sum([
-                Criteria.AUTO_GRID_POINTAGE[game_piece[1]]
-                for game_piece in grid_data.split("|")
-                if game_piece
-            ])
+        # Autonomous calculations
+        auto_speaker_points = team_data[Queries.AUTO_SPEAKER].apply(lambda cycle: cycle * 5)
+        auto_amp_points = team_data[Queries.AUTO_AMP].apply(lambda cycle: cycle * 2)
+        auto_leave_points = team_data[Queries.LEFT_STARTING_ZONE].apply(
+            lambda left_starting_zone: Criteria.BOOLEAN_CRITERIA[left_starting_zone]
         )
-        auto_mobility_points = team_data[Queries.LEFT_COMMUNITY].apply(
-            lambda left_community: Criteria.MOBILITY_CRITERIA[left_community] * 3
-        )
-        auto_charge_station_points = team_data[Queries.AUTO_CHARGING_STATE].apply(
-            lambda charging_state: Criteria.AUTO_CHARGE_POINTAGE.get(charging_state, 0)
-        )
+        total_auto_points = auto_speaker_points + auto_amp_points + auto_leave_points
 
-        teleop_grid_points = team_data[Queries.TELEOP_GRID].apply(
-            lambda grid_data: sum([
-                Criteria.TELEOP_GRID_POINTAGE[game_piece[1]]
-                for game_piece in grid_data.split("|")
-                if game_piece
-            ])
-        )
+        # Teleop calculations
+        teleop_speaker_points = team_data[Queries.TELEOP_SPEAKER].apply(lambda cycle: cycle * 2)
+        teleop_amp_points = team_data[Queries.TELEOP_AMP]
+        total_teleop_points = teleop_speaker_points + teleop_amp_points
 
-        endgame_points = team_data[Queries.ENDGAME_FINAL_CHARGE].apply(
-            lambda charging_state: Criteria.ENDGAME_POINTAGE.get(charging_state, 0)
+        # Endgame (stage) calculations
+        park_points = team_data[Queries.PARKED_UNDER_STAGE].apply(
+            lambda parking_state: Criteria.BOOLEAN_CRITERIA[parking_state]
         )
+        climb_points = team_data[Queries.CLIMBED_CHAIN].apply(
+            lambda climbing_state: Criteria.BOOLEAN_CRITERIA[climbing_state] * 3
+        )
+        harmony_points = team_data[Queries.HARMONIZED_ON_CHAIN].apply(
+            lambda harmonized: Criteria.BOOLEAN_CRITERIA[harmonized] * 2
+        )
+        trap_points = team_data[Queries.TELEOP_TRAP].apply(lambda cycle: cycle * 5)
+        total_endgame_points = park_points + climb_points + harmony_points + trap_points
 
-        if type_of_grid == Queries.AUTO_GRID:
-            return auto_grid_points + auto_mobility_points + auto_charge_station_points
-        elif type_of_grid == Queries.TELEOP_GRID:
-            return teleop_grid_points
+        if mode == Queries.AUTO:
+            return total_auto_points
+        elif mode == Queries.TELEOP:
+            return total_teleop_points
 
         return (
-            auto_grid_points
-            + auto_mobility_points
-            + auto_charge_station_points
-            + teleop_grid_points
-            + endgame_points
-        )
-
-    def classify_autos_by_match(self, team_number: int) -> Series:
-        """Classifies each auto mode performed by a team.
-        As of now, this method only classifies grid placement (cable cover/charge station/loading zone).
-
-        :return: A series containing grid placements indicating where the team started.
-        """
-        team_data = scouting_data_for_team(team_number, self.data)
-        positions_to_placements = {
-            "1": Queries.LEFT, "2": Queries.LEFT, "3": Queries.RIGHT,
-            "4": Queries.COOP, "5": Queries.COOP, "6": Queries.COOP,
-            "7": Queries.RIGHT, "8": Queries.RIGHT, "9": Queries.RIGHT
-        }
-
-        return team_data[Queries.AUTO_GRID].apply(
-            lambda grid_data: (
-                positions_to_placements[grid_data[0]]
-                if grid_data
-                else Queries.LEFT
-            )
+            total_auto_points
+            + total_teleop_points
+            + total_endgame_points
         )
 
     # Cycle calculation methods
-    def average_cycles(self, team_number: int, type_of_grid: str) -> float:
+    def average_cycles(self, team_number: int, mode: str) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
 
         The following custom graphs are supported with this function:
         - Bar graph
 
         :param team_number: The team number to calculate the average cycles for.
-        :param type_of_grid: The mode to calculate said cycles for (AutoGrid/TeleopGrid)
+        :param mode: The mode to calculate said cycles for (Auto/Teleop)
         :return: A float representing the average cycles for said team in the mode specified.
         """
-        return self.cycles_by_match(team_number, type_of_grid).mean()
+        return self.cycles_by_match(team_number, mode).mean()
 
-    def average_cycles_for_height(self, team_number: int, type_of_grid: str, height: str) -> float:
-        """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
+    def average_cycles_for_structure(self, team_number: int, structure: str) -> float:
+        """Calculates the average cycles for a team for a structure (wrapper around `cycles_by_match`).
 
         The following custom graphs are supported with this function:
         - Bar graph
 
         :param team_number: The team number to calculate the average cycles for.
-        :param type_of_grid: The mode to calculate said cycles for (AutoGrid/TeleopGrid)
-        :param height: The height to return cycles by match for (H/M/L)
-        :return: A float representing the average cycles for said team in the mode specified.
+        :param structure: The structure to return cycles for (AutoSpeaker/AutoAmp/TeleopSpeaker/TeleopAmp/TeleopTrap)
+        :return: A float representing the average cycles for said team in the structure specified.
         """
-        return self.cycles_by_height_per_match(team_number, type_of_grid, height).mean()
+        return self.cycles_by_structure_per_match(team_number, structure).mean()
 
-    def cycles_by_match(self, team_number: int, type_of_grid: str) -> Series:
+    def average_potential_amplification_periods(self, team_number: int) -> float:
+        """Returns the potential amplification periods a team is capable of by match.
+
+        The following custom graphs are supported with this function:
+        - Bar graph
+
+        The amplification periods that a team is capable of is decided by their auto + teleop amp cycles divided by two
+        :param team_number: The team to determine the potential amplification periods for.
+        """
+        return self.potential_amplification_periods_by_match(team_number).mean()
+
+    def cycles_by_match(self, team_number: int, mode: str) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) in a match
 
         The following custom graphs are supported with this function:
@@ -138,16 +125,18 @@ class CalculatedStats:
         - Multi line graph
 
         :param team_number: The team number to calculate the cycles by match for.
-        :param type_of_grid: The mode to return cycles by match for (AutoGrid/TeleopGrid)
+        :param mode: The mode to return cycles by match for (Auto/Teleop)
         :return: A series containing the cycles per match for the mode specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
-        return team_data[type_of_grid].apply(
-            lambda grid_data: len(grid_data) if type(grid_data) is list else len(grid_data.split("|"))
-        )
 
-    def cycles_by_height_per_match(self, team_number: int, type_of_grid: str, height: str) -> Series:
-        """Returns the cycles for a certain mode (autonomous/teleop) and height in a match
+        if mode == Queries.AUTO:
+            return team_data[Queries.AUTO_SPEAKER] + team_data[Queries.AUTO_AMP]
+        else:
+            return team_data[Queries.TELEOP_SPEAKER] + team_data[Queries.TELEOP_AMP] + team_data[Queries.TELEOP_TRAP]
+
+    def cycles_by_structure_per_match(self, team_number: int, structure: str | tuple) -> Series:
+        """Returns the cycles for a certain structure (auto speaker, auto amp, etc.) in a match
 
         The following custom graphs are supported with this function:
         - Line graph
@@ -155,97 +144,112 @@ class CalculatedStats:
         - Multi line graph
 
         :param team_number: The team number to calculate the cycles by height per match for.
-        :param type_of_grid: The mode to return cycles by match for (AutoGrid/TeleopGrid)
-        :param height: The height to return cycles by match for (H/M/L)
-        :return: A series containing the cycles per match for the mode specified.
+        :param structure: The structure to return cycles for (AutoSpeaker/AutoAmp/TeleopSpeaker/TeleopAmp/TeleopTrap)
+        :return: A series containing the cycles per match for the structure specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
-        return team_data[type_of_grid].apply(
-            lambda grid_data: len([
-                game_piece for game_piece in grid_data.split("|")
-                if game_piece and game_piece[1] == height
-            ])
-        )
 
-    def cycles_by_game_piece_per_match(self, team_number: int, type_of_grid: str, game_piece: str) -> Series:
-        """Returns the cycles for a certain game piece across matches.
+        if isinstance(structure, tuple):
+            return reduce(lambda x, y: x + y, [team_data[struct] for struct in structure])
+        else:
+            return team_data[structure]
+
+    def potential_amplification_periods_by_match(self, team_number: int) -> Series:
+        """Returns the potential amplification periods a team is capable of by match.
 
         The following custom graphs are supported with this function:
         - Line graph
         - Box plot
         - Multi line graph
 
-        :param team_number: The team number to calculate the cycles by game piece per match for.
-        :param type_of_grid: The type of mode to calculate the game piece cycles for (AutoGrid/TeleopGrid)
-        :param game_piece: The type of game piece to count cycles for (cone/cube)
-        :return: A series containing the cycles per match for the game piece specified.
+        The amplification periods that a team is capable of is decided by their auto + teleop amp cycles divided by two
+        :param team_number: The team to determine the potential amplification periods for.
         """
-        team_data = scouting_data_for_team(team_number, self.data)
-        game_piece_positions = (
-            {"1", "3", "4", "6", "7", "9"}
-            if game_piece == Queries.CONE
-            else {"2", "5", "8"}
-        )
+        return self.cycles_by_structure_per_match(team_number, (Queries.AUTO_AMP, Queries.TELEOP_AMP)) // 2
 
-        return team_data[type_of_grid].apply(
-            lambda grid_data: len([
-                cycle for cycle in grid_data.split("|")
-                if cycle and (
-                        cycle[0] in game_piece_positions
-                        or cycle[2:] == game_piece
-                )
-            ])
-        )
-
-    # Accuracy methods
-    def average_auto_accuracy(self, team_number: int) -> float:
-        """Returns the average auto accuracy of a team (wrapper around `auto_accuracy_by_match`).
+    # Alliance-wide methods
+    def average_coop_bonus_rate(self, team_number_one: int, team_number_two: int, team_number_three: int) -> float:
+        """Returns the average rate (%) that the coopertition bonus is reached by an alliance (average method).
+        (ignore)
 
         The following custom graphs are supported with this function:
         - Bar graph
 
-        :param team_number: The team to determine the average auto accuracy for.
-        :return: A float representing a percentage of the average auto accuracy of said team.
+        :param team_number_one: The first team within the alliance.
+        :param team_number_two: The second team within the alliance.
+        :param team_number_three: The third team within the alliance.
+        :return: A float representing the % rate of the alliance reaching the coopertition bonus.
         """
-        return self.auto_accuracy_by_match(team_number).mean()
+        return self.reaches_coop_bonus_by_match(team_number_one, team_number_two, team_number_three).astype(int).mean()
 
-    def auto_accuracy_by_match(self, team_number: int) -> Series:
-        """Returns the auto accuracy of a team by match.
+    def reaches_coop_bonus_by_match(self, team_number_one: int, team_number_two: int, team_number_three: int) -> Series:
+        """Returns whether three teams within an alliance are able to reach the coopertition bonus within the first
+        45 seconds of a match by match. (ignore)
 
         The following custom graphs are supported with this function:
         - Line graph
         - Box plot
         - Multi line graph
 
-        :param team_number: The team to determine the auto accuracy per match for.
-        :return: A series containing the auto accuracy by match for said team.
+        :param team_number_one: The first team within the alliance.
+        :param team_number_two: The second team within the alliance.
+        :param team_number_three: The third team within the alliance.
+        :return: Whether or not the alliance would reach the coopertition bonus requirement of one amp cycle in 45 sec.
         """
-        auto_missed_by_match = self.stat_per_match(
-            team_number,
-            Queries.AUTO_MISSED
-        )
-        auto_cycles_by_match = self.cycles_by_match(
-            team_number,
-            Queries.AUTO_GRID
-        ) + auto_missed_by_match  # Adding auto missed in order to get an accurate % (2 scored + 1 missed = 33%)
-        return 1 - (auto_missed_by_match / auto_cycles_by_match)
-    
+        auto_amp_sufficient = (
+            self.cycles_by_structure_per_match(team_number_one, Queries.AUTO_AMP)
+            + self.cycles_by_structure_per_match(team_number_two, Queries.AUTO_AMP)
+            + self.cycles_by_structure_per_match(team_number_three, Queries.AUTO_AMP)
+        ).apply(lambda total_auto_amp: total_auto_amp >= 1)
+        teleop_amp_sufficient = (
+            self.cycles_by_structure_per_match(team_number_one, Queries.TELEOP_AMP)
+            + self.cycles_by_structure_per_match(team_number_two, Queries.TELEOP_AMP)
+            + self.cycles_by_structure_per_match(team_number_three, Queries.TELEOP_AMP)
+        ).apply(lambda total_teleop_amp: total_teleop_amp >= 1)  # Should be able to put one down in the first 45 seconds, poor metric so should change later
+
+        return auto_amp_sufficient | teleop_amp_sufficient
+
+    # Rating methods
     def average_driver_rating(self, team_number: int) -> float:
-        """Returns the average driver rating of a team
+        """Returns the average driver rating of a team.
 
         :param team_number: The team to determine the driver rating for.
         :return: A float representing the average driver rating of said team.
         """
-        return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].mean()
+        return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].apply(
+            lambda driver_rating: Criteria.DRIVER_RATING_CRITERIA.get(driver_rating, float("nan"))
+        ).mean()
     
-    def average_defense_rating(self, team_number: int) -> float:
-        """Returns the average defense rating of a team
+    def average_defense_time(self, team_number: int) -> float:
+        """Returns the average defense time of a team
 
-        :param team_number: The team to determine the defense rating for.
-        :return: A float representing the average defense rating of said team.
+        :param team_number: The team to determine the defense time for.
+        :return: A float representing the average defense time of said team.
         """
-        return scouting_data_for_team(team_number, self.data)[Queries.DEFENSE_RATING].mean()
-    
+        return scouting_data_for_team(team_number, self.data)[Queries.DEFENSE_TIME].apply(
+            lambda defense_time: Criteria.DEFENSE_TIME_CRITERIA.get(defense_time, float("nan"))
+        ).mean()
+
+    def average_defense_skill(self, team_number: int) -> float:
+        """Returns the average defense skill of a team.
+
+        :param team_number: The team to determine the defense skill for.
+        :return: A float representing the average defense skill of said team.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.DEFENSE_SKILL].apply(
+            lambda defense_skill: Criteria.BASIC_RATING_CRITERIA.get(defense_skill, float("nan"))
+        ).mean()
+
+    def average_counter_defense_skill(self, team_number: int) -> float:
+        """Returns the average counter defense skill (ability to swerve past defense) of a team.
+
+        :param team_number: The team to determine the counter defense skill for.
+        :return: A float representing the average counter defense skill of said team.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.COUNTER_DEFENSE_SKIll].apply(
+            lambda counter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(counter_defense_skill, float("nan"))
+        ).mean()
+
     def disables_by_team(self, team_number: int) -> float:
         """Returns a series of data representing the teams disables
 
@@ -341,12 +345,15 @@ class CalculatedStats:
         ])
 
     def driving_index(self, team_number: int) -> float:
-        """Determines how fast a team is based on multiplying their teleop cycles by their driver rating.
+        """Determines how fast a team is based on multiplying their teleop cycles by their counter defense rating
 
         - Used for custom graphs with three teams.
         - Used for custom graphs with a full event.
 
         :param team_number: The team number to calculate a driving index for.
         """
-        team_data = scouting_data_for_team(team_number, self.data)
-        return self.cycles_by_match(team_number, Queries.TELEOP_GRID).mean() * team_data[Queries.DRIVER_RATING].mean()
+        counter_defense_skill = self.average_counter_defense_skill(team_number)
+        return (
+            self.average_cycles(team_number, Queries.TELEOP)
+            * 0 if isna(counter_defense_skill) else counter_defense_skill
+        )

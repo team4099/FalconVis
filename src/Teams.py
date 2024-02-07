@@ -69,4 +69,3 @@ if __name__ == '__main__':
                 team_number,
                 type_of_graph=GraphType.POINT_CONTRIBUTIONS
             )
-            

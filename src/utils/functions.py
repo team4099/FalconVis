@@ -1,5 +1,6 @@
 """Defines utility functions that are later used in FalconVis."""
 from io import StringIO
+from json import load
 from re import search
 from typing import Any
 
@@ -83,16 +84,20 @@ def retrieve_match_schedule() -> DataFrame:
         key=lambda match_info: (match_levels_to_order[match_info["comp_level"]], match_info["match_number"])
     )
 
-    return DataFrame.from_dict(
-        [
-            {
-                "match_key": match["key"].replace(f"{EventSpecificConstants.EVENT_CODE}_", ""),
-                "red_alliance": [int(team[3:]) for team in match["alliances"]["red"]["team_keys"]],
-                "blue_alliance": [int(team[3:]) for team in match["alliances"]["blue"]["team_keys"]]
-            }
-            for match in event_matches
-        ]
-    )
+    if event_matches:
+        return DataFrame.from_dict(
+            [
+                {
+                    "match_key": match["key"].replace(f"{EventSpecificConstants.EVENT_CODE}_", ""),
+                    "red_alliance": [int(team[3:]) for team in match["alliances"]["red"]["team_keys"]],
+                    "blue_alliance": [int(team[3:]) for team in match["alliances"]["blue"]["team_keys"]]
+                }
+                for match in event_matches
+            ]
+        )
+    else:  # Load match schedule from local files
+        with open("src/data/match_schedule.json") as file:
+            return DataFrame.from_dict(load(file))
 
 
 def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = None) -> DataFrame:

@@ -43,7 +43,7 @@ class GeneralConstants:
 class EventSpecificConstants:
     """Constants specific to an event."""
 
-    EVENT_CODE = "2023new"
+    EVENT_CODE = "2024vaash"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     PIT_SCOUTING_URL = (
         f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
@@ -65,38 +65,32 @@ class Queries:
     MATCH_NUMBER = "MatchNumber"
     TEAM_NUMBER = "TeamNumber"
 
-    AUTO_GRID = "AutoGrid"
-    AUTO_MISSED = "AutoMissed"
-    LEFT_COMMUNITY = "Mobile"
-    AUTO_ENGAGE_ATTEMPTED = "AutoAttemptedCharge"
-    AUTO_CHARGING_STATE = "AutoChargingState"
-    AUTO_CONES = "AutoCones"
-    AUTO_CUBES = "AutoCubes"
+    AUTO_SPEAKER = "AutoSpeaker"
+    AUTO_AMP = "AutoAmp"
+    LEFT_STARTING_ZONE = "AutoLeave"
 
-    TELEOP_GRID = "TeleopGrid"
-    ENDGAME_FINAL_CHARGE = "EndgameFinalCharge"
+    TELEOP_SPEAKER = "TeleopSpeaker"
+    TELEOP_AMP = "TeleopAmp"
+    TELEOP_TRAP = "TeleopTrap"
+
+    PARKED_UNDER_STAGE = "Parked"
+    CLIMBED_CHAIN = "ClimbStatus"
+    HARMONIZED_ON_CHAIN = "Harmonized"
+    CLIMB_SPEED = "Slow/Fast"
 
     DRIVER_RATING = "DriverRating"
-    DEFENSE_RATING = "DefenseRating"
-    DISABLE = "Disable"
-
-    # Constants for different heights
-    LOW = "L"
-    MID = "M"
-    HIGH = "H"
-
-    # Constants for different game pieces
-    CONE = "cone"
-    CUBE = "cube"
+    DEFENSE_TIME = "DefenseTime"
+    DEFENSE_SKILL = "DefenseSkill"
+    COUNTER_DEFENSE_SKIll = "CounterDefenseSkill"
+    DISABLE = "Disabled"
 
     # Alliance constants
     RED_ALLIANCE = "red"
     BLUE_ALLIANCE = "blue"
 
-    # Grid placements
-    LEFT = "left"
-    COOP = "coop"
-    RIGHT = "right"
+    # Modes
+    AUTO = "Auto"
+    TELEOP = "Teleop"
 
     # Custom graph keywords
     ONE_TEAM_KEYWORD = "Used for custom graphs with one team."
@@ -108,41 +102,41 @@ class Criteria:
     """Criteria used in `CalculatedStats`."""
 
     # Autonomous criteria
-    AUTO_GRID_POINTAGE = {
-        Queries.LOW: 3,
-        Queries.MID: 4,
-        Queries.HIGH: 6
-    }
-    MOBILITY_CRITERIA = {
+    BOOLEAN_CRITERIA = {
         0: 0,
         "false": 0,
         1: 1,
-        "true": 1
-    }
-    AUTO_CHARGE_POINTAGE = {
-        "Dock": 8,
-        "Engage": 12
-    }
-    AUTO_ATTEMPT_CRITERIA = {
-        "Engage": 1
-    }
-    SUCCESSFUL_ENGAGE_CRITERIA = {
-        "Engage": 1
-    }
-    SUCCESSFUL_DOCK_CRITERIA = {
-        "Dock": 1
-    }
-
-    # Teleop Criteria
-    TELEOP_GRID_POINTAGE = {
-        Queries.LOW: 2,
-        Queries.MID: 3,
-        Queries.HIGH: 5
+        "true": 1,
+        False: 0,
+        True: 1
     }
 
     # Endgame Criteria
-    ENDGAME_POINTAGE = {
+    CLIMBING_POINTAGE = {
         "Park": 2,
         "Dock": 6,
         "Engage": 10
+    }
+
+    # Ratings criteria
+    DRIVER_RATING_CRITERIA = {
+        "Very Fluid": 5,
+        "Fluid": 4,
+        "Average": 3,
+        "Poor": 2,
+        "Very Poor": 1
+    }
+    DEFENSE_TIME_CRITERIA = {
+        "Very Often": 5,
+        "Often": 4,
+        "Sometimes": 3,
+        "Rarely": 2,
+        "Never": 1
+    }
+    BASIC_RATING_CRITERIA = {
+        "Very Good": 5,
+        "Good": 4,
+        "Okay": 3,
+        "Poor": 2,
+        "Very Poor": 1
     }

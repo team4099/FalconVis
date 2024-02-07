@@ -23,13 +23,13 @@ class PicklistManager(PageManager):
         self.requested_stats = {
             "Average Auto Cycles": partial(
                 self.calculated_stats.average_cycles,
-                type_of_grid=Queries.AUTO_GRID
+                mode=Queries.AUTO
             ),
             "Average Teleop Cycles": partial(
                 self.calculated_stats.average_cycles,
-                type_of_grid=Queries.TELEOP_GRID
+                mode=Queries.TELEOP
             )
-        }
+        }  # TODO: Add more stats here later
 
     def generate_input_section(self) -> list[list, list]:
         """Creates the input section for the `Picklist` page.
