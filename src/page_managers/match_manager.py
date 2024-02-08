@@ -58,12 +58,12 @@ class MatchManager(PageManager):
             # Filter through matches where the selected team plays in.
             match_schedule = match_schedule[
                 match_schedule["red_alliance"]
-                .apply(lambda alliance: ",".join(map(str, alliance)))
-                .str.contains(filter_by_team_number)
+                    .apply(lambda alliance: ",".join(map(str, alliance)))
+                    .str.contains(filter_by_team_number)
                 | match_schedule["blue_alliance"]
-                .apply(lambda alliance: ",".join(map(str, alliance)))
-                .str.contains(filter_by_team_number)
-            ]
+                    .apply(lambda alliance: ",".join(map(str, alliance)))
+                    .str.contains(filter_by_team_number)
+                ]
 
         match_chosen = match_selector_col.selectbox(
             "Choose Match", match_schedule["match_key"]
@@ -128,7 +128,7 @@ class MatchManager(PageManager):
         ]
 
     def generate_match_prediction_dashboard(
-        self, red_alliance: list[int], blue_alliance: list[int]
+            self, red_alliance: list[int], blue_alliance: list[int]
     ) -> None:
         """Generates metrics for match predictions (Red vs. Blue Tab).
 
@@ -152,13 +152,13 @@ class MatchManager(PageManager):
 
             # Calculate mean and standard deviation of the point distribution of the red alliance.
             red_alliance_std = (
-                sum(
-                    [
-                        np.std(team_distribution) ** 2
-                        for team_distribution in red_alliance_points
-                    ]
-                )
-                ** 0.5
+                    sum(
+                        [
+                            np.std(team_distribution) ** 2
+                            for team_distribution in red_alliance_points
+                        ]
+                    )
+                    ** 0.5
             )
             red_alliance_mean = sum(
                 [
@@ -169,13 +169,13 @@ class MatchManager(PageManager):
 
             # Calculate mean and standard deviation of the point distribution of the blue alliance.
             blue_alliance_std = (
-                sum(
-                    [
-                        np.std(team_distribution) ** 2
-                        for team_distribution in blue_alliance_points
-                    ]
-                )
-                ** 0.5
+                    sum(
+                        [
+                            np.std(team_distribution) ** 2
+                            for team_distribution in blue_alliance_points
+                        ]
+                    )
+                    ** 0.5
             )
             blue_alliance_mean = sum(
                 [
@@ -185,7 +185,7 @@ class MatchManager(PageManager):
             )
 
             # Calculate mean and standard deviation of the point distribution of red alliance - blue alliance
-            compared_std = (red_alliance_std**2 + blue_alliance_std**2) ** 0.5
+            compared_std = (red_alliance_std ** 2 + blue_alliance_std ** 2) ** 0.5
             compared_mean = red_alliance_mean - blue_alliance_mean
 
             # Use sentinel value if there isn't enough of a distribution yet to determine standard deviation.
@@ -293,7 +293,7 @@ class MatchManager(PageManager):
             )
 
     def generate_match_prediction_graphs(
-        self, red_alliance: list[int], blue_alliance: list[int], type_of_graph: str
+            self, red_alliance: list[int], blue_alliance: list[int], type_of_graph: str
     ) -> None:
         """Generate graphs for match prediction (Red vs. Blue tab).
 
@@ -354,10 +354,10 @@ class MatchManager(PageManager):
             )
 
     def generate_autonomous_graphs(
-        self,
-        team_numbers: list[int],
-        type_of_graph: str,
-        color_gradient: list[str]
+            self,
+            team_numbers: list[int],
+            type_of_graph: str,
+            color_gradient: list[str]
     ) -> None:
         """Generates the autonomous graphs for the `Match` page.
 
@@ -368,7 +368,86 @@ class MatchManager(PageManager):
         """
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        # TODO: add auton graphs
+        best_auto_config_col, auto_cycles_breakdown_col = st.columns(2, gap="large")
+
+        # Best auto configuration graph
+        with best_auto_config_col:
+            if display_cycle_contributions:
+                best_autos_by_team = sorted(
+                    [
+                        (team_number, self.calculated_stats.cycles_by_match(team_number, Queries.AUTO).max())
+                        for team_number in team_numbers
+                    ],
+                    key=lambda pair: pair[1],
+                    reverse=True
+                )
+            else:
+                best_autos_by_team = sorted(
+                    [
+                        (
+                        team_number, self.calculated_stats.points_contributed_by_match(team_number, Queries.AUTO).max())
+                        for team_number in team_numbers
+                    ],
+                    key=lambda pair: pair[1],
+                    reverse=True
+                )
+
+            plotly_chart(
+                bar_graph(
+                    [pair[0] for pair in best_autos_by_team],
+                    [pair[1] for pair in best_autos_by_team],
+                    x_axis_label="Teams",
+                    y_axis_label=(
+                        "# of Cycles in Auto"
+                        if display_cycle_contributions
+                        else "# of Points in Auto"
+                    ),
+                    title="Best Auto Configuration",
+                    color=color_gradient[1]
+                )
+            )
+
+        # Auto cycle breakdown graph
+        with auto_cycles_breakdown_col:
+            if display_cycle_contributions:
+                average_speaker_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_SPEAKER)
+                    for team in team_numbers
+                ]
+                average_amp_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_AMP)
+                    for team in team_numbers
+                ]
+            else:
+                average_speaker_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_SPEAKER) * 5
+                    for team in team_numbers
+                ]
+                average_amp_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_AMP) * 2
+                    for team in team_numbers
+                ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    team_numbers,
+                    [average_speaker_cycles_by_team, average_amp_cycles_by_team],
+                    "Teams",
+                    [
+                        ("Avg. Speaker Cycles" if display_cycle_contributions else "Avg. Speaker Points"),
+                        ("Avg. Amp Cycles" if display_cycle_contributions else "Avg. Amp Points")
+                    ],
+                    ("Total Auto Cycles" if display_cycle_contributions else "Total Auto Points"),
+                    title="Auto Scoring Breakdown",
+                    color_map={
+                        ("Avg. Speaker Cycles" if display_cycle_contributions else "Avg. Speaker Points"): color_gradient[1],
+                        ("Avg. Amp Cycles" if display_cycle_contributions else "Avg. Amp Points"): color_gradient[2]
+                    }
+                ).update_layout(xaxis={"categoryorder": "total descending"})
+            )
+
+
+
 
     def generate_teleop_graphs(
         self,
@@ -384,5 +463,3 @@ class MatchManager(PageManager):
         :return:
         """
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
-
-        # TODO: add teleop graphs
