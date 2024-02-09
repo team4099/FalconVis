@@ -28,28 +28,52 @@ class EventManager(PageManager):
         )
 
     @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
-    def _retrieve_cycle_distributions(_self, type_of_grid: str) -> list:
+    def _retrieve_cycle_distributions(_self, mode: str) -> list:
         """Retrieves cycle distributions across an event for autonomous/teleop.
 
-        :param type_of_grid: The mode to retrieve cycle data for (autonomous/teleop).
+        :param mode: The mode to retrieve cycle data for (autonomous/teleop).
         :return: A list containing the cycle distirbutions for each team.
         """
         teams = retrieve_team_list()
         return [
-            _self.calculated_stats.cycles_by_match(team, type_of_grid)
+            _self.calculated_stats.cycles_by_match(team, mode)
             for team in teams
         ]
 
     @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
-    def _retrieve_point_distributions(_self, type_of_grid: str) -> list:
+    def _retrieve_point_distributions(_self, mode: str) -> list:
         """Retrieves point distributions across an event for autonomous/teleop.
 
-        :param type_of_grid: The mode to retrieve point contribution data for (autonomous/teleop).
-        :return: A list containing the point distirbutions for each team.
+        :param mode: The mode to retrieve point contribution data for (autonomous/teleop).
+        :return: A list containing the point distributions for each team.
         """
         teams = retrieve_team_list()
         return [
-            _self.calculated_stats.points_contributed_by_match(team, type_of_grid)
+            _self.calculated_stats.points_contributed_by_match(team, mode)
+            for team in teams
+        ]
+
+    @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+    def _retrieve_speaker_cycle_distributions(_self) -> list:
+        """Retrieves the distribution of speaker cycles for each team across an event for auto/teleop.
+
+        :return: A list containing the speaker cycle distributions for each team.
+        """
+        teams = retrieve_team_list()
+        return [
+            _self.calculated_stats.cycles_by_structure_per_match(team, (Queries.AUTO_SPEAKER, Queries.TELEOP_SPEAKER))
+            for team in teams
+        ]
+
+    @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+    def _retrieve_amp_cycle_distributions(_self) -> list:
+        """Retrieves the distribution of amp cycles for each team across an event for auto/teleop.
+
+        :return: A list containing the amp cycle distributions for each team.
+        """
+        teams = retrieve_team_list()
+        return [
+            _self.calculated_stats.cycles_by_structure_per_match(team, (Queries.AUTO_AMP, Queries.TELEOP_AMP))
             for team in teams
         ]
 
@@ -105,5 +129,115 @@ class EventManager(PageManager):
         """
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
         teams = retrieve_team_list()
+        auto_cycles_col, teleop_cycles_col = st.columns(2, gap="large")
+        speaker_cycles_col, amp_cycles_col= st.columns(2, gap="large")
 
-        # TODO: Add event graphs
+        # Display event-wide graph surrounding each team and their cycle distributions with the Speaker.
+        with speaker_cycles_col:
+            variable_key = f"speaker_cycles_col_{type_of_graph}"
+
+            speaker_distributions = self._retrieve_speaker_cycle_distributions()
+            speaker_sorted_distributions = dict(
+                sorted(
+                    zip(teams, speaker_distributions),
+                    key=lambda pair: (pair[1].median(), pair[1].mean()),
+                    reverse=True
+                )
+            )
+
+            speaker_sorted_teams = list(speaker_sorted_distributions.keys())
+            speaker_distributions = list(speaker_sorted_distributions.values())
+
+            if not st.session_state.get(variable_key):
+                st.session_state[variable_key] = 0
+
+            plotly_chart(
+                box_plot(
+                    speaker_sorted_teams[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    speaker_distributions[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    x_axis_label="Teams",
+                    y_axis_label=f"Cycle Distribution",
+                    title=f"Cycle Contributions to the Speaker"
+                ).update_layout(
+                    showlegend=False
+                )
+            )
+
+            previous_col, next_col = st.columns(2)
+
+            if previous_col.button(
+                    f"Previous {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"prevSpeaker{type_of_graph}",
+                    disabled=(st.session_state[variable_key] - self.TEAMS_TO_SPLIT_BY < 0)
+            ):
+                st.session_state[variable_key] -= self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+            if next_col.button(
+                    f"Next {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"nextSpeaker{type_of_graph}",
+                    disabled=(st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY >= len(teams))
+            ):
+                st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+        # Display event-wide graph surrounding each team and their cycle contributions to the Amp.
+        with amp_cycles_col:
+            variable_key = f"amp_cycles_col_{type_of_graph}"
+
+            amp_distributions = self._retrieve_amp_cycle_distributions()
+            amp_sorted_distributions = dict(
+                sorted(
+                    zip(teams, amp_distributions),
+                    key=lambda pair: (pair[1].median(), pair[1].mean()),
+                    reverse=True
+                )
+            )
+
+            amp_sorted_teams = list(amp_sorted_distributions.keys())
+            amp_distributions = list(amp_sorted_distributions.values())
+
+            if not st.session_state.get(variable_key):
+                st.session_state[variable_key] = 0
+
+            plotly_chart(
+                box_plot(
+                    amp_sorted_teams[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    amp_distributions[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    x_axis_label="Teams",
+                    y_axis_label=f"Cycle Distribution",
+                    title=f"Cycle Contributions to the Amp"
+                ).update_layout(
+                    showlegend=False
+                )
+            )
+
+            previous_col, next_col = st.columns(2)
+
+            if previous_col.button(
+                    f"Previous {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"prevAmp{type_of_graph}",
+                    disabled=(st.session_state[variable_key] - self.TEAMS_TO_SPLIT_BY < 0)
+            ):
+                st.session_state[variable_key] -= self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+            if next_col.button(
+                    f"Next {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"nextAmp{type_of_graph}",
+                    disabled=(st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY >= len(teams))
+            ):
+                st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
