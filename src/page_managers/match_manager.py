@@ -481,8 +481,32 @@ class MatchManager(PageManager):
                     [normal_climbs_by_team, harmonized_climbs_by_team],
                     x_axis_label="Teams",
                     y_axis_label= ["Normal Climbs", "Harmonized Climbs"],
+                    y_axis_title="# of Climb Types",
                     title="Climbs by Team",
                     color_map={"Normal Climbs": color_gradient[1], "Harmonized Climbs": color_gradient[2]}
+                )
+            )
+
+        with climb_speed_by_team:
+            slow_climbs = [
+                (team_data[Queries.CLIMB_SPEED] == "Slow").sum()
+                for team_data in teams_data
+            ]
+            
+            fast_climbs = [
+                (team_data[Queries.CLIMB_SPEED] == "Fast").sum()
+                for team_data in teams_data
+            ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    team_numbers,
+                    [slow_climbs, fast_climbs],
+                    x_axis_label="Teams",
+                    y_axis_label= ["Slow Climbs", "Fast Climbs"],
+                    y_axis_title="# of Climb Speeds",
+                    title="Climb Speeds by Team",
+                    color_map={"Slow Climbs": color_gradient[1], "Fast Climbs": color_gradient[2]}
                 )
             )
 

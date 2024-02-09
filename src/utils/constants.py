@@ -76,7 +76,7 @@ class Queries:
     PARKED_UNDER_STAGE = "Parked"
     CLIMBED_CHAIN = "ClimbStatus"
     HARMONIZED_ON_CHAIN = "Harmonized"
-    CLIMB_SPEED = "Slow/Fast"
+    CLIMB_SPEED = "ClimbSpeed"
 
     DRIVER_RATING = "DriverRating"
     DEFENSE_TIME = "DefenseTime"
