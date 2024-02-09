@@ -9,6 +9,7 @@ from utils import (
     box_plot,
     CalculatedStats,
     colored_metric,
+    colored_metric_with_two_values,
     Criteria,
     GeneralConstants,
     GraphType,
@@ -85,18 +86,30 @@ class TeamManager(PageManager, ContainsMetrics):
 
         # Metric for average auto cycles
         with auto_cycle_col:
-            average_auto_cycles = self.calculated_stats.average_cycles(
+            average_auto_speaker_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.AUTO
+                Queries.AUTO_SPEAKER
             )
-            auto_cycles_for_percentile = self.calculated_stats.quantile_stat(
+            average_auto_amp_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.AUTO_AMP
+            )
+            average_auto_speaker_cycles_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.average_cycles(team, Queries.AUTO)
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_SPEAKER)
             )
-            colored_metric(
+            average_auto_amp_cycles_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_AMP)
+            )
+
+            colored_metric_with_two_values(
                 "Average Auto Cycles",
-                round(average_auto_cycles, 2),
-                threshold=auto_cycles_for_percentile
+                "Speaker / Amp",
+                round(average_auto_speaker_cycles, 2),
+                round(average_auto_amp_cycles, 2),
+                first_threshold=average_auto_speaker_cycles_for_percentile,
+                second_threshold=average_auto_amp_cycles_for_percentile
             )
 
         # Metric for average teleop cycles
