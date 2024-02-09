@@ -460,7 +460,31 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
+        teams_data = [scouting_data_for_team(team) for team in team_numbers]
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+
+        climb_breakdown_by_team_col, climb_speed_by_team = st.columns(2)
+
+        with climb_breakdown_by_team_col:
+            normal_climbs_by_team = [
+                team_data[Queries.HARMONIZED_ON_CHAIN].sum() 
+                for team_data in teams_data
+            ]
+            harmonized_climbs_by_team = [
+                team_data[Queries.CLIMBED_CHAIN].sum() - harmonized_climbs #This works but it shouldn't I think we have harmonized climbs and normal climbs reversed
+                for team_data, harmonized_climbs in zip(teams_data, normal_climbs_by_team)
+            ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    team_numbers,
+                    [normal_climbs_by_team, harmonized_climbs_by_team],
+                    x_axis_label="Teams",
+                    y_axis_label= ["Normal Climbs", "Harmonized Climbs"],
+                    title="Climbs by Team",
+                    color_map={"Normal Climbs": color_gradient[1], "Harmonized Climbs": color_gradient[2]}
+                )
+            )
 
     def generate_qualitative_graphs(
         self,
