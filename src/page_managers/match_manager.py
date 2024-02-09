@@ -313,7 +313,7 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col = st.columns(3)
+        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col, reaches_coop_col = st.columns(4)
 
         fastest_cyclers = sorted(
             {
@@ -349,6 +349,19 @@ class MatchManager(PageManager):
                 "Slowest Cycler",
                 fastest_cyclers[2][0],
                 background_color=color_gradient[2],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the chance of reaching the co-op bonus (1 amp cycle in 45 seconds + auto)
+        with reaches_coop_col:
+            coop_by_match = [self.calculated_stats.reaches_coop_bonus_by_match(team) for team in team_numbers]
+            possible_coop_combos = self.calculated_stats.cartesian_product(*coop_by_match)
+
+            colored_metric(
+                "Chance of Co-Op Bonus",
+                f"{len([combo for combo in possible_coop_combos if any(combo)]) / len(possible_coop_combos):.0%}",
+                background_color=color_gradient[3],
                 opacity=0.4,
                 border_opacity=0.9
             )
@@ -445,9 +458,6 @@ class MatchManager(PageManager):
                     }
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
-
-
-
 
     def generate_teleop_graphs(
         self,
