@@ -6,7 +6,7 @@ import numpy as np
 from numpy import percentile
 from pandas import DataFrame, Series, isna
 
-from .constants import Criteria, Queries
+from .constants import Criteria, GeneralConstants, Queries
 from .functions import scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
 
 __all__ = ["CalculatedStats"]
@@ -168,21 +168,19 @@ class CalculatedStats:
         return self.cycles_by_structure_per_match(team_number, (Queries.AUTO_AMP, Queries.TELEOP_AMP)) // 2
 
     # Alliance-wide methods
-    def average_coop_bonus_rate(self, team_number_one: int, team_number_two: int, team_number_three: int) -> float:
+    def average_coop_bonus_rate(self, team_number: int) -> float:
         """Returns the average rate (%) that the coopertition bonus is reached by an alliance (average method).
         (ignore)
 
         The following custom graphs are supported with this function:
         - Bar graph
 
-        :param team_number_one: The first team within the alliance.
-        :param team_number_two: The second team within the alliance.
-        :param team_number_three: The third team within the alliance.
+        :param team_number: The team to calculate the average coop bonus rate for.
         :return: A float representing the % rate of the alliance reaching the coopertition bonus.
         """
-        return self.reaches_coop_bonus_by_match(team_number_one, team_number_two, team_number_three).astype(int).mean()
+        return self.reaches_coop_bonus_by_match(team_number).astype(int).mean()
 
-    def reaches_coop_bonus_by_match(self, team_number_one: int, team_number_two: int, team_number_three: int) -> Series:
+    def reaches_coop_bonus_by_match(self, team_number: int) -> Series:
         """Returns whether three teams within an alliance are able to reach the coopertition bonus within the first
         45 seconds of a match by match. (ignore)
 
@@ -191,21 +189,15 @@ class CalculatedStats:
         - Box plot
         - Multi line graph
 
-        :param team_number_one: The first team within the alliance.
-        :param team_number_two: The second team within the alliance.
-        :param team_number_three: The third team within the alliance.
+        :param team_number: The team to determine the coop bonus rate by match for.
         :return: Whether or not the alliance would reach the coopertition bonus requirement of one amp cycle in 45 sec.
         """
-        auto_amp_sufficient = (
-            self.cycles_by_structure_per_match(team_number_one, Queries.AUTO_AMP)
-            + self.cycles_by_structure_per_match(team_number_two, Queries.AUTO_AMP)
-            + self.cycles_by_structure_per_match(team_number_three, Queries.AUTO_AMP)
+        auto_amp_sufficient = self.cycles_by_structure_per_match(
+            team_number, Queries.AUTO_AMP
         ).apply(lambda total_auto_amp: total_auto_amp >= 1)
         teleop_amp_sufficient = (
-            self.cycles_by_structure_per_match(team_number_one, Queries.TELEOP_AMP)
-            + self.cycles_by_structure_per_match(team_number_two, Queries.TELEOP_AMP)
-            + self.cycles_by_structure_per_match(team_number_three, Queries.TELEOP_AMP)
-        ).apply(lambda total_teleop_amp: total_teleop_amp >= 1)  # Should be able to put one down in the first 45 seconds, poor metric so should change later
+            self.cycles_by_structure_per_match(team_number, Queries.TELEOP_AMP)
+        ).apply(lambda total_teleop_amp: total_teleop_amp >= 1)
 
         return auto_amp_sufficient | teleop_amp_sufficient
 

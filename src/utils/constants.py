@@ -27,6 +27,7 @@ class GeneralConstants:
     BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1", "#a8c1e3"]
     GOLD_GRADIENT = ["#ffbd4d", "#ff9000", "#dd5f00"]
     LEVEL_GRADIENT = ["#f44a53", "#ff8800", "#f4c717"]
+
     # Colors
     DARK_RED = "#450a0a"
     DARK_BLUE = "#172554"
@@ -36,8 +37,9 @@ class GeneralConstants:
     CONE_COLOR = PRIMARY_COLOR
     CUBE_COLOR = "#4F46E5"
 
-    # Game-specific constants
-    CHARGE_STATION_LENGTH = 8  # In feet
+    # General game constants
+    TELEOP_TOTAL_TIME = (2 * 60 + 15)
+    TELEOP_MINUS_ENDGAME = TELEOP_TOTAL_TIME - 20
 
 
 class EventSpecificConstants:

@@ -304,7 +304,146 @@ class MatchManager(PageManager):
         combined_teams = red_alliance + blue_alliance
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
         color_sequence = ["#781212", "#163ba1"]  # Bright red  # Bright blue
-        # TODO: Add match prediction graphs
+
+        structure_breakdown_col, auto_cycles_col = st.columns(2)
+        teleop_cycles_col, cumulative_cycles_col = st.columns(2)
+
+        # Breaks down where the different teams scored among the six teams
+        with structure_breakdown_col:
+            structure_breakdown = [
+                [
+                    self.calculated_stats.cycles_by_structure_per_match(
+                        team, structures
+                    ).sum()
+                    for team in combined_teams
+                ]
+                for structures in (
+                    (Queries.AUTO_AMP, Queries.TELEOP_AMP),
+                    (Queries.AUTO_SPEAKER, Queries.TELEOP_SPEAKER),
+                    Queries.TELEOP_TRAP
+                )
+            ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    combined_teams,
+                    structure_breakdown,
+                    "Teams",
+                    ["# of Amp Cycles", "# of Speaker Cycles", "# of Trap Cycles"],
+                    "Total Cycles Scored into Structures",
+                    title="Structure Breakdown",
+                    color_map={
+                        "# of Amp Cycles": GeneralConstants.GOLD_GRADIENT[0],
+                        "# of Speaker Cycles": GeneralConstants.GOLD_GRADIENT[1],
+                        "# of Trap Cycles": GeneralConstants.GOLD_GRADIENT[2]
+                    },
+                ).update_layout(xaxis={"categoryorder": "total descending"})
+            )
+
+        # Breaks down cycles/point contributions among both alliances in Autonomous.
+        with auto_cycles_col:
+            auto_alliance_distributions = []
+
+            for alliance in (red_alliance, blue_alliance):
+                cycles_in_alliance = [
+                    (
+                        self.calculated_stats.cycles_by_match(team, Queries.AUTO)
+                        if display_cycle_contributions
+                        else self.calculated_stats.points_contributed_by_match(
+                            team, Queries.AUTO
+                        )
+                    )
+                    for team in alliance
+                ]
+                auto_alliance_distributions.append(
+                    self.calculated_stats.cartesian_product(
+                        *cycles_in_alliance, reduce_with_sum=True
+                    )
+                )
+
+            plotly_chart(
+                box_plot(
+                    ["Red Alliance", "Blue Alliance"],
+                    auto_alliance_distributions,
+                    y_axis_label=(
+                        "Notes Scored"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        f"Notes During Autonomous (N={len(auto_alliance_distributions[0])})"
+                        if display_cycle_contributions
+                        else f"Points Contributed During Autonomous (N={len(auto_alliance_distributions[0])})"
+                    ),
+                    color_sequence=color_sequence,
+                )
+            )
+
+        # Breaks down cycles/point contributions among both alliances in Teleop.
+        with teleop_cycles_col:
+            teleop_alliance_distributions = []
+
+            for alliance in (red_alliance, blue_alliance):
+                cycles_in_alliance = [
+                    (
+                        self.calculated_stats.cycles_by_match(team, Queries.TELEOP)
+                        if display_cycle_contributions
+                        else self.calculated_stats.points_contributed_by_match(
+                            team, Queries.TELEOP
+                        )
+                    )
+                    for team in alliance
+                ]
+                teleop_alliance_distributions.append(
+                    self.calculated_stats.cartesian_product(
+                        *cycles_in_alliance, reduce_with_sum=True
+                    )
+                )
+
+            plotly_chart(
+                box_plot(
+                    ["Red Alliance", "Blue Alliance"],
+                    teleop_alliance_distributions,
+                    y_axis_label=(
+                        "Notes Scored"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        f"Notes During Teleop (N={len(teleop_alliance_distributions[0])})"
+                        if display_cycle_contributions
+                        else f"Points Contributed During Teleop (N={len(teleop_alliance_distributions[0])})"
+                    ),
+                    color_sequence=color_sequence,
+                )
+            )
+
+        # Show cumulative cycles/point contributions (auto and teleop)
+        with cumulative_cycles_col:
+            cumulative_alliance_distributions = [
+                auto_distribution + teleop_distribution
+                for auto_distribution, teleop_distribution in zip(
+                    auto_alliance_distributions, teleop_alliance_distributions
+                )
+            ]
+
+            plotly_chart(
+                box_plot(
+                    ["Red Alliance", "Blue Alliance"],
+                    cumulative_alliance_distributions,
+                    y_axis_label=(
+                        "Notes Scored"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        f"Notes During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
+                        if display_cycle_contributions
+                        else f"Points Contributed During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
+                    ),
+                    color_sequence=color_sequence,
+                )
+            )
 
     def generate_alliance_dashboard(self, team_numbers: list[int], color_gradient: list[str]) -> None:
         """Generates an alliance dashboard in the `Match` page.
@@ -313,7 +452,7 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col = st.columns(3)
+        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col, reaches_coop_col = st.columns(4)
 
         fastest_cyclers = sorted(
             {
@@ -349,6 +488,19 @@ class MatchManager(PageManager):
                 "Slowest Cycler",
                 fastest_cyclers[2][0],
                 background_color=color_gradient[2],
+                opacity=0.4,
+                border_opacity=0.9
+            )
+
+        # Colored metric displaying the chance of reaching the co-op bonus (1 amp cycle in 45 seconds + auto)
+        with reaches_coop_col:
+            coop_by_match = [self.calculated_stats.reaches_coop_bonus_by_match(team) for team in team_numbers]
+            possible_coop_combos = self.calculated_stats.cartesian_product(*coop_by_match)
+
+            colored_metric(
+                "Chance of Co-Op Bonus",
+                f"{len([combo for combo in possible_coop_combos if any(combo)]) / len(possible_coop_combos):.0%}",
+                background_color=color_gradient[3],
                 opacity=0.4,
                 border_opacity=0.9
             )
@@ -446,7 +598,6 @@ class MatchManager(PageManager):
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
 
-
     def generate_teleop_graphs(
         self,
         team_numbers: list[int],
@@ -463,7 +614,55 @@ class MatchManager(PageManager):
         teams_data = [scouting_data_for_team(team) for team in team_numbers]
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        climb_breakdown_by_team_col, climb_speed_by_team = st.columns(2)
+        speaker_cycles_over_time_col, amp_periods_over_time_col = st.columns(2, gap="large")
+        climb_breakdown_by_team_col, climb_speed_by_team = st.columns(2, gap="large")
+
+        # Display the teleop speaker cycles of each team over time
+        with speaker_cycles_over_time_col:
+            cycles_by_team = [
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_SPEAKER) *
+                (
+                    1 if display_cycle_contributions else 2
+                )
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(cycles_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop Speaker Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed in the Speaker Over Time"
+                    ),
+                    color_map=dict(zip(team_numbers, color_gradient))
+                )
+            )
+
+        # Display the teleop speaker cycles of each team over time
+        with amp_periods_over_time_col:
+            amp_periods_by_team = [
+                self.calculated_stats.potential_amplification_periods_by_match(team)
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(amp_periods_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title="# of Potential Amplification Periods",
+                    title="Potential Amplification Periods Produced by Alliance",
+                    color_map=dict(zip(team_numbers, color_gradient))
+                )
+            )
 
         with climb_breakdown_by_team_col:
             normal_climbs_by_team = [
@@ -506,7 +705,7 @@ class MatchManager(PageManager):
                     y_axis_label= ["Slow Climbs", "Fast Climbs"],
                     y_axis_title="# of Climb Speeds",
                     title="Climb Speeds by Team",
-                    color_map={"Slow Climbs": color_gradient[1], "Fast Climbs": color_gradient[2]}
+                    color_map={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN}
                 )
             )
 
