@@ -6,7 +6,7 @@ from scipy.integrate import quad
 from scipy.stats import norm
 
 from .page_manager import PageManager
-from utils import (
+from ..utils import (
     alliance_breakdown,
     bar_graph,
     box_plot,
@@ -612,3 +612,51 @@ class MatchManager(PageManager):
         :return:
         """
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+        speaker_cycles_over_time_col, amp_periods_over_time_col = st.columns(2, gap="large")
+
+        # Display the teleop speaker cycles of each team over time
+        with speaker_cycles_over_time_col:
+            cycles_by_team = [
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_SPEAKER) *
+                (
+                    1 if display_cycle_contributions else 2
+                )
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(cycles_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop Speaker Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed in the Speaker Over Time"
+                    ),
+                    color_map=dict(zip(team_numbers, color_gradient))
+                )
+            )
+
+        # Display the teleop speaker cycles of each team over time
+        with amp_periods_over_time_col:
+            amp_periods_by_team = [
+                self.calculated_stats.potential_amplification_periods_by_match(team)
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(amp_periods_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title="# of Potential Amplification Periods",
+                    title="Potential Amplification Periods Produced by Alliance",
+                    color_map=dict(zip(team_numbers, color_gradient))
+                )
+            )

@@ -6,7 +6,7 @@ import numpy as np
 from numpy import percentile
 from pandas import DataFrame, Series, isna
 
-from .constants import Criteria, Queries
+from .constants import Criteria, GeneralConstants, Queries
 from .functions import scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
 
 __all__ = ["CalculatedStats"]
