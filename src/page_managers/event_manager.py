@@ -77,6 +77,18 @@ class EventManager(PageManager):
             for team in teams
         ]
 
+    @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+    def _retrieve_auto_cycle_distributions(_self) -> list:
+        """Retrieves the distribution of autonomous cycles for each team across an event with speaker/amp.
+
+        :return: A list containing the autonomous cycle distributions for each team.
+        """
+        teams = retrieve_team_list()
+        return [
+            _self.calculated_stats.cycles_by_structure_per_match(team, (Queries.AUTO_SPEAKER, Queries.AUTO_AMP))
+            for team in teams
+        ]
+
     def generate_input_section(self) -> None:
         """Defines that there are no inputs for the event page, showing event-wide graphs."""
         return
@@ -237,6 +249,61 @@ class EventManager(PageManager):
                     f"Next {self.TEAMS_TO_SPLIT_BY} Teams",
                     use_container_width=True,
                     key=f"nextAmp{type_of_graph}",
+                    disabled=(st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY >= len(teams))
+            ):
+                st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+        # Display event-wide graph surrounding each team and their cycle distributions in the Autonomous period.
+        with auto_cycles_col:
+            variable_key = f"auto_cycles_col_{type_of_graph}"
+
+            auto_distributions = self._retrieve_auto_cycle_distributions()
+            auto_sorted_distributions = dict(
+                sorted(
+                    zip(teams, auto_distributions),
+                    key=lambda pair: (pair[1].median(), pair[1].mean()),
+                    reverse=True
+                )
+            )
+
+            auto_sorted_teams = list(auto_sorted_distributions.keys())
+            auto_distributions = list(auto_sorted_distributions.values())
+
+            if not st.session_state.get(variable_key):
+                st.session_state[variable_key] = 0
+
+            plotly_chart(
+                box_plot(
+                    auto_sorted_teams[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    auto_distributions[
+                        st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
+                    ],
+                    x_axis_label="Teams",
+                    y_axis_label=f"Cycle Distribution",
+                    title=f"Cycle Contributions in Auto"
+                ).update_layout(
+                    showlegend=False
+                )
+            )
+
+            previous_col, next_col = st.columns(2)
+
+            if previous_col.button(
+                    f"Previous {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"prevAuto{type_of_graph}",
+                    disabled=(st.session_state[variable_key] - self.TEAMS_TO_SPLIT_BY < 0)
+            ):
+                st.session_state[variable_key] -= self.TEAMS_TO_SPLIT_BY
+                st.experimental_rerun()
+
+            if next_col.button(
+                    f"Next {self.TEAMS_TO_SPLIT_BY} Teams",
+                    use_container_width=True,
+                    key=f"nextAuto{type_of_graph}",
                     disabled=(st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY >= len(teams))
             ):
                 st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
