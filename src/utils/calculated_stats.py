@@ -242,8 +242,8 @@ class CalculatedStats:
             lambda counter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(counter_defense_skill, float("nan"))
         ).mean()
 
-    def disables_by_team(self, team_number: int) -> float:
-        """Returns a series of data representing the teams disables
+    def disables_by_match(self, team_number: int) -> float:
+        """Returns a series of data representing the team's disables
 
         :param team_number: The team to find disable data for.
         :return: A series with the teams disable data.

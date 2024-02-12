@@ -6,7 +6,7 @@ from scipy.integrate import quad
 from scipy.stats import norm
 
 from .page_manager import PageManager
-from ..utils import (
+from utils import (
     alliance_breakdown,
     bar_graph,
     box_plot,
@@ -611,8 +611,11 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
+        teams_data = [scouting_data_for_team(team) for team in team_numbers]
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+
         speaker_cycles_over_time_col, amp_periods_over_time_col = st.columns(2, gap="large")
+        climb_breakdown_by_team_col, climb_speed_by_team = st.columns(2, gap="large")
 
         # Display the teleop speaker cycles of each team over time
         with speaker_cycles_over_time_col:
@@ -658,5 +661,114 @@ class MatchManager(PageManager):
                     y_axis_title="# of Potential Amplification Periods",
                     title="Potential Amplification Periods Produced by Alliance",
                     color_map=dict(zip(team_numbers, color_gradient))
+                )
+            )
+
+        with climb_breakdown_by_team_col:
+            normal_climbs_by_team = [
+                team_data[Queries.HARMONIZED_ON_CHAIN].sum() 
+                for team_data in teams_data
+            ]
+            harmonized_climbs_by_team = [
+                team_data[Queries.CLIMBED_CHAIN].sum() - harmonized_climbs #This works but it shouldn't I think we have harmonized climbs and normal climbs reversed
+                for team_data, harmonized_climbs in zip(teams_data, normal_climbs_by_team)
+            ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    team_numbers,
+                    [normal_climbs_by_team, harmonized_climbs_by_team],
+                    x_axis_label="Teams",
+                    y_axis_label= ["Normal Climbs", "Harmonized Climbs"],
+                    y_axis_title="# of Climb Types",
+                    title="Climbs by Team",
+                    color_map={"Normal Climbs": color_gradient[1], "Harmonized Climbs": color_gradient[2]}
+                )
+            )
+
+        with climb_speed_by_team:
+            slow_climbs = [
+                (team_data[Queries.CLIMB_SPEED] == "Slow").sum()
+                for team_data in teams_data
+            ]
+            
+            fast_climbs = [
+                (team_data[Queries.CLIMB_SPEED] == "Fast").sum()
+                for team_data in teams_data
+            ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    team_numbers,
+                    [slow_climbs, fast_climbs],
+                    x_axis_label="Teams",
+                    y_axis_label= ["Slow Climbs", "Fast Climbs"],
+                    y_axis_title="# of Climb Speeds",
+                    title="Climb Speeds by Team",
+                    color_map={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN}
+                )
+            )
+
+    def generate_qualitative_graphs(
+        self,
+        team_numbers: list[int],
+        color_gradient: list[str]
+    ):
+        """Generates the qualitative graphs for the `Match` page.
+
+        :param team_numbers: The teams to generate the graphs for.
+        :param color_gradient: The color gradient to use for graphs, depending on the alliance.
+        :return:
+        """
+        driver_rating_by_team_col, defense_rating_by_team_col, disables_by_team_col = st.columns(3)
+
+        with driver_rating_by_team_col:
+            driver_rating_by_team = [
+                self.calculated_stats.average_driver_rating(team)
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    driver_rating_by_team,
+                    x_axis_label="Teams",
+                    y_axis_label="Driver Rating (1-5)",
+                    title="Average Driver Rating by Team",
+                    color=color_gradient[0]
+                )
+            )
+        
+        with defense_rating_by_team_col:
+            defense_rating_by_team = [
+                self.calculated_stats.average_defense_skill(team)
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    defense_rating_by_team,
+                    x_axis_label="Teams",
+                    y_axis_label="Defense Rating (1-5)",
+                    title="Average Defense Rating by Team",
+                    color=color_gradient[1]
+                )
+            )
+
+        with disables_by_team_col:
+            disables_by_team = [
+                self.calculated_stats.disables_by_match(team).sum()
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    disables_by_team,
+                    x_axis_label="Teams",
+                    y_axis_label="Disables",
+                    title="Disables by Team",
+                    color=color_gradient[2]
                 )
             )

@@ -51,7 +51,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :param team_number: The team number to calculate the metrics for.
         """
         points_contributed_col, drivetrain_col, auto_cycle_col, teleop_cycle_col = st.columns(4)
-        iqr_col, auto_engage_col, auto_engage_accuracy_col, auto_accuracy_col = st.columns(4)
+        iqr_col, trap_ability_col, times_climbed_col, harmonize_ability_col = st.columns(4)
 
         # Metric for avg. points contributed
         with points_contributed_col:
@@ -128,6 +128,47 @@ class TeamManager(PageManager, ContainsMetrics):
                 threshold=teleop_cycles_for_percentile
             )
 
+        # TODO: the next 3 metrics are likely wrong
+        # Metric for ability to score trap
+        with trap_ability_col:
+            trap_ability = self.calculated_stats.average_stat(
+                team_number,
+                Queries.TELEOP_TRAP,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            colored_metric(
+                "Able To Score Trap",
+                "Yes" if trap_ability > 0 else "No",
+            )
+
+        # Metric for total times climbed
+        with times_climbed_col:
+            times_climbed = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.CLIMBED_CHAIN,
+            )
+            times_climbed_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CHAIN)
+            )
+            colored_metric(
+                "Times Climbed",
+                times_climbed,
+                threshold=times_climbed_for_percentile
+            )
+
+        # Metric for ability to harmonize
+        with harmonize_ability_col:
+            harmonize_ability = self.calculated_stats.average_stat(
+                team_number,
+                Queries.HARMONIZED_ON_CHAIN,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            colored_metric(
+                "Able To Harmonize",
+                "Yes" if harmonize_ability > 0 else "No"
+            )
+
         # Metric for IQR of points contributed (consistency)
         with iqr_col:
             team_dataset = self.calculated_stats.points_contributed_by_match(
@@ -147,9 +188,6 @@ class TeamManager(PageManager, ContainsMetrics):
                 threshold=iqr_for_percentile,
                 invert_threshold=True
             )
-
-        # TODO: Add the other metrics
-
 
     def generate_autonomous_graphs(
         self,
