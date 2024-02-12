@@ -114,59 +114,30 @@ class TeamManager(PageManager, ContainsMetrics):
 
         # Metric for average teleop cycles
         with teleop_cycle_col:
-            average_teleop_cycles = self.calculated_stats.average_cycles(
+            average_teleop_speaker_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.TELEOP
+                Queries.TELEOP_SPEAKER
             )
-            teleop_cycles_for_percentile = self.calculated_stats.quantile_stat(
+            average_teleop_amp_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.TELEOP_AMP
+            )
+            average_teleop_speaker_cycles_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.average_cycles(team, Queries.TELEOP)
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_SPEAKER)
             )
-            colored_metric(
+            average_teleop_amp_cycles_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_AMP)
+            )
+
+            colored_metric_with_two_values(
                 "Average Teleop Cycles",
-                round(average_teleop_cycles, 2),
-                threshold=teleop_cycles_for_percentile
-            )
-
-        # TODO: the next 3 metrics are likely wrong
-        # Metric for ability to score trap
-        with trap_ability_col:
-            trap_ability = self.calculated_stats.average_stat(
-                team_number,
-                Queries.TELEOP_TRAP,
-                Criteria.BOOLEAN_CRITERIA
-            )
-            colored_metric(
-                "Able To Score Trap",
-                "Yes" if trap_ability > 0 else "No",
-            )
-
-        # Metric for total times climbed
-        with times_climbed_col:
-            times_climbed = self.calculated_stats.cumulative_stat(
-                team_number,
-                Queries.CLIMBED_CHAIN,
-            )
-            times_climbed_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CHAIN)
-            )
-            colored_metric(
-                "Times Climbed",
-                times_climbed,
-                threshold=times_climbed_for_percentile
-            )
-
-        # Metric for ability to harmonize
-        with harmonize_ability_col:
-            harmonize_ability = self.calculated_stats.average_stat(
-                team_number,
-                Queries.HARMONIZED_ON_CHAIN,
-                Criteria.BOOLEAN_CRITERIA
-            )
-            colored_metric(
-                "Able To Harmonize",
-                "Yes" if harmonize_ability > 0 else "No"
+                "Speaker / Amp",
+                round(average_teleop_speaker_cycles, 2),
+                round(average_teleop_amp_cycles, 2),
+                first_threshold=average_teleop_speaker_cycles_for_percentile,
+                second_threshold=average_teleop_amp_cycles_for_percentile
             )
 
         # Metric for IQR of points contributed (consistency)
@@ -187,6 +158,55 @@ class TeamManager(PageManager, ContainsMetrics):
                 iqr_of_points_contributed,
                 threshold=iqr_for_percentile,
                 invert_threshold=True
+            )
+
+        # Metric for ability to score trap
+        with trap_ability_col:
+            average_trap_cycles = self.calculated_stats.average_stat(
+                team_number,
+                Queries.TELEOP_TRAP,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            colored_metric(
+                "Can they score in the trap?",
+                average_trap_cycles,
+                threshold=0.01,
+                value_formatter=lambda value: "Yes" if value > 0 else "No"
+            )
+
+        # Metric for total times climbed
+        with times_climbed_col:
+            times_climbed = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.CLIMBED_CHAIN,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_climbed_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CHAIN, Criteria.BOOLEAN_CRITERIA)
+            )
+            colored_metric(
+                "# of Times Climbed",
+                times_climbed,
+                threshold=times_climbed_for_percentile
+            )
+
+        # Metric for ability to harmonize
+        with harmonize_ability_col:
+            times_harmonized = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.HARMONIZED_ON_CHAIN,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_harmonized_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.HARMONIZED_ON_CHAIN, Criteria.BOOLEAN_CRITERIA)
+            )
+
+            colored_metric(
+                "# of Times Harmonized",
+                times_harmonized,
+                threshold=times_harmonized_for_percentile
             )
 
     def generate_autonomous_graphs(
