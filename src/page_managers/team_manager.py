@@ -14,6 +14,7 @@ from utils import (
     GeneralConstants,
     GraphType,
     line_graph,
+    multi_line_graph,
     plotly_chart,
     Queries,
     retrieve_team_list,
@@ -40,9 +41,11 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :return: The team number selected to create graphs for.
         """
+        queried_team = int(st.experimental_get_query_params().get("team_number", [0])[0])
         return st.selectbox(
             "Team Number",
-            retrieve_team_list()
+            (team_list := retrieve_team_list()),
+            index=team_list.index(queried_team) if queried_team in team_list else 0
         )
 
     def generate_metrics(self, team_number: int) -> None:
@@ -220,10 +223,50 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        team_data = scouting_data_for_team(team_number)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        # TODO: Add autonomous graphs
+        # Metric for how many times they left the starting zone
+        times_left_starting_zone = self.calculated_stats.cumulative_stat(
+            team_number,
+            Queries.LEFT_STARTING_ZONE,
+            Criteria.BOOLEAN_CRITERIA
+        )
+        times_left_for_percentile = self.calculated_stats.quantile_stat(
+            0.5,
+            lambda self, team: self.cumulative_stat(team, Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA)
+        )
+
+        colored_metric(
+            "# of Leaves from the Starting Zone",
+            times_left_starting_zone,
+            threshold=times_left_for_percentile
+        )
+
+        # Speaker/amp over time graph
+        speaker_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            team_number,
+            Queries.AUTO_SPEAKER
+        ) * (1 if using_cycle_contributions else 5)
+        amp_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            team_number,
+            Queries.AUTO_AMP
+        ) * (1 if using_cycle_contributions else 2)
+        line_names = [
+            ("# of Speaker Cycles" if using_cycle_contributions else "# of Speaker Points"),
+            ("# of Amp Cycles" if using_cycle_contributions else "# of Amp Points")
+        ]
+
+        plotly_chart(
+            multi_line_graph(
+                range(len(speaker_cycles_by_match)),
+                [speaker_cycles_by_match, amp_cycles_by_match],
+                x_axis_label="Match Index",
+                y_axis_label=line_names,
+                y_axis_title=f"# of Autonomous {'Cycles' if using_cycle_contributions else 'Points'}",
+                title=f"Speaker/Amp {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
+                color_map=dict(zip(line_names, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+            )
+        )
 
     def generate_teleop_graphs(
         self,

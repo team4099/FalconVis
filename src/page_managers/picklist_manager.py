@@ -3,10 +3,13 @@
 from functools import partial
 
 import streamlit as st
+from dotenv import load_dotenv
 from pandas import DataFrame
 
 from .page_manager import PageManager
 from utils import CalculatedStats, Queries, retrieve_scouting_data, retrieve_team_list
+
+load_dotenv()
 
 
 class PicklistManager(PageManager):
@@ -18,6 +21,7 @@ class PicklistManager(PageManager):
             retrieve_scouting_data()
         )
         self.teams = retrieve_team_list()
+        self.client = Client(auth=os.getenv("NOTION_TOKEN"))
 
         # Requested stats is used to define the stats wanted in the picklist generation.
         self.requested_stats = {
