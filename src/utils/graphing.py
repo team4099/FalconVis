@@ -138,16 +138,22 @@ def _create_multicolumn_df(
 
   
 # Wrapper around `st.plotly_chart` for attaching a configuration making graphs static.
-def plotly_chart(fig: Figure, use_container_width: bool = True, **kwargs) -> None:
+def plotly_chart(fig: Figure, use_container_width: bool = True, legend_on_bottom: bool = False, **kwargs) -> None:
     """A wrapper around `st.plotly_chart` for plotting Plotly figures.
 
     Used for attaching configurations and other valuable arguments for our app.
 
     :param fig: A Plotly figure.
     :param use_container_width: Whether or not to use the full container.
+    :param legend_on_bottom: Whether or not to anchor the legend to the bottom.
     """
     st.plotly_chart(
-        fig,
+        fig if not legend_on_bottom else fig.update_layout(
+            legend=dict(
+                y=-0.5,
+                x=0
+            )
+        ),
         use_container_width=use_container_width,
         config={"staticPlot": True},
         **kwargs
@@ -295,6 +301,8 @@ def multi_line_graph(
         color_discrete_map=color_map
     ).update_traces(
         line=dict(width=4)
+    ).update_layout(
+        legend=dict(y=-0.4, x=0)
     )
 
 
