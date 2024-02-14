@@ -93,7 +93,7 @@ class CalculatedStats:
         :param mode: The mode to calculate said cycles for (Auto/Teleop)
         :return: A float representing the average cycles for said team in the mode specified.
         """
-        if mode:
+        if mode is not None:
             return self.cycles_by_match(team_number, mode).mean()
         else:
             return (self.cycles_by_match(team_number, Queries.AUTO) + self.cycles_by_match(team_number, Queries.TELEOP)).mean()

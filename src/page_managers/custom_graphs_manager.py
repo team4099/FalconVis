@@ -40,7 +40,7 @@ class CustomGraphsManager(PageManager):
         names_to_methods = {
             name.replace("_", " ").capitalize(): method
             for name, method in inspect.getmembers(self.calculated_stats, predicate=inspect.ismethod)
-            if not name.startswith("__") and "(ignore)" not in method.__doc__
+            if method.__doc__ and not name.startswith("__") and "(ignore)" not in method.__doc__
         }
 
         st.write("#### 📈 Data to Display")
