@@ -6,8 +6,8 @@ import numpy as np
 from numpy import percentile
 from pandas import DataFrame, Series, isna
 
-from .constants import Criteria, GeneralConstants, Queries
-from .functions import scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
+from .constants import Criteria, Queries
+from .functions import _convert_to_float_from_numpy_type, scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
 
 __all__ = ["CalculatedStats"]
 
@@ -81,7 +81,7 @@ class CalculatedStats:
         )
 
     # Cycle calculation methods
-    def average_cycles(self, team_number: int, mode: str) -> float:
+    def average_cycles(self, team_number: int, mode: str = None) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
 
         The following custom graphs are supported with this function:
@@ -91,7 +91,10 @@ class CalculatedStats:
         :param mode: The mode to calculate said cycles for (Auto/Teleop)
         :return: A float representing the average cycles for said team in the mode specified.
         """
-        return self.cycles_by_match(team_number, mode).mean()
+        if mode:
+            return self.cycles_by_match(team_number, mode).mean()
+        else:
+            return (self.cycles_by_match(team_number, Queries.AUTO) + self.cycles_by_match(team_number, Queries.TELEOP)).mean()
 
     def average_cycles_for_structure(self, team_number: int, structure: str) -> float:
         """Calculates the average cycles for a team for a structure (wrapper around `cycles_by_match`).
@@ -168,6 +171,7 @@ class CalculatedStats:
         return self.cycles_by_structure_per_match(team_number, (Queries.AUTO_AMP, Queries.TELEOP_AMP)) // 2
 
     # Alliance-wide methods
+    @_convert_to_float_from_numpy_type
     def average_coop_bonus_rate(self, team_number: int) -> float:
         """Returns the average rate (%) that the coopertition bonus is reached by an alliance (average method).
         (ignore)
@@ -202,6 +206,7 @@ class CalculatedStats:
         return auto_amp_sufficient | teleop_amp_sufficient
 
     # Rating methods
+    @_convert_to_float_from_numpy_type
     def average_driver_rating(self, team_number: int) -> float:
         """Returns the average driver rating of a team.
 
@@ -211,7 +216,8 @@ class CalculatedStats:
         return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].apply(
             lambda driver_rating: Criteria.DRIVER_RATING_CRITERIA.get(driver_rating, float("nan"))
         ).mean()
-    
+
+    @_convert_to_float_from_numpy_type
     def average_defense_time(self, team_number: int) -> float:
         """Returns the average defense time of a team
 
@@ -222,6 +228,7 @@ class CalculatedStats:
             lambda defense_time: Criteria.DEFENSE_TIME_CRITERIA.get(defense_time, float("nan"))
         ).mean()
 
+    @_convert_to_float_from_numpy_type
     def average_defense_skill(self, team_number: int) -> float:
         """Returns the average defense skill of a team.
 
@@ -232,6 +239,7 @@ class CalculatedStats:
             lambda defense_skill: Criteria.BASIC_RATING_CRITERIA.get(defense_skill, float("nan"))
         ).mean()
 
+    @_convert_to_float_from_numpy_type
     def average_counter_defense_skill(self, team_number: int) -> float:
         """Returns the average counter defense skill (ability to swerve past defense) of a team.
 
@@ -275,6 +283,7 @@ class CalculatedStats:
         return percentile(dataset, quantile * 100)
 
     # General methods
+    @_convert_to_float_from_numpy_type
     def average_stat(self, team_number: int, stat: str, criteria: dict | None = None) -> float:
         """Calculates the average statistic for a team (wrapper around `stat_per_match`).
 
@@ -285,6 +294,7 @@ class CalculatedStats:
         """
         return self.stat_per_match(team_number, stat, criteria).mean()
 
+    @_convert_to_float_from_numpy_type
     def cumulative_stat(self, team_number: int, stat: str, criteria: dict | None = None) -> int:
         """Calculates a cumulative stat for a team (wrapper around `stat_per_match`).
 

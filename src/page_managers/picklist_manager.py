@@ -1,13 +1,16 @@
 """Creates the `PicklistManager` class used to set up the Picklist page and its table."""
 
+import os
 from functools import partial
 
 import streamlit as st
 from dotenv import load_dotenv
+from notion_client import Client
+from notion_client.helpers import get_id
 from pandas import DataFrame
 
 from .page_manager import PageManager
-from utils import CalculatedStats, Queries, retrieve_scouting_data, retrieve_team_list
+from utils import CalculatedStats, Criteria, EventSpecificConstants, Queries, retrieve_scouting_data, retrieve_team_list
 
 load_dotenv()
 
@@ -32,8 +35,39 @@ class PicklistManager(PageManager):
             "Average Teleop Cycles": partial(
                 self.calculated_stats.average_cycles,
                 mode=Queries.TELEOP
-            )
-        }  # TODO: Add more stats here later
+            ),
+            "Average Speaker Cycles": partial(
+                self.calculated_stats.average_cycles_for_structure,
+                structure=(Queries.AUTO_SPEAKER, Queries.TELEOP_SPEAKER)
+            ),
+            "Average Amp Cycles": partial(
+                self.calculated_stats.average_cycles_for_structure,
+                structure=(Queries.AUTO_AMP, Queries.TELEOP_AMP)
+            ),
+            "Average Trap Cycles": partial(
+                self.calculated_stats.average_cycles_for_structure,
+                structure=Queries.TELEOP_TRAP
+            ),
+            "# of Times Climbed": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=Queries.CLIMBED_CHAIN,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "# of Times Harmonized": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=Queries.HARMONIZED_ON_CHAIN,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "# of Disables": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=Queries.DISABLE,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "Average Driver Rating": self.calculated_stats.average_driver_rating,
+            "Average Defense Skill": self.calculated_stats.average_defense_skill,
+            "Average Defense Time": self.calculated_stats.average_defense_time,
+            "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill
+        }
 
     def generate_input_section(self) -> list[list, list]:
         """Creates the input section for the `Picklist` page.
@@ -63,3 +97,110 @@ class PicklistManager(PageManager):
             for team in self.teams
         ]
         return DataFrame.from_dict(requested_picklist)
+
+    def write_to_notion(self, dataframe: DataFrame) -> None:
+        """Writes to a Notion picklist entered by the user in the constants file.
+
+        :param dataframe: The dataframe containing all the statistics of each team.
+        :return:
+        """
+        # Generate Notion Database first
+        properties = {
+            "Team Name": {"title": {}}
+        } | {
+            column: {"number": {}} for column in dataframe.columns if column != "Team Number"
+        }
+        icon = {"type": "emoji", "emoji": "🗒️"}
+        self.client.databases.update(
+            database_id=(db_id := get_id(EventSpecificConstants.PICKLIST_URL)), properties=properties, icon=icon
+        )
+
+        # Retrieve poroperties of database
+        db_properties = self.client.databases.query(database_id=db_id)["results"][0]["properties"]
+        ids = {property_name: property_values["id"] for property_name, property_values in db_properties.items()}
+
+        # Find percentiles across all teams
+        percentile_75 = self.calculated_stats.quantile_stat(
+            0.75,
+            lambda self_, team: self_.average_cycles(team)
+        )
+        percentile_50 = self.calculated_stats.quantile_stat(
+            0.5,
+            lambda self_, team: self_.average_cycles(team)
+        )
+        percentile_25 = self.calculated_stats.quantile_stat(
+            0.25,
+            lambda self_, team: self_.average_cycles(team)
+        )
+
+        for _, row in dataframe.iterrows():
+            team_name = row["Team Number"]
+            query_page = self.client.databases.query(
+                database_id=db_id,
+                filter={
+                    "property": "Team Name",
+                    "title": {
+                        "contains": team_name,
+                    },
+                }
+            )
+            # Based off of the percentile between all their stats
+            team_cycles = self.calculated_stats.average_cycles(int(team_name.split()[1]))
+
+            if team_cycles > percentile_75:
+                emoji = "🔵"
+            elif percentile_50 <= team_cycles < percentile_75:
+                emoji = "🟢"
+            elif percentile_25 <= team_cycles < percentile_50:
+                emoji = "🟠"
+            else:
+                emoji = "🔴"
+
+            # No page created yet.
+            if not query_page["results"]:
+                self.client.pages.create(
+                    database_id=db_id,
+                    icon={"type": "emoji", "emoji": emoji},
+                    parent={"type": "database_id", "database_id": db_id},
+                    properties={
+                        column: {
+                            "id": ids[column],
+                            "number": dataframe[dataframe["Team Number"] == team_name][column].iloc[0]
+                        } for column in dataframe.columns if column != "Team Number"
+                    } | {
+                        "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
+                    },
+                    children=[
+                        {
+                            "object": "block",
+                            "type": "embed",
+                            "embed": {
+                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app?team_number=4099"
+                            }
+                        }
+                    ]
+                )
+            # Page already created
+            else:
+                self.client.pages.update(
+                    page_id=query_page["results"][0]["id"],
+                    icon={"type": "emoji", "emoji": emoji},
+                    parent={"type": "database_id", "database_id": db_id},
+                    properties={
+                       column: {
+                           "id": ids[column],
+                           "number": dataframe[dataframe["Team Number"] == team_name][column].iloc[0]
+                       } for column in dataframe.columns if column != "Team Number"
+                    } | {
+                       "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
+                    },
+                    children=[
+                        {
+                            "object": "block",
+                            "type": "embed",
+                            "embed": {
+                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app?team_number=4099"
+                            }
+                        }
+                    ]
+                )

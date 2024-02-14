@@ -130,3 +130,15 @@ def retrieve_team_list() -> list:
         )
     )
 
+
+def _convert_to_float_from_numpy_type(function):
+    """
+    Helper decorator used in Calculated Stats to convert numpy native types to Python native types.
+
+    :param function: The function "decorated".
+    :return: A wrapper function.
+    """
+    def wrapper(*args, **kwargs) -> float:
+        return float(function(*args, **kwargs)) # Converts numpy dtype to native python type
+
+    return wrapper
