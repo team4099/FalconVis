@@ -171,7 +171,7 @@ class PicklistManager(PageManager):
                             "object": "block",
                             "type": "embed",
                             "embed": {
-                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app?team_number={team_number}"
+                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app/?team_number={team_number}"
                             }
                         }
                     ]
