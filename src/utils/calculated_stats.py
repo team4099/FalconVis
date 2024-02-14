@@ -1,4 +1,6 @@
 """File that contains the class which calculates statistics for a team/event/for other purposes."""
+from __future__ import annotations
+
 from functools import reduce
 from typing import Callable
 
@@ -217,7 +219,21 @@ class CalculatedStats:
             lambda driver_rating: Criteria.DRIVER_RATING_CRITERIA.get(driver_rating, float("nan"))
         ).mean()
 
+<<<<<<< HEAD
     @_convert_to_float_from_numpy_type
+=======
+    def driver_by_match(self, team_number: int) -> float:
+        """Returns a series of data representing the team's defense rating
+
+        :param team_number: The team to find defense data for.
+        :return: A series with the teams defense data.
+        """
+
+        return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].apply(
+            lambda driver_rating: Criteria.BASIC_RATING_CRITERIA.get(driver_rating, float("nan"))
+        )
+    
+>>>>>>> ec35a9b997de75fc5367e1b887e3aa9fc7c1f9ec
     def average_defense_time(self, team_number: int) -> float:
         """Returns the average defense time of a team
 
@@ -239,7 +255,11 @@ class CalculatedStats:
             lambda defense_skill: Criteria.BASIC_RATING_CRITERIA.get(defense_skill, float("nan"))
         ).mean()
 
+<<<<<<< HEAD
     @_convert_to_float_from_numpy_type
+=======
+
+>>>>>>> ec35a9b997de75fc5367e1b887e3aa9fc7c1f9ec
     def average_counter_defense_skill(self, team_number: int) -> float:
         """Returns the average counter defense skill (ability to swerve past defense) of a team.
 
@@ -249,14 +269,6 @@ class CalculatedStats:
         return scouting_data_for_team(team_number, self.data)[Queries.COUNTER_DEFENSE_SKIll].apply(
             lambda counter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(counter_defense_skill, float("nan"))
         ).mean()
-
-    def disables_by_match(self, team_number: int) -> float:
-        """Returns a series of data representing the team's disables
-
-        :param team_number: The team to find disable data for.
-        :return: A series with the teams disable data.
-        """
-        return scouting_data_for_team(team_number, self.data)[Queries.DISABLE]
     
     def drivetrain_width_by_team(self, team_number: int) -> float:
         """Returns a float representing the teams drivetrain width

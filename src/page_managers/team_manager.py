@@ -9,7 +9,6 @@ from utils import (
     box_plot,
     CalculatedStats,
     colored_metric,
-    colored_metric_with_two_values,
     Criteria,
     GeneralConstants,
     GraphType,
@@ -21,7 +20,9 @@ from utils import (
     retrieve_pit_scouting_data,
     retrieve_scouting_data,
     scouting_data_for_team,
-    stacked_bar_graph
+    stacked_bar_graph,
+    colored_metric_with_two_values,
+    populate_missing_data
 )
 
 
@@ -242,7 +243,7 @@ class TeamManager(PageManager, ContainsMetrics):
             threshold=times_left_for_percentile
         )
 
-        # Speaker/amp over time graph
+        # Auto Speaker/amp over time graph
         speaker_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
             team_number,
             Queries.AUTO_SPEAKER
@@ -279,7 +280,139 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
+        times_climbed_col, times_harmonized_col = st.columns(2)
+        speaker_amp_col, climb_speed_col = st.columns(2)
+
+
         team_data = scouting_data_for_team(team_number)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        # TODO: Add teleop graphs
+        # Teleop Speaker/amp over time graph
+        with speaker_amp_col:
+            speaker_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_SPEAKER
+            ) * (1 if using_cycle_contributions else 5)
+            amp_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_AMP
+            ) * (1 if using_cycle_contributions else 2)
+            line_names = [
+                ("# of Speaker Cycles" if using_cycle_contributions else "# of Speaker Points"),
+                ("# of Amp Cycles" if using_cycle_contributions else "# of Amp Points")
+            ]
+
+            plotly_chart(
+                multi_line_graph(
+                    range(len(speaker_cycles_by_match)),
+                    [speaker_cycles_by_match, amp_cycles_by_match],
+                    x_axis_label="Match Index",
+                    y_axis_label=line_names,
+                    y_axis_title=f"# of Teleop {'Cycles' if using_cycle_contributions else 'Points'}",
+                    title=f"Speaker/Amp {'Cycles' if using_cycle_contributions else 'Points'} During Teleop Over Time",
+                    color_map=dict(zip(line_names, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+                )
+            )
+
+        # Metric for times climbed
+        with times_climbed_col:
+            times_climbed = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.CLIMBED_CHAIN,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_climbed_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CHAIN, Criteria.BOOLEAN_CRITERIA)
+            )
+
+            colored_metric(
+                "# of Times Climbed",
+                times_climbed,
+                threshold=times_climbed_for_percentile
+            )
+
+        # Metric for harmonized
+        with times_harmonized_col:
+            times_harmonized = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.HARMONIZED_ON_CHAIN,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_harmonized_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.HARMONIZED_ON_CHAIN, Criteria.BOOLEAN_CRITERIA)
+            )
+
+            colored_metric(
+                "# of Times Harmonized",
+                times_harmonized,
+                threshold=times_harmonized_for_percentile
+            )
+
+        # Climb speed over time graph
+        with climb_speed_col:
+            climb_speed_by_match = self.calculated_stats.stat_per_match(
+                team_number,
+                Queries.CLIMB_SPEED
+            )
+
+            plotly_chart(
+                line_graph(
+                    range(len(climb_speed_by_match)),
+                    climb_speed_by_match,
+                    x_axis_label="Match Index",
+                    y_axis_label="Climb Speed",
+                    title=f"Climb Speed Over Time",
+                )
+            )
+
+    def generate_qualitative_graphs(
+            self,
+            team_number: int,
+    ) -> None:
+        """Generates the teleop graphs for the `Team` page.
+
+        :param team_number: The team to generate the graphs for.
+        :return:
+        """
+        driver_rating_col, defense_skill_col, disables_col = st.columns(3)
+
+        with driver_rating_col:
+            driver_rating_by_match = self.calculated_stats.stat_per_match(team_number, Queries.DRIVER_RATING)
+
+            plotly_chart(
+                line_graph(
+                    range(len(driver_rating_by_match)),
+                    driver_rating_by_match,
+                    x_axis_label="Match Key",
+                    y_axis_label="Driver Rating (1-5)",
+                    title="Driver Rating Over Time",
+                )
+            )
+
+        with defense_skill_col:
+            defense_skill_by_match = self.calculated_stats.stat_per_match(team_number, Queries.DEFENSE_SKILL)
+
+            plotly_chart(
+                line_graph(
+                    range(len(defense_skill_by_match)),
+                    defense_skill_by_match,
+                    x_axis_label="Match Key",
+                    y_axis_label="Defense Skill (1-5)",
+                    title="Defense Skill Over Time",
+                )
+            )
+
+        with disables_col:
+            disables_by_match = self.calculated_stats.stat_per_match(team_number, Queries.DISABLE)
+
+            plotly_chart(
+                line_graph(
+                    range(len(disables_by_match)),
+                    disables_by_match,
+                    x_axis_label="Match Key",
+                    y_axis_label="Disables",
+                    title="Disables by Match",
+                )
+            )

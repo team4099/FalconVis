@@ -1,4 +1,6 @@
 """Defines graphing functions that are later used in FalconVis that wrap around Plotly."""
+from __future__ import annotations
+
 import numpy as np
 import plotly.express as px
 import streamlit as st

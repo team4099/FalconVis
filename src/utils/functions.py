@@ -112,7 +112,7 @@ def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = N
 
     return scouting_data[
         scouting_data["TeamNumber"] == team_number
-    ]
+        ]
 
 
 def retrieve_team_list() -> list:
@@ -142,3 +142,4 @@ def _convert_to_float_from_numpy_type(function):
         return float(function(*args, **kwargs)) # Converts numpy dtype to native python type
 
     return wrapper
+
