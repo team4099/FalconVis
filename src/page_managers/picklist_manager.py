@@ -115,10 +115,6 @@ class PicklistManager(PageManager):
             database_id=(db_id := get_id(EventSpecificConstants.PICKLIST_URL)), properties=properties, icon=icon
         )
 
-        # Retrieve poroperties of database
-        db_properties = self.client.databases.query(database_id=db_id)["results"][0]["properties"]
-        ids = {property_name: property_values["id"] for property_name, property_values in db_properties.items()}
-
         # Find percentiles across all teams
         percentile_75 = self.calculated_stats.quantile_stat(
             0.75,
@@ -145,7 +141,8 @@ class PicklistManager(PageManager):
                 }
             )
             # Based off of the percentile between all their stats
-            team_cycles = self.calculated_stats.average_cycles(int(team_name.split()[1]))
+            team_number = int(team_name.split()[1])
+            team_cycles = self.calculated_stats.average_cycles(team_number)
 
             if team_cycles > percentile_75:
                 emoji = "🔵"
@@ -164,7 +161,6 @@ class PicklistManager(PageManager):
                     parent={"type": "database_id", "database_id": db_id},
                     properties={
                         column: {
-                            "id": ids[column],
                             "number": dataframe[dataframe["Team Number"] == team_name][column].iloc[0]
                         } for column in dataframe.columns if column != "Team Number"
                     } | {
@@ -175,7 +171,7 @@ class PicklistManager(PageManager):
                             "object": "block",
                             "type": "embed",
                             "embed": {
-                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app?team_number=4099"
+                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app?team_number={team_number}"
                             }
                         }
                     ]
@@ -188,19 +184,9 @@ class PicklistManager(PageManager):
                     parent={"type": "database_id", "database_id": db_id},
                     properties={
                        column: {
-                           "id": ids[column],
                            "number": dataframe[dataframe["Team Number"] == team_name][column].iloc[0]
                        } for column in dataframe.columns if column != "Team Number"
                     } | {
                        "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
-                    },
-                    children=[
-                        {
-                            "object": "block",
-                            "type": "embed",
-                            "embed": {
-                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app?team_number=4099"
-                            }
-                        }
-                    ]
+                    }
                 )

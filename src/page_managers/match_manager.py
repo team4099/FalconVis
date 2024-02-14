@@ -695,7 +695,7 @@ class MatchManager(PageManager):
                     team_numbers,
                     [normal_climbs_by_team, harmonized_climbs_by_team],
                     x_axis_label="Teams",
-                    y_axis_label= ["Normal Climbs", "Harmonized Climbs"],
+                    y_axis_label=["Normal Climbs", "Harmonized Climbs"],
                     y_axis_title="# of Climb Types",
                     title="Climbs by Team",
                     color_map={"Normal Climbs": color_gradient[0], "Harmonized Climbs": color_gradient[1]}

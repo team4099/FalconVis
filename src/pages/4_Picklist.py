@@ -33,9 +33,3 @@ if __name__ == '__main__':
 
     if st.button("📝  Write to Notion Picklist"):
         picklist_manager.write_to_notion(generated_picklist)
-
-
-
-
-
-
