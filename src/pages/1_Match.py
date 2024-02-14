@@ -59,8 +59,8 @@ if __name__ == '__main__':
             color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
         )
 
-        red_auto_tab, red_teleop_tab = st.tabs(
-            ["🤖 Autonomous", "🎮 Teleop"]
+        red_auto_tab, red_teleop_tab, red_qualitative_tab = st.tabs(
+            ["🤖 Autonomous", "🎮 Teleop", "📝 Qualitative"]
         )
 
         with red_auto_tab:
@@ -100,6 +100,12 @@ if __name__ == '__main__':
                     type_of_graph=GraphType.POINT_CONTRIBUTIONS,
                     color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
                 )
+        
+        with red_qualitative_tab:
+            match_manager.generate_qualitative_graphs(
+                teams_selected[0],
+                color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
+            )
 
     with blue_alliance_tab:
         st.write("### :blue[Blue] Alliance Graphs")
@@ -110,8 +116,8 @@ if __name__ == '__main__':
             color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
         )
 
-        blue_auto_tab, blue_teleop_tab = st.tabs(
-            ["🤖 Autonomous", "🎮 Teleop"]
+        blue_auto_tab, blue_teleop_tab, blue_qualitative_tab = st.tabs(
+            ["🤖 Autonomous", "🎮 Teleop", "📝 Qualitative"]
         )
 
         with blue_auto_tab:
@@ -151,3 +157,9 @@ if __name__ == '__main__':
                     type_of_graph=GraphType.POINT_CONTRIBUTIONS,
                     color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
                 )
+
+        with blue_qualitative_tab:
+            match_manager.generate_qualitative_graphs(
+                teams_selected[1],
+                color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
+            )

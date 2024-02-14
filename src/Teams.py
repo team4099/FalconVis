@@ -20,8 +20,8 @@ if __name__ == '__main__':
     # Generate the input section of the `Teams` page.
     team_number = team_manager.generate_input_section()
 
-    metric_tab, auto_graphs_tab, teleop_graphs_tab = st.tabs(
-        ["📊 Metrics", "🤖 Autonomous Graphs", "🎮 Teleop + Endgame Graphs"]
+    metric_tab, auto_graphs_tab, teleop_graphs_tab, qualitative_graphs_tab = st.tabs(
+        ["📊 Metrics", "🤖 Autonomous Graphs", "🎮 Teleop + Endgame Graphs", "📝 Qualitative Graphs"]
     )
 
     with metric_tab:
@@ -69,4 +69,9 @@ if __name__ == '__main__':
                 team_number,
                 type_of_graph=GraphType.POINT_CONTRIBUTIONS
             )
-            
+
+    with qualitative_graphs_tab:
+        st.write("#### 📝 Qualitative Graphs")
+        team_manager.generate_qualitative_graphs(
+            team_number,
+        )

@@ -31,8 +31,5 @@ if __name__ == '__main__':
        key='download-csv'
     )
 
-
-
-
-
-
+    if st.button("📝  Write to Notion Picklist"):
+        picklist_manager.write_to_notion(generated_picklist)

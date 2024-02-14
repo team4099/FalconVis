@@ -1,4 +1,6 @@
 """Defines graphing functions that are later used in FalconVis that wrap around Plotly."""
+from __future__ import annotations
+
 import numpy as np
 import plotly.express as px
 import streamlit as st
@@ -160,7 +162,8 @@ def bar_graph(
     y_axis_label: str = "",
     title: str = "",
     horizontal: bool = False,
-    color: str | None = None,
+    color: dict | str | None = None,
+    color_indicator: str | None = None,
     hover_data: list = None
 ) -> Figure:
     """
@@ -180,9 +183,14 @@ def bar_graph(
         title=title,
         orientation=("h" if horizontal else "v"),
         hover_data=hover_data,
-        color_discrete_sequence=[
-            GeneralConstants.PRIMARY_COLOR if color is None else color
-        ]
+        **(
+            {
+                "color_discrete_sequence": [GeneralConstants.PRIMARY_COLOR if color is None else color]
+            } if isinstance(color, str) or color is None else {
+                "color": color_indicator,
+                "color_discrete_map": color
+            }
+        )
     ).update_xaxes(
         type="category"
     )

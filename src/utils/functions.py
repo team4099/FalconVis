@@ -1,9 +1,11 @@
 """Defines utility functions that are later used in FalconVis."""
 from io import StringIO
+from json import load
 from re import search
 from typing import Any
 
 import streamlit as st
+from numpy import int64
 from pandas import DataFrame, read_csv
 from requests import get
 from tbapy import TBA
@@ -83,16 +85,20 @@ def retrieve_match_schedule() -> DataFrame:
         key=lambda match_info: (match_levels_to_order[match_info["comp_level"]], match_info["match_number"])
     )
 
-    return DataFrame.from_dict(
-        [
-            {
-                "match_key": match["key"].replace(f"{EventSpecificConstants.EVENT_CODE}_", ""),
-                "red_alliance": [int(team[3:]) for team in match["alliances"]["red"]["team_keys"]],
-                "blue_alliance": [int(team[3:]) for team in match["alliances"]["blue"]["team_keys"]]
-            }
-            for match in event_matches
-        ]
-    )
+    if event_matches:
+        return DataFrame.from_dict(
+            [
+                {
+                    "match_key": match["key"].replace(f"{EventSpecificConstants.EVENT_CODE}_", ""),
+                    "red_alliance": [int(team[3:]) for team in match["alliances"]["red"]["team_keys"]],
+                    "blue_alliance": [int(team[3:]) for team in match["alliances"]["blue"]["team_keys"]]
+                }
+                for match in event_matches
+            ]
+        )
+    else:  # Load match schedule from local files
+        with open("src/data/match_schedule.json") as file:
+            return DataFrame.from_dict(load(file))
 
 
 def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = None) -> DataFrame:
@@ -107,7 +113,7 @@ def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = N
 
     return scouting_data[
         scouting_data["TeamNumber"] == team_number
-    ]
+        ]
 
 
 def retrieve_team_list() -> list:
@@ -124,4 +130,18 @@ def retrieve_team_list() -> list:
             scouting_data["TeamNumber"]
         )
     )
+
+
+def _convert_to_float_from_numpy_type(function):
+    """
+    Helper decorator used in Calculated Stats to convert numpy native types to Python native types.
+
+    :param function: The function "decorated".
+    :return: A wrapper function.
+    """
+    def wrapper(*args, **kwargs) -> float | int:
+        result = function(*args, **kwargs)
+        return int(result) if isinstance(result, int64) else float(result) # Converts numpy dtype to native python type
+
+    return wrapper
 
