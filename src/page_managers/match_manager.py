@@ -705,7 +705,7 @@ class MatchManager(PageManager):
                     y_axis_label= ["Slow Climbs", "Fast Climbs"],
                     y_axis_title="# of Climb Speeds",
                     title="Climb Speeds by Team",
-                    color_map={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN}
+                    color_map={"Slow Climbs": GeneralConstants.DARK_RED, "Fast Climbs": GeneralConstants.DARK_GREEN}
                 )
             )
 

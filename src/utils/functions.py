@@ -112,7 +112,7 @@ def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = N
 
     return scouting_data[
         scouting_data["TeamNumber"] == team_number
-    ]
+        ]
 
 
 def retrieve_team_list() -> list:
@@ -129,4 +129,3 @@ def retrieve_team_list() -> list:
             scouting_data["TeamNumber"]
         )
     )
-
