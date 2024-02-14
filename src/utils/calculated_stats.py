@@ -219,10 +219,8 @@ class CalculatedStats:
             lambda driver_rating: Criteria.DRIVER_RATING_CRITERIA.get(driver_rating, float("nan"))
         ).mean()
 
-<<<<<<< HEAD
     @_convert_to_float_from_numpy_type
-=======
-    def driver_by_match(self, team_number: int) -> float:
+    def average_defense_rating(self, team_number: int) -> float:
         """Returns a series of data representing the team's defense rating
 
         :param team_number: The team to find defense data for.
@@ -232,8 +230,8 @@ class CalculatedStats:
         return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].apply(
             lambda driver_rating: Criteria.BASIC_RATING_CRITERIA.get(driver_rating, float("nan"))
         )
-    
->>>>>>> ec35a9b997de75fc5367e1b887e3aa9fc7c1f9ec
+
+    @_convert_to_float_from_numpy_type
     def average_defense_time(self, team_number: int) -> float:
         """Returns the average defense time of a team
 
@@ -255,11 +253,7 @@ class CalculatedStats:
             lambda defense_skill: Criteria.BASIC_RATING_CRITERIA.get(defense_skill, float("nan"))
         ).mean()
 
-<<<<<<< HEAD
     @_convert_to_float_from_numpy_type
-=======
-
->>>>>>> ec35a9b997de75fc5367e1b887e3aa9fc7c1f9ec
     def average_counter_defense_skill(self, team_number: int) -> float:
         """Returns the average counter defense skill (ability to swerve past defense) of a team.
 

@@ -617,6 +617,12 @@ class MatchManager(PageManager):
         speaker_cycles_over_time_col, amp_periods_over_time_col = st.columns(2, gap="large")
         climb_breakdown_by_team_col, climb_speed_by_team = st.columns(2, gap="large")
 
+        short_gradient = [
+            GeneralConstants.LIGHT_RED,
+            GeneralConstants.RED_TO_GREEN_GRADIENT[2],
+            GeneralConstants.LIGHT_GREEN
+        ]
+
         # Display the teleop speaker cycles of each team over time
         with speaker_cycles_over_time_col:
             cycles_by_team = [
@@ -626,6 +632,11 @@ class MatchManager(PageManager):
                 )
                 for team in team_numbers
             ]
+            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
+            color_map = {
+                pair[0]: color
+                for pair, color in zip(best_teams, short_gradient)
+            }
 
             plotly_chart(
                 multi_line_graph(
@@ -642,7 +653,7 @@ class MatchManager(PageManager):
                         if display_cycle_contributions
                         else "Points Contributed in the Speaker Over Time"
                     ),
-                    color_map=dict(zip(team_numbers, color_gradient))
+                    color_map=color_map
                 )
             )
 
@@ -652,6 +663,11 @@ class MatchManager(PageManager):
                 self.calculated_stats.potential_amplification_periods_by_match(team)
                 for team in team_numbers
             ]
+            best_teams = sorted(zip(team_numbers, amp_periods_by_team), key=lambda pair: pair[1].mean())
+            color_map = {
+                pair[0]: color
+                for pair, color in zip(best_teams, short_gradient)
+            }
 
             plotly_chart(
                 multi_line_graph(
@@ -660,18 +676,18 @@ class MatchManager(PageManager):
                     y_axis_label=team_numbers,
                     y_axis_title="# of Potential Amplification Periods",
                     title="Potential Amplification Periods Produced by Alliance",
-                    color_map=dict(zip(team_numbers, color_gradient))
+                    color_map=color_map
                 )
             )
 
         with climb_breakdown_by_team_col:
-            normal_climbs_by_team = [
+            harmonized_climbs_by_team = [
                 team_data[Queries.HARMONIZED_ON_CHAIN].sum() 
                 for team_data in teams_data
             ]
-            harmonized_climbs_by_team = [
-                team_data[Queries.CLIMBED_CHAIN].sum() - harmonized_climbs #This works but it shouldn't I think we have harmonized climbs and normal climbs reversed
-                for team_data, harmonized_climbs in zip(teams_data, normal_climbs_by_team)
+            normal_climbs_by_team = [
+                team_data[Queries.CLIMBED_CHAIN].sum() - harmonized_climbs
+                for team_data, harmonized_climbs in zip(teams_data, harmonized_climbs_by_team)
             ]
 
             plotly_chart(
@@ -682,7 +698,7 @@ class MatchManager(PageManager):
                     y_axis_label= ["Normal Climbs", "Harmonized Climbs"],
                     y_axis_title="# of Climb Types",
                     title="Climbs by Team",
-                    color_map={"Normal Climbs": color_gradient[1], "Harmonized Climbs": color_gradient[2]}
+                    color_map={"Normal Climbs": color_gradient[0], "Harmonized Climbs": color_gradient[1]}
                 )
             )
 
@@ -702,10 +718,10 @@ class MatchManager(PageManager):
                     team_numbers,
                     [slow_climbs, fast_climbs],
                     x_axis_label="Teams",
-                    y_axis_label= ["Slow Climbs", "Fast Climbs"],
+                    y_axis_label=["Slow Climbs", "Fast Climbs"],
                     y_axis_title="# of Climb Speeds",
                     title="Climb Speeds by Team",
-                    color_map={"Slow Climbs": GeneralConstants.DARK_RED, "Fast Climbs": GeneralConstants.DARK_GREEN}
+                    color_map={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN}
                 )
             )
 
@@ -758,7 +774,7 @@ class MatchManager(PageManager):
 
         with disables_by_team_col:
             disables_by_team = [
-                self.calculated_stats.disables_by_match(team).sum()
+                self.calculated_stats.cumulative_stat(team, Queries.DISABLE, Criteria.BOOLEAN_CRITERIA)
                 for team in team_numbers
             ]
 

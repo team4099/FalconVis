@@ -1,6 +1,9 @@
 """Creates the `TeamManager` class used to set up the Teams page and its graphs."""
 
+import re
 import streamlit as st
+from annotated_text import annotated_text
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 from .contains_metrics import ContainsMetrics
 from .page_manager import PageManager
@@ -55,7 +58,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :param team_number: The team number to calculate the metrics for.
         """
         points_contributed_col, drivetrain_col, auto_cycle_col, teleop_cycle_col = st.columns(4)
-        iqr_col, trap_ability_col, times_climbed_col, harmonize_ability_col = st.columns(4)
+        iqr_col, trap_ability_col, climb_breakdown_col, disables_col = st.columns(4)
 
         # Metric for avg. points contributed
         with points_contributed_col:
@@ -178,8 +181,8 @@ class TeamManager(PageManager, ContainsMetrics):
                 value_formatter=lambda value: "Yes" if value > 0 else "No"
             )
 
-        # Metric for total times climbed
-        with times_climbed_col:
+        # Metric for total times climbed and total harmonizes
+        with climb_breakdown_col:
             times_climbed = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.CLIMBED_CHAIN,
@@ -189,14 +192,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 0.5,
                 lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CHAIN, Criteria.BOOLEAN_CRITERIA)
             )
-            colored_metric(
-                "# of Times Climbed",
-                times_climbed,
-                threshold=times_climbed_for_percentile
-            )
 
-        # Metric for ability to harmonize
-        with harmonize_ability_col:
             times_harmonized = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.HARMONIZED_ON_CHAIN,
@@ -207,10 +203,32 @@ class TeamManager(PageManager, ContainsMetrics):
                 lambda self, team: self.cumulative_stat(team, Queries.HARMONIZED_ON_CHAIN, Criteria.BOOLEAN_CRITERIA)
             )
 
-            colored_metric(
-                "# of Times Harmonized",
+            colored_metric_with_two_values(
+                "Climb Breakdown",
+                "# of Times Climbed/Harmonized",
+                times_climbed,
                 times_harmonized,
-                threshold=times_harmonized_for_percentile
+                first_threshold=times_climbed_for_percentile,
+                second_threshold=times_harmonized_for_percentile
+            )
+
+        # Metric for number of disables
+        with disables_col:
+            times_disabled = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.DISABLE,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_disabled_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.DISABLE, Criteria.BOOLEAN_CRITERIA)
+            )
+
+            colored_metric(
+                "# of Times Disabled",
+                times_disabled,
+                threshold=times_disabled_for_percentile,
+                invert_threshold=True
             )
 
     def generate_autonomous_graphs(
@@ -314,105 +332,180 @@ class TeamManager(PageManager, ContainsMetrics):
                 )
             )
 
-        # Metric for times climbed
-        with times_climbed_col:
-            times_climbed = self.calculated_stats.cumulative_stat(
-                team_number,
-                Queries.CLIMBED_CHAIN,
-                Criteria.BOOLEAN_CRITERIA
-            )
-            times_climbed_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CHAIN, Criteria.BOOLEAN_CRITERIA)
-            )
-
-            colored_metric(
-                "# of Times Climbed",
-                times_climbed,
-                threshold=times_climbed_for_percentile
-            )
-
-        # Metric for harmonized
-        with times_harmonized_col:
-            times_harmonized = self.calculated_stats.cumulative_stat(
-                team_number,
-                Queries.HARMONIZED_ON_CHAIN,
-                Criteria.BOOLEAN_CRITERIA
-            )
-            times_harmonized_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.HARMONIZED_ON_CHAIN, Criteria.BOOLEAN_CRITERIA)
-            )
-
-            colored_metric(
-                "# of Times Harmonized",
-                times_harmonized,
-                threshold=times_harmonized_for_percentile
-            )
-
         # Climb speed over time graph
         with climb_speed_col:
-            climb_speed_by_match = self.calculated_stats.stat_per_match(
+            slow_climbs = self.calculated_stats.cumulative_stat(
                 team_number,
-                Queries.CLIMB_SPEED
+                Queries.CLIMB_SPEED,
+                {"Slow": 1}
+            )
+            fast_climbs = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.CLIMB_SPEED,
+                {"Fast": 1}
             )
 
             plotly_chart(
-                line_graph(
-                    range(len(climb_speed_by_match)),
-                    climb_speed_by_match,
-                    x_axis_label="Match Index",
-                    y_axis_label="Climb Speed",
-                    title=f"Climb Speed Over Time",
+                bar_graph(
+                    ["Slow Climbs", "Fast Climbs"],
+                    [slow_climbs, fast_climbs],
+                    x_axis_label="Type of Climb",
+                    y_axis_label="# of Climbs",
+                    title=f"Climb Speed Breakdown",
+                    color={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN},
+                    color_indicator="Type of Climb"
                 )
             )
 
-    def generate_qualitative_graphs(
-            self,
-            team_number: int,
-    ) -> None:
-        """Generates the teleop graphs for the `Team` page.
+    def generate_qualitative_graphs(self, team_number: int) -> None:
+        """Generates the qualitative graphs for the `Team` page.
 
         :param team_number: The team to generate the graphs for.
         :return:
         """
-        driver_rating_col, defense_skill_col, disables_col = st.columns(3)
+        # Constants used for the sentiment analysis
+        ml_weight = 1
+        estimate_weight = 1
 
-        with driver_rating_col:
-            driver_rating_by_match = self.calculated_stats.stat_per_match(team_number, Queries.DRIVER_RATING)
+        sentiment = SentimentIntensityAnalyzer()
+        positivity_scores = []
+        scouting_data = scouting_data_for_team(team_number)
 
-            plotly_chart(
-                line_graph(
-                    range(len(driver_rating_by_match)),
-                    driver_rating_by_match,
-                    x_axis_label="Match Key",
-                    y_axis_label="Driver Rating (1-5)",
-                    title="Driver Rating Over Time",
+        # Split into two tabs
+        qualitative_graphs_tab, note_scouting_analysis_tab = st.tabs(
+            ["📊 Qualitative Graphs", "✏️ Note Scouting Analysis"]
+        )
+
+        with qualitative_graphs_tab:
+            driver_rating_col, defense_skill_col, counter_defense_skill = st.columns(3)
+
+            with driver_rating_col:
+                driver_rating_types = Criteria.DRIVER_RATING_CRITERIA.keys()
+                driver_rating_by_type = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.DRIVER_RATING, {driver_rating_type: 1})
+                    for driver_rating_type in driver_rating_types
+                ]
+
+                plotly_chart(
+                    bar_graph(
+                        driver_rating_types,
+                        driver_rating_by_type,
+                        x_axis_label="Driver Rating",
+                        y_axis_label="# of Occurrences",
+                        title="Driver Rating Breakdown",
+                        color=dict(zip(driver_rating_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                        color_indicator="Driver Rating"
+                    )
+                )
+
+            with defense_skill_col:
+                defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
+                defense_skill_by_type = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.DEFENSE_SKILL, {defense_skill_type: 1})
+                    for defense_skill_type in defense_skill_types
+                ]
+
+                plotly_chart(
+                    bar_graph(
+                        defense_skill_types,
+                        defense_skill_by_type,
+                        x_axis_label="Defense Skill",
+                        y_axis_label="# of Occurrences",
+                        title="Defense Skill Breakdown",
+                        color=dict(zip(defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                        color_indicator="Defense Skill"
+                    )
+                )
+
+            with counter_defense_skill:
+                counter_defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
+                counter_defense_skill_by_type = [
+                    self.calculated_stats.cumulative_stat(
+                        team_number,
+                        Queries.COUNTER_DEFENSE_SKIll,
+                        {counter_defense_skill_type: 1}
+                    )
+                    for counter_defense_skill_type in defense_skill_types
+                ]
+
+                plotly_chart(
+                    bar_graph(
+                        counter_defense_skill_types,
+                        counter_defense_skill_by_type,
+                        x_axis_label="Counter Defense Skill",
+                        y_axis_label="# of Occurrences",
+                        title="Counter Defense Skill Breakdown",
+                        color=dict(zip(counter_defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                        color_indicator="Counter Defense Skill"
+                    )
+                )
+
+        with note_scouting_analysis_tab:
+            notes_col, metrics_col = st.columns(2, gap="medium")
+            notes_by_match = dict(
+                zip(
+                    scouting_data[Queries.MATCH_KEY],
+                    (
+                            scouting_data[Queries.AUTO_NOTES].apply(lambda note: (note + " ").lower() if note else "") +
+                            scouting_data[Queries.TELEOP_NOTES].apply(
+                                lambda note: (note + " ").lower() if note else "") +
+                            scouting_data[Queries.ENDGAME_NOTES].apply(
+                                lambda note: (note + " ").lower() if note else "") +
+                            scouting_data[Queries.RATING_NOTES].apply(lambda note: note.lower())
+
+                    )
                 )
             )
 
-        with defense_skill_col:
-            defense_skill_by_match = self.calculated_stats.stat_per_match(team_number, Queries.DEFENSE_SKILL)
+            with notes_col:
+                st.write("##### Notes")
+                st.markdown("<hr style='margin: 0px'/>",
+                            unsafe_allow_html=True)  # Hacky way to create a divider without whitespace
 
-            plotly_chart(
-                line_graph(
-                    range(len(defense_skill_by_match)),
-                    defense_skill_by_match,
-                    x_axis_label="Match Key",
-                    y_axis_label="Defense Skill (1-5)",
-                    title="Defense Skill Over Time",
+                for match_key, notes in notes_by_match.items():
+                    if notes.strip().replace("|", ""):
+                        notes_col.write(f"###### {match_key}")
+
+                        text_split_by_words = re.split(r"(\s+)", notes)
+                        annotated_words = []
+                        # Used to create a rough estimate of how positive the notes are. Positive terms have a weight of
+                        # one, while negative terms have a weight of negative one and neutral terms have a weight of zero.
+                        sentiment_scores = []
+
+                        for word in text_split_by_words:
+                            if not word.strip():
+                                annotated_words.append(word)
+                                continue
+
+                            if any(term in word.lower() for term in GeneralConstants.POSITIVE_TERMS):
+                                annotated_words.append((word, "", f"{GeneralConstants.LIGHT_GREEN}75"))
+                                sentiment_scores.append(1)
+                            elif any(term in word.lower() for term in GeneralConstants.NEGATIVE_TERMS):
+                                annotated_words.append((word, "", f"{GeneralConstants.LIGHT_RED}75"))
+                                sentiment_scores.append(-1)
+                            else:
+                                annotated_words.append(word)
+
+                        # A score given to the notes given that generates a "sentiment score", using
+                        # the English vocabulary to determine how positive a string of text is. The downside of this method
+                        # is that it won't catch negative terms in the context of a robot's performance, which is why
+                        # we weight it with our own estimate of the "sentiment" score.
+                        ml_generated_score = sentiment.polarity_scores(notes)["compound"]
+                        sentiment_estimate = sum(sentiment_scores) / (len(sentiment_scores) or 1)
+                        positivity_scores.append(
+                            (ml_generated_score * ml_weight + sentiment_estimate * estimate_weight) / 2
+                        )
+
+                        annotated_text(
+                            *annotated_words
+                        )
+                        st.markdown("<hr style='margin: 0px'/>", unsafe_allow_html=True)
+
+            with metrics_col:
+                st.write("##### Metrics")
+
+                colored_metric(
+                    "Positivity Score of Notes",
+                    round(sum(positivity_scores) / (len(positivity_scores) or 1), 2),
+                    threshold=0
                 )
-            )
-
-        with disables_col:
-            disables_by_match = self.calculated_stats.stat_per_match(team_number, Queries.DISABLE)
-
-            plotly_chart(
-                line_graph(
-                    range(len(disables_by_match)),
-                    disables_by_match,
-                    x_axis_label="Match Key",
-                    y_axis_label="Disables",
-                    title="Disables by Match",
-                )
-            )

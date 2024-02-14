@@ -27,11 +27,15 @@ class GeneralConstants:
     BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1", "#a8c1e3"]
     GOLD_GRADIENT = ["#ffbd4d", "#ff9000", "#dd5f00"]
     LEVEL_GRADIENT = ["#f44a53", "#ff8800", "#f4c717"]
+    RED_TO_GREEN_GRADIENT = ["#ffb6b3", "#ffd5d4", "#e7f1e8", "#bde7bd", "#77dd76"]
+    SHORT_RED_TO_GREEN_GRADIENT = ["#ffb6b3", "#ffd5d4", "#bde7bd", "#77dd76"]
 
     # Colors
     DARK_RED = "#450a0a"
     DARK_BLUE = "#172554"
     DARK_GREEN = "#052e16"
+    LIGHT_RED = "#ff7276"
+    LIGHT_GREEN = "#00873e"
 
     # Game piece colors
     CONE_COLOR = PRIMARY_COLOR
@@ -40,6 +44,10 @@ class GeneralConstants:
     # General game constants
     TELEOP_TOTAL_TIME = (2 * 60 + 15)
     TELEOP_MINUS_ENDGAME = TELEOP_TOTAL_TIME - 20
+
+    # Sentiment analysis terms
+    POSITIVE_TERMS = {"consistent", "speed", "good", "cycle", "fast", "score", "well", "amazing", "spectactular"}
+    NEGATIVE_TERMS = {"can't", "disable", "foul", "bad", "drop", "stuck", "poor", "missed", "slow", "only", "tip", "broke", "struggle", "bug", "prone"}
 
 
 class EventSpecificConstants:
@@ -87,6 +95,12 @@ class Queries:
     DEFENSE_SKILL = "DefenseSkill"
     COUNTER_DEFENSE_SKIll = "CounterDefenseSkill"
     DISABLE = "Disabled"
+
+    # Notes
+    AUTO_NOTES = "AutoNotes"
+    TELEOP_NOTES = "TeleopNotes"
+    ENDGAME_NOTES = "EndgameNotes"
+    RATING_NOTES = "RatingNotes"
 
     # Alliance constants
     RED_ALLIANCE = "red"

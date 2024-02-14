@@ -5,6 +5,7 @@ from re import search
 from typing import Any
 
 import streamlit as st
+from numpy import int64
 from pandas import DataFrame, read_csv
 from requests import get
 from tbapy import TBA
@@ -138,8 +139,9 @@ def _convert_to_float_from_numpy_type(function):
     :param function: The function "decorated".
     :return: A wrapper function.
     """
-    def wrapper(*args, **kwargs) -> float:
-        return float(function(*args, **kwargs)) # Converts numpy dtype to native python type
+    def wrapper(*args, **kwargs) -> float | int:
+        result = function(*args, **kwargs)
+        return int(result) if isinstance(result, int64) else float(result) # Converts numpy dtype to native python type
 
     return wrapper
 
