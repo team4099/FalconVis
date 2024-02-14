@@ -65,7 +65,8 @@ def colored_metric_with_two_values(
         border_opacity = (1 if border_opacity is None else border_opacity)
 
     with open("./src/utils/components/colored_metric_with_two_values_component.html") as html_file:
-        html_template = html_file.read().format(
+        html_content = html_file.read().split("\n\n")
+        html_template = html_content[0] + html_content[1].format(
             metric_title=metric_title,
             metric_subtitle=metric_subtitle,
             metric_first_value=(str(metric_first_value) if value_formatter is None else value_formatter(metric_first_value)),
