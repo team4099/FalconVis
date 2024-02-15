@@ -79,9 +79,24 @@ class EventManager(PageManager):
 
     @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
     def _retrieve_teleop_distributions(_self) -> list:
+        """Retrieves the distribution of teleoperated cycles for each team across an event.
+
+        :return: A list containing the teleoperated cycle distributions for each team.
+        """
         teams = retrieve_team_list()
         return [
             _self.calculated_stats.cycles_by_match(team, Queries.TELEOP) for team in teams
+        ]
+
+    @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+    def _retrieve_auto_distributions(_self) -> list:
+        """Retrieves the distribution of autonomous cycles for each team across an event.
+
+        :return: A list containing the autonomous cycle distributions for each team.
+        """
+        teams = retrieve_team_list()
+        return [
+            _self.calculated_stats.cycles_by_match(team, Queries.AUTO) for team in teams
         ]
 
     def generate_input_section(self) -> None:
@@ -309,7 +324,10 @@ class EventManager(PageManager):
         with auto_cycles_col:
             variable_key = f"auto_cycles_col_{type_of_graph}"
 
-            auto_distributions = self._retrieve_auto_cycle_distributions()
+            auto_distributions = (
+                self._retrieve_auto_distributions()
+            )
+            
             auto_sorted_distributions = dict(
                 sorted(
                     zip(teams, auto_distributions),
