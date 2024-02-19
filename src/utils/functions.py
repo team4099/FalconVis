@@ -1,6 +1,6 @@
 """Defines utility functions that are later used in FalconVis."""
 from io import StringIO
-from json import load
+from json import load, loads
 from re import search
 from typing import Any
 
@@ -48,7 +48,7 @@ def retrieve_scouting_data() -> DataFrame:
     :return: A dataframe containing the scouting data from an event.
     """
     scouting_data = DataFrame.from_dict(
-        get(EventSpecificConstants.URL).json()
+        loads(get(EventSpecificConstants.URL).text)
     )
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))
