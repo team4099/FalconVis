@@ -242,24 +242,44 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
+        leaves_col, centerline_col = st.columns(2)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        # Metric for how many times they left the starting zone
-        times_left_starting_zone = self.calculated_stats.cumulative_stat(
-            team_number,
-            Queries.LEFT_STARTING_ZONE,
-            Criteria.BOOLEAN_CRITERIA
-        )
-        times_left_for_percentile = self.calculated_stats.quantile_stat(
-            0.5,
-            lambda self, team: self.cumulative_stat(team, Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA)
-        )
+        with leaves_col:
+            # Metric for how many times they left the starting zone
+            times_left_starting_zone = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.LEFT_STARTING_ZONE,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_left_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA)
+            )
 
-        colored_metric(
-            "# of Leaves from the Starting Zone",
-            times_left_starting_zone,
-            threshold=times_left_for_percentile
-        )
+            colored_metric(
+                "# of Leaves from the Starting Zone",
+                times_left_starting_zone,
+                threshold=times_left_for_percentile
+            )
+
+        with centerline_col:
+            # Metric for how many times they went to the centerline for auto
+            times_went_to_centerline = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.AUTO_USED_CENTERLINE,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            centerline_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.AUTO_USED_CENTERLINE, Criteria.BOOLEAN_CRITERIA)
+            )
+
+            colored_metric(
+                "# of Centerline Autos",
+                times_went_to_centerline,
+                threshold=centerline_for_percentile
+            )
 
         # Auto Speaker/amp over time graph
         speaker_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
@@ -298,11 +318,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        times_climbed_col, times_harmonized_col = st.columns(2)
         speaker_amp_col, climb_speed_col = st.columns(2)
-
-
-        team_data = scouting_data_for_team(team_number)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         # Teleop Speaker/amp over time graph

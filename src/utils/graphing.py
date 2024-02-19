@@ -192,10 +192,15 @@ def bar_graph(
         **(
             {
                 "color_discrete_sequence": [GeneralConstants.PRIMARY_COLOR if color is None else color]
-            } if isinstance(color, str) or color is None else {
-                "color": color_indicator,
-                "color_discrete_map": color
-            }
+            } if isinstance(color, str) or color is None else (
+                {
+                    "color_discrete_sequence": color
+                } if isinstance(color, list)
+                else {
+                    "color": color_indicator,
+                    "color_discrete_map": color
+                }
+            )
         )
     ).update_xaxes(
         type="category"

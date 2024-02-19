@@ -79,6 +79,7 @@ class Queries:
 
     AUTO_SPEAKER = "AutoSpeaker"
     AUTO_AMP = "AutoAmp"
+    AUTO_USED_CENTERLINE = "AutoCenterline"
     LEFT_STARTING_ZONE = "AutoLeave"
 
     TELEOP_SPEAKER = "TeleopSpeaker"

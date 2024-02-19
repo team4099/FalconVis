@@ -506,10 +506,10 @@ class MatchManager(PageManager):
             )
 
     def generate_autonomous_graphs(
-            self,
-            team_numbers: list[int],
-            type_of_graph: str,
-            color_gradient: list[str]
+        self,
+        team_numbers: list[int],
+        type_of_graph: str,
+        color_gradient: list[str]
     ) -> None:
         """Generates the autonomous graphs for the `Match` page.
 
@@ -520,7 +520,7 @@ class MatchManager(PageManager):
         """
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        best_auto_config_col, auto_cycles_breakdown_col = st.columns(2, gap="large")
+        best_auto_config_col, auto_cycles_breakdown_col, centerline_auto_col = st.columns(3)
 
         # Best auto configuration graph
         with best_auto_config_col:
@@ -555,7 +555,7 @@ class MatchManager(PageManager):
                         else "# of Points in Auto"
                     ),
                     title="Best Auto Configuration",
-                    color=color_gradient[1]
+                    color=color_gradient
                 )
             )
 
@@ -595,6 +595,28 @@ class MatchManager(PageManager):
                         ("Avg. Speaker Cycles" if display_cycle_contributions else "Avg. Speaker Points"): color_gradient[1],
                         ("Avg. Amp Cycles" if display_cycle_contributions else "Avg. Amp Points"): color_gradient[2]
                     }
+                ).update_layout(xaxis={"categoryorder": "total descending"})
+            )
+
+        # Number of times they intook from the centerline by team
+        with centerline_auto_col:
+            autos_in_centerline_by_team = [
+                self.calculated_stats.cumulative_stat(
+                    team,
+                    Queries.AUTO_USED_CENTERLINE,
+                    Criteria.BOOLEAN_CRITERIA
+                )
+                for team in team_numbers
+            ]
+
+            plotly_chart(
+                bar_graph(
+                    team_numbers,
+                    autos_in_centerline_by_team,
+                    x_axis_label="Teams",
+                    y_axis_label="# of Centerline Autos Achieved",
+                    title="Centerline Autos Achieved By Team",
+                    color=color_gradient[-1]
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
 
