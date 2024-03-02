@@ -224,7 +224,7 @@ class EventManager(PageManager):
 
         # Display event-wide graph surrounding each team and their cycle distributions in the Teleop period.
         with teleop_cycles_col:
-            variable_key = f"auto_cycles_col_{type_of_graph}"
+            variable_key = f"teleop_cycles_col_{type_of_graph}"
 
             teleop_distributions = (
                 self._retrieve_cycle_distributions(Queries.TELEOP)
