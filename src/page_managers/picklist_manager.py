@@ -153,6 +153,125 @@ class PicklistManager(PageManager):
             else:
                 emoji = "🔴"
 
+            autonomous_notes = self.calculated_stats.stat_per_match(team_number, Queries.AUTO_NOTES)
+
+            if not autonomous_notes.empty and any(note for note in autonomous_notes):
+                autonomous_block = [
+                    {
+                        "object": "block",
+                        "type": "heading_3",
+                        "heading_3": {
+                            "rich_text": [
+                                {
+                                    "text": {
+                                        "content": "Autonomous Notes",
+                                        "link": None
+                                    }
+                                }
+                            ],
+                            "color": "default",
+                            "is_toggleable": False
+                        }
+                    }
+                ] + [
+                    {
+                        "type": "bulleted_list_item",
+                        "bulleted_list_item": {
+                            "rich_text": [
+                                {
+                                    "type": "text",
+                                    "text": {
+                                        "content": note,
+                                        "link": None
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                    for note in autonomous_notes if note
+                ]
+            else:
+                autonomous_block = []
+
+            teleop_notes = self.calculated_stats.stat_per_match(team_number, Queries.TELEOP_NOTES)
+
+            if not teleop_notes.empty and any(note for note in teleop_notes):
+                teleop_block = [
+                    {
+                        "object": "block",
+                        "type": "heading_3",
+                        "heading_3": {
+                            "rich_text": [
+                                {
+                                    "text": {
+                                        "content": "Teleop Notes",
+                                        "link": None
+                                    }
+                                }
+                            ],
+                            "color": "default",
+                            "is_toggleable": False
+                        }
+                    }
+                ] + [
+                    {
+                        "type": "bulleted_list_item",
+                        "bulleted_list_item": {
+                            "rich_text": [
+                                {
+                                    "type": "text",
+                                    "text": {
+                                        "content": note,
+                                        "link": None
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                    for note in teleop_notes if note
+                ]
+            else:
+                teleop_block = []
+
+            endgame_notes = self.calculated_stats.stat_per_match(team_number, Queries.ENDGAME_NOTES)
+            if not endgame_notes.empty and any(note for note in endgame_notes):
+                endgame_block = [
+                    {
+                        "object": "block",
+                        "type": "heading_3",
+                        "heading_3": {
+                            "rich_text": [
+                                {
+                                    "text": {
+                                        "content": "Endgame Notes",
+                                        "link": None
+                                    }
+                                }
+                            ],
+                            "color": "default",
+                            "is_toggleable": False
+                        }
+                    }
+                ] + [
+                    {
+                        "type": "bulleted_list_item",
+                        "bulleted_list_item": {
+                            "rich_text": [
+                                {
+                                    "type": "text",
+                                    "text": {
+                                        "content": note,
+                                        "link": None
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                    for note in endgame_notes if note
+                ]
+            else:
+                endgame_block = []
+
             # No page created yet.
             if not query_page["results"]:
                 self.client.pages.create(
@@ -169,12 +288,24 @@ class PicklistManager(PageManager):
                     children=[
                         {
                             "object": "block",
-                            "type": "embed",
-                            "embed": {
-                                "url": f"https://falconvis-{EventSpecificConstants.EVENT_CODE[-3:]}.streamlit.app/?team_number={team_number}"
+                            "type": "callout",
+                            "callout": {
+                                "rich_text": [
+                                    {
+                                        "type": "text",
+                                        "text": {
+                                            "content": f"Notes of {team_name}",
+                                            "link": None
+                                        }
+                                    }
+                                ],
+                                "icon": {
+                                    "emoji": "📝"
+                                },
+                                "color": "default"
                             }
                         }
-                    ]
+                    ] + autonomous_block + teleop_block + endgame_block
                 )
             # Page already created
             else:
