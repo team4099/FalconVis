@@ -281,7 +281,7 @@ class PicklistManager(PageManager):
                     parent={"type": "database_id", "database_id": db_id},
                     properties={
                         column: {
-                            "number": dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]
+                            "number": data if (data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
                         } for column in dataframe.columns if column != "Team Number"
                     } | {
                         "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
@@ -316,7 +316,7 @@ class PicklistManager(PageManager):
                     parent={"type": "database_id", "database_id": db_id},
                     properties={
                        column: {
-                           "number": dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]
+                           "number": data if (data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
                        } for column in dataframe.columns if column != "Team Number"
                     } | {
                        "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
