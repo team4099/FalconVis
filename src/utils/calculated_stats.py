@@ -21,6 +21,7 @@ class CalculatedStats:
         self.data = data
 
     # Point contribution methods
+    @_convert_to_float_from_numpy_type
     def average_points_contributed(self, team_number: int) -> float:
         """Returns the average points contributed by a team.
 
@@ -83,6 +84,7 @@ class CalculatedStats:
         )
 
     # Cycle calculation methods
+    @_convert_to_float_from_numpy_type
     def average_cycles(self, team_number: int, mode: str = None) -> float:
         """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
 
@@ -98,6 +100,7 @@ class CalculatedStats:
         else:
             return (self.cycles_by_match(team_number, Queries.AUTO) + self.cycles_by_match(team_number, Queries.TELEOP)).mean()
 
+    @_convert_to_float_from_numpy_type
     def average_cycles_for_structure(self, team_number: int, structure: str) -> float:
         """Calculates the average cycles for a team for a structure (wrapper around `cycles_by_match`).
 

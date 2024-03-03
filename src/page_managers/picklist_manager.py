@@ -28,6 +28,7 @@ class PicklistManager(PageManager):
 
         # Requested stats is used to define the stats wanted in the picklist generation.
         self.requested_stats = {
+            "Average Points Contributed": self.calculated_stats.average_points_contributed,
             "Average Auto Cycles": partial(
                 self.calculated_stats.average_cycles,
                 mode=Queries.AUTO
