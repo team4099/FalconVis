@@ -7,7 +7,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from notion_client import Client
 from notion_client.helpers import get_id
-from pandas import DataFrame
+from pandas import DataFrame, notna
 
 from .page_manager import PageManager
 from utils import CalculatedStats, Criteria, EventSpecificConstants, Queries, retrieve_scouting_data, retrieve_team_list
@@ -281,7 +281,7 @@ class PicklistManager(PageManager):
                     parent={"type": "database_id", "database_id": db_id},
                     properties={
                         column: {
-                            "number": data if (data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
+                            "number": data if notna(data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
                         } for column in dataframe.columns if column != "Team Number"
                     } | {
                         "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
@@ -316,7 +316,7 @@ class PicklistManager(PageManager):
                     parent={"type": "database_id", "database_id": db_id},
                     properties={
                        column: {
-                           "number": data if (data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
+                           "number": data if notna(data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
                        } for column in dataframe.columns if column != "Team Number"
                     } | {
                        "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
