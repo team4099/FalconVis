@@ -112,6 +112,8 @@ class RankingSimulatorManager(PageManager):
 
             progress_bar.progress(idx / len(teams), "Crunching the simulations...")
 
+        progress_bar.empty()
+
         new_rankings = []
 
         # Calculate new rankings with simulated rankings.
