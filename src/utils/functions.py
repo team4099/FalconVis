@@ -15,6 +15,7 @@ from .constants import EventSpecificConstants, GeneralConstants, Queries
 __all__ = [
     "populate_missing_data",
     "retrieve_match_schedule",
+    "retrieve_match_data",
     "retrieve_pit_scouting_data",
     "retrieve_team_list",
     "retrieve_scouting_data",
@@ -99,6 +100,43 @@ def retrieve_match_schedule() -> DataFrame:
     else:  # Load match schedule from local files
         with open("src/data/match_schedule.json") as file:
             return DataFrame.from_dict(load(file))
+
+
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE // 2)
+def retrieve_match_data() -> DataFrame:
+    """Retrieves the TBA match data at an event up to the latest matches they've played."""
+    tba_instance = TBA(
+        auth_key="6lcmneN5bBDYpC47FolBxp2RZa4AbQCVpmKMSKw9x9btKt7da5yMzVamJYk0XDBm"  # For testing purposes
+    )
+
+    event_matches = [
+        match
+        for match in tba_instance.event_matches(EventSpecificConstants.EVENT_CODE)
+        if match["comp_level"] == "qm"
+    ]
+
+    if event_matches:
+        return DataFrame(
+            [
+                {
+                    "match_number": match["match_number"],
+                    "match_key": match["key"].replace(f"{EventSpecificConstants.EVENT_CODE}_", ""),
+                    "red_alliance": ",".join(team[3:] for team in match["alliances"]["red"]["team_keys"]),
+                    "blue_alliance": ",".join(team[3:] for team in match["alliances"]["blue"]["team_keys"]),
+                    "red_alliance_rp": match["score_breakdown"]["red"]["rp"],
+                    "blue_alliance_rp": match["score_breakdown"]["blue"]["rp"],
+                    "red_score": match["alliances"]["red"]["score"],
+                    "blue_score": match["alliances"]["blue"]["score"],
+                    "reached_coop": (
+                        match["score_breakdown"]["red"]["coopertitionBonusAchieved"]
+                        and match["score_breakdown"]["blue"]["coopertitionBonusAchieved"]
+                    )
+                }
+                for match in event_matches
+            ]
+        )
+    else:
+        return DataFrame()
 
 
 def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = None) -> DataFrame:

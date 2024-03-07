@@ -7,6 +7,8 @@ from typing import Callable
 import numpy as np
 from numpy import percentile
 from pandas import DataFrame, Series, isna
+from scipy.integrate import quad
+from scipy.stats import norm
 
 from .constants import Criteria, Queries
 from .functions import _convert_to_float_from_numpy_type, scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
@@ -76,6 +78,8 @@ class CalculatedStats:
             return total_auto_points
         elif mode == Queries.TELEOP:
             return total_teleop_points
+        elif mode == Queries.ENDGAME:
+            return total_endgame_points
 
         return (
             total_auto_points
@@ -124,7 +128,7 @@ class CalculatedStats:
         """
         return self.potential_amplification_periods_by_match(team_number).mean()
 
-    def cycles_by_match(self, team_number: int, mode: str) -> Series:
+    def cycles_by_match(self, team_number: int, mode: str = None) -> Series:
         """Returns the cycles for a certain mode (autonomous/teleop) in a match
 
         The following custom graphs are supported with this function:
@@ -140,8 +144,13 @@ class CalculatedStats:
 
         if mode == Queries.AUTO:
             return team_data[Queries.AUTO_SPEAKER] + team_data[Queries.AUTO_AMP]
-        else:
+        elif mode == Queries.TELEOP:
             return team_data[Queries.TELEOP_SPEAKER] + team_data[Queries.TELEOP_AMP] + team_data[Queries.TELEOP_TRAP]
+        else:
+            return (
+                team_data[Queries.AUTO_SPEAKER] + team_data[Queries.AUTO_AMP]
+                + team_data[Queries.TELEOP_SPEAKER] + team_data[Queries.TELEOP_AMP] + team_data[Queries.TELEOP_TRAP]
+            )
 
     def cycles_by_structure_per_match(self, team_number: int, structure: str | tuple) -> Series:
         """Returns the cycles for a certain structure (auto speaker, auto amp, etc.) in a match
@@ -368,3 +377,117 @@ class CalculatedStats:
             self.average_cycles(team_number, Queries.TELEOP)
             * 0 if isna(counter_defense_skill) else counter_defense_skill
         )
+
+    # Methods for ranking simulation
+    def chance_of_coop_bonus(self, alliance: list[int]) -> float:
+        """Determines the chance of the coop bonus using all possible permutations with an alliance.
+
+        :param alliance: The three teams on the alliance.
+        """
+        coop_by_match = [self.reaches_coop_bonus_by_match(team) for team in alliance]
+        possible_coop_combos = self.cartesian_product(*coop_by_match)
+        return len([combo for combo in possible_coop_combos if any(combo)]) / len(possible_coop_combos)
+
+    def chance_of_bonuses(self, alliance: list[int]) -> tuple[float, float, float]:
+        """Determines the chance of the coopertition bonus, the melody bonus and the ensemble bonus using all possible permutations with an alliance.
+
+        :param alliance: The three teams on the alliance.
+        """
+        chance_of_coop = self.chance_of_coop_bonus(alliance)
+        cycles_for_alliance = [self.cycles_by_match(team) for team in alliance]
+
+        # Melody RP calculations
+        possible_cycle_combos = self.cartesian_product(*cycles_for_alliance, reduce_with_sum=True)
+        chance_of_reaching_15_cycles = (
+            len([combo for combo in possible_cycle_combos if combo >= 15]) / len(possible_cycle_combos)
+        )
+        chance_of_reaching_18_cycles = (
+            len([combo for combo in possible_cycle_combos if combo >= 18]) / len(possible_cycle_combos)
+        )
+
+        # Ensemble RP calculations
+        endgame_points_by_team = [self.points_contributed_by_match(team, Queries.ENDGAME) for team in alliance]
+        possible_endgame_combos = self.cartesian_product(*endgame_points_by_team, reduce_with_sum=True)
+        chance_of_reaching_10_points = (
+            len([combo for combo in possible_endgame_combos if combo >= 10]) / len(possible_endgame_combos)
+        )
+
+        ability_to_climb_by_team = [True in self.stat_per_match(team, Queries.CLIMBED_CHAIN) for team in alliance]
+
+        if ability_to_climb_by_team.count(True) >= 2:  # If teams can climb
+            chance_of_ensemble_rp = chance_of_reaching_10_points
+        else:
+            chance_of_ensemble_rp = 0  # No chance that they can get the RP even if 10 points can be reached.
+
+        return (
+            chance_of_coop,
+            chance_of_reaching_18_cycles * (1 - chance_of_coop) + chance_of_reaching_15_cycles * chance_of_coop,
+            chance_of_ensemble_rp
+        )
+        
+    def chance_of_winning(self, alliance_one: list[int], alliance_two: list[int]) -> tuple:
+        """Returns the chance of winning between two alliances using integrals."""
+        alliance_one_points = [
+            self.points_contributed_by_match(team)
+            for team in alliance_one
+        ]
+        alliance_two_points = [
+            self.points_contributed_by_match(team)
+            for team in alliance_two
+        ]
+
+        # Calculate mean and standard deviation of the point distribution of the red alliance.
+        alliance_one_std = (
+                sum(
+                    [
+                        np.std(team_distribution) ** 2
+                        for team_distribution in alliance_one_points
+                    ]
+                )
+                ** 0.5
+        )
+        alliance_one_mean = sum(
+            [
+                np.mean(team_distribution)
+                for team_distribution in alliance_one_points
+            ]
+        )
+
+        # Calculate mean and standard deviation of the point distribution of the blue alliance.
+        alliance_two_std = (
+                sum(
+                    [
+                        np.std(team_distribution) ** 2
+                        for team_distribution in alliance_two_points
+                    ]
+                )
+                ** 0.5
+        )
+        alliance_two_mean = sum(
+            [
+                np.mean(team_distribution)
+                for team_distribution in alliance_two_points
+            ]
+        )
+
+        # Calculate mean and standard deviation of the point distribution of red alliance - blue alliance
+        compared_std = (alliance_one_std ** 2 + alliance_two_std ** 2) ** 0.5
+        compared_mean = alliance_one_mean - alliance_two_mean
+
+        # Use sentinel value if there isn't enough of a distribution yet to determine standard deviation.
+        if not compared_std and compared_mean:
+            compared_std = abs(compared_mean)
+        elif not compared_std:
+            compared_std = 0.5
+
+        compared_distribution = norm(loc=compared_mean, scale=compared_std)
+
+        # Calculate odds of red/blue winning using integrals.
+        odds_of_red_winning = quad(
+            lambda x: compared_distribution.pdf(x), 0, np.inf
+        )[0]
+        odds_of_blue_winning = quad(
+            lambda x: compared_distribution.pdf(x), -np.inf, 0
+        )[0]
+
+        return odds_of_red_winning, odds_of_blue_winning, alliance_one_mean, alliance_two_mean

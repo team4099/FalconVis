@@ -18,7 +18,7 @@ class GeneralConstants:
         "Average Teleop Cycles",
         "Average Auto Cycles"
     ]
-    SECONDS_TO_CACHE = 60 * 4
+    SECONDS_TO_CACHE = 60 * 3
     PRIMARY_COLOR = "#EFAE09"
     AVERAGE_FOUL_RATE = 1.06
 
@@ -110,6 +110,7 @@ class Queries:
     # Modes
     AUTO = "Auto"
     TELEOP = "Teleop"
+    ENDGAME = "Endgame"
 
     # Custom graph keywords
     ONE_TEAM_KEYWORD = "Used for custom graphs with one team."

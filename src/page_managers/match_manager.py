@@ -494,12 +494,9 @@ class MatchManager(PageManager):
 
         # Colored metric displaying the chance of reaching the co-op bonus (1 amp cycle in 45 seconds + auto)
         with reaches_coop_col:
-            coop_by_match = [self.calculated_stats.reaches_coop_bonus_by_match(team) for team in team_numbers]
-            possible_coop_combos = self.calculated_stats.cartesian_product(*coop_by_match)
-
             colored_metric(
                 "Chance of Co-Op Bonus",
-                f"{len([combo for combo in possible_coop_combos if any(combo)]) / len(possible_coop_combos):.0%}",
+                f"{self.calculated_stats.chance_of_coop_bonus(team_numbers):.0%}",
                 background_color=color_gradient[3],
                 opacity=0.4,
                 border_opacity=0.9
