@@ -6,26 +6,12 @@ from numpy import logical_and
 from pandas import DataFrame
 
 from .page_manager import PageManager
-from utils import (
-    bar_graph,
-    box_plot,
+from ..utils import (
     CalculatedStats,
-    colored_metric,
-    Criteria,
-    GeneralConstants,
-    GraphType,
-    line_graph,
-    multi_line_graph,
-    plotly_chart,
-    Queries,
     retrieve_match_data,
     retrieve_match_schedule,
     retrieve_scouting_data,
-    retrieve_team_list,
-    scouting_data_for_team,
-    stacked_bar_graph,
-    colored_metric_with_two_values,
-    populate_missing_data
+    retrieve_team_list
 )
 
 
