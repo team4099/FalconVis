@@ -6,7 +6,7 @@ from numpy import logical_and
 from pandas import DataFrame
 
 from .page_manager import PageManager
-from ..utils import (
+from utils import (
     CalculatedStats,
     retrieve_match_data,
     retrieve_match_schedule,
