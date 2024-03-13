@@ -10,17 +10,19 @@ from pandas import DataFrame, Series, isna
 from scipy.integrate import quad
 from scipy.stats import norm
 
+
+from .base_calculated_stats import BaseCalculatedStats
 from .constants import Criteria, Queries
 from .functions import _convert_to_float_from_numpy_type, scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
 
 __all__ = ["CalculatedStats"]
 
 
-class CalculatedStats:
+class CalculatedStats(BaseCalculatedStats):
     """Utility class for calculating statistics in an event."""
 
     def __init__(self, data: DataFrame):
-        self.data = data
+        super().__init__(data)
 
     # Point contribution methods
     @_convert_to_float_from_numpy_type
@@ -335,34 +337,6 @@ class CalculatedStats:
         return team_data[stat].apply(
             lambda datum: criteria.get(datum, 0) if criteria is not None else datum
         )
-
-    def calculate_iqr(self, dataset: Series) -> float:
-        """Calculates the IQR of a dataset (75th percentile - 25th percentile).
-
-        :param dataset: The dataset to calculate the IQR for.
-        :return: A float representing the IQR.
-        """
-        return percentile(dataset, 75) - percentile(dataset, 25)
-
-    def cartesian_product(
-        self,
-        dataset_x: list,
-        dataset_y: list,
-        dataset_z: list,
-        reduce_with_sum: bool = False
-    ) -> np.ndarray:
-        """Creates a cartesian product (permutations of each element in the three datasets).
-
-        :param dataset_x: A dataset containing x values.
-        :param dataset_y: A dataset containing y values.
-        :param dataset_z: A dataset containing z values.
-        :param reduce_with_sum: Whether or not to add up the cartesian product for each tuple yielded.
-        :return: A list containing the cartesian products or the sum of it if `reduce_with_sum` is True.
-        """
-        return np.array([
-            (x + y + z if reduce_with_sum else (x, y, z))
-            for x in dataset_x for y in dataset_y for z in dataset_z
-        ])
 
     def driving_index(self, team_number: int) -> float:
         """Determines how fast a team is based on multiplying their teleop cycles by their counter defense rating
