@@ -13,9 +13,11 @@ from tbapy import TBA
 from .constants import EventSpecificConstants, GeneralConstants, Queries
 
 __all__ = [
+    "note_scouting_data_for_team",
     "populate_missing_data",
     "retrieve_match_schedule",
     "retrieve_match_data",
+    "retrieve_note_scouting_data",
     "retrieve_pit_scouting_data",
     "retrieve_team_list",
     "retrieve_scouting_data",
@@ -45,6 +47,22 @@ def populate_missing_data(distributions: list[list], sentinel: Any = None) -> tu
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_scouting_data() -> DataFrame:
     """Retrieves the latest scouting data from team4099/ScoutingAppData on GitHub based on the current event.
+
+    :return: A dataframe containing the scouting data from an event.
+    """
+    scouting_data = DataFrame.from_dict(
+        loads(get(EventSpecificConstants.URL).text)
+    )
+    scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
+        lambda match_key: int(search(r"\d+", match_key).group(0))
+    )
+
+    return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
+
+
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+def retrieve_note_scouting_data() -> DataFrame:
+    """Retrieves the latest note scouting data from team4099/ScoutingAppData on GitHub based on the current event.
 
     :return: A dataframe containing the scouting data from an event.
     """
@@ -154,12 +172,29 @@ def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = N
         ]
 
 
-def retrieve_team_list() -> list:
+def note_scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = None) -> DataFrame:
+    """Retrieves the submissions within the note scouting data for a certain team.
+
+    :param team_number: The number of the team to retrieve the submissions for.
+    :param scouting_data: An optional argument allowing the user to pass in the scouting data if already retrieved.
+    :return: A dataframe containing th submissions within the scouting data for the team passed in.
+    """
+    if scouting_data is None:
+        scouting_data = retrieve_note_scouting_data()
+
+    return scouting_data[
+        scouting_data["TeamNumber"] == team_number
+        ]
+
+
+def retrieve_team_list(scouting_data: DataFrame = None) -> list:
     """Retrieves the team list at the current event via the scouting data.
 
     :return: A list containing the teams at the current event.
     """
-    scouting_data = retrieve_scouting_data()
+    if scouting_data is None:
+        scouting_data = retrieve_scouting_data()
+
     # Filter out empty team numbers
     scouting_data = scouting_data[scouting_data["TeamNumber"] != ""]
 
