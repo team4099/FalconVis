@@ -49,7 +49,7 @@ class TeamManager(PageManager, ContainsMetrics):
         return st.selectbox(
             "Team Number",
             (team_list := retrieve_team_list()),
-            index=team_list.index(queried_team) if queried_team in team_list else team_list.index(4099)
+            index=team_list.index(queried_team) if queried_team in team_list else (team_list.find(4099) if 4099 in team_list else 0)
         )
 
     def generate_metrics(self, team_number: int) -> None:

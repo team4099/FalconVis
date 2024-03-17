@@ -67,7 +67,7 @@ def retrieve_note_scouting_data() -> DataFrame:
     :return: A dataframe containing the scouting data from an event.
     """
     scouting_data = DataFrame.from_dict(
-        loads(get(EventSpecificConstants.URL).text)
+        loads(get(EventSpecificConstants.NOTE_SCOUTING_URL).text)
     )
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))

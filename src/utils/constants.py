@@ -108,6 +108,11 @@ class Queries:
     RED_ALLIANCE = "red"
     BLUE_ALLIANCE = "blue"
 
+    # Note scouting queries
+    AMP_ALIGNING_SPEED = "AligningSpeed"
+    SCORING_SPEED = "ScoringSpeed"
+    INTAKING_SPEED = "IntakingSpeed"
+
     # Modes
     AUTO = "Auto"
     TELEOP = "Teleop"
@@ -160,4 +165,24 @@ class Criteria:
         "Okay": 3,
         "Poor": 2,
         "Very Poor": 1
+    }
+
+    # Note scouting ratings criteria
+    AMP_ALIGNING_SPEED_CRITERIA = {
+        "Very Quick": 5,
+        "Quick": 4,
+        "Okay": 3,
+        "Slow": 2,
+        "Very Slow": 1
+    }
+    SCORING_SPEED_CRITERIA = {
+        "Fast": 3,
+        "Okay": 2,
+        "Slow": 1
+    }
+    INTAKING_SPEED_CRITERIA = {
+        "Fast": 3,
+        "Okay": 2,
+        "Slow": 1,
+        "Unknown": 1
     }
