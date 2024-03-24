@@ -112,7 +112,7 @@ def retrieve_match_schedule() -> DataFrame:
                     "red_alliance": [int(team[3:]) for team in match["alliances"]["red"]["team_keys"]],
                     "blue_alliance": [int(team[3:]) for team in match["alliances"]["blue"]["team_keys"]]
                 }
-                for match in event_matches if match["score_breakdown"] is not None
+                for match in event_matches
             ]
         )
     else:  # Load match schedule from local files
@@ -150,7 +150,7 @@ def retrieve_match_data() -> DataFrame:
                         and match["score_breakdown"]["blue"]["coopertitionBonusAchieved"]
                     )
                 }
-                for match in event_matches
+                for match in event_matches if match["score_breakdown"] is not None
             ]
         )
     else:
