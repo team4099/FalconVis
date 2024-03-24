@@ -60,7 +60,7 @@ class EventSpecificConstants:
     PIT_SCOUTING_URL = (
         f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
     )
-    PICKLIST_URL = "https://www.notion.so/team4099/42836f096b83453e8f284956799be386?v=a20940a6d4bb4e9bb233a6581c2bf65a"
+    PICKLIST_URL = "https://www.notion.so/team4099/d19066533a8844d3aa2cd9e68e70f214?v=4e41a6a99bd349b3b44d716c0187deb3"
 
 
 class GraphType(Enum):
