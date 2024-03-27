@@ -1,7 +1,7 @@
 """Defines utility functions that are later used in FalconVis."""
 from io import StringIO
 from json import load, loads
-from re import search
+from re import search, sub
 from typing import Any
 
 import streamlit as st
@@ -50,9 +50,13 @@ def retrieve_scouting_data() -> DataFrame:
 
     :return: A dataframe containing the scouting data from an event.
     """
-    scouting_data = DataFrame.from_dict(
-        loads(get(EventSpecificConstants.URL).text)
-    )
+
+    scouting_data_raw = loads(get(EventSpecificConstants.URL).text)
+
+    scouting_data_cleaned = recursively_check_utf8(scouting_data_raw)
+
+    scouting_data = DataFrame.from_dict(scouting_data_cleaned)
+
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))
     )
@@ -218,3 +222,20 @@ def _convert_to_float_from_numpy_type(function):
 
     return wrapper
 
+def recursively_check_utf8(list_of_dicts):
+    """
+    Removes all non-UTF-8 characters from values of dictionaries contained in lists, used to clean scouting data.
+
+    :param list_of_dicts: The list of dictionarys with values to be cleaned
+    :return: The cleaned list of dictionaries
+    """
+    new_list = []
+    for d in list_of_dicts:
+        new_dict = {}
+        for key, value in d.items():
+            if isinstance(value, str):
+                new_dict[key] = sub(r'[\x00-\x1F\x7F-\x9F]', '', value)
+            else:
+                new_dict[key] = value
+        new_list.append(new_dict)
+    return new_list
