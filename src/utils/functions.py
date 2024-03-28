@@ -222,7 +222,7 @@ def _convert_to_float_from_numpy_type(function):
 
     return wrapper
 
-def recursively_check_utf8(list_of_dicts):
+def recursively_check_utf8(list_of_dicts: list) -> list:
     """
     Removes all non-UTF-8 characters from values of dictionaries contained in lists, used to clean scouting data.
 
@@ -230,12 +230,16 @@ def recursively_check_utf8(list_of_dicts):
     :return: The cleaned list of dictionaries
     """
     new_list = []
+
     for d in list_of_dicts:
         new_dict = {}
+
         for key, value in d.items():
             if isinstance(value, str):
                 new_dict[key] = sub(r'[\x00-\x1F\x7F-\x9F]', '', value)
             else:
                 new_dict[key] = value
+
         new_list.append(new_dict)
+
     return new_list
