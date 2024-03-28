@@ -150,8 +150,8 @@ def retrieve_match_data() -> DataFrame:
                     "red_score": match["alliances"]["red"]["score"],
                     "blue_score": match["alliances"]["blue"]["score"],
                     "reached_coop": (
-                        match["score_breakdown"]["red"]["coopertitionBonusAchieved"]
-                        and match["score_breakdown"]["blue"]["coopertitionBonusAchieved"]
+                            match["score_breakdown"]["red"]["coopertitionBonusAchieved"]
+                            and match["score_breakdown"]["blue"]["coopertitionBonusAchieved"]
                     )
                 }
                 for match in event_matches
@@ -222,7 +222,8 @@ def _convert_to_float_from_numpy_type(function):
 
     return wrapper
 
-def recursively_check_utf8(list_of_dicts: list) -> list:
+
+def recursively_check_utf8(list_of_dicts: list[dict]) -> list[dict]:
     """
     Removes all non-UTF-8 characters from values of dictionaries contained in lists, used to clean scouting data.
 
