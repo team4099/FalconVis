@@ -229,7 +229,7 @@ def check_utf8(list_of_dicts: list[dict]) -> list[dict]:
     :return: The cleaned list of dictionaries
     """
 
-    for count, d in enumerate(list_of_dicts):
+    for d in list_of_dicts:
         for key, value in d.items():
             if isinstance(value, str):
                 d[key] = sub(r'[\x00-\x1F\x7F-\x9F]', '', value)  # Replace illegal chars with ''
