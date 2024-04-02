@@ -318,7 +318,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        speaker_amp_col, climb_speed_col = st.columns(2)
+        speaker_amp_col, climb_speed_col, passing_shot_col = st.columns(3)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         # Teleop Speaker/amp over time graph
@@ -370,6 +370,27 @@ class TeamManager(PageManager, ContainsMetrics):
                     title=f"Climb Speed Breakdown",
                     color={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN},
                     color_indicator="Type of Climb"
+                )
+            )
+
+            # Climb speed over time graph
+        with passing_shot_col:
+            passing_shot_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_PASSING
+            )
+            line_names = [
+                "# of Cycles"
+            ]
+            plotly_chart(
+                line_graph(
+                    range(len(passing_shot_by_match)),
+                    [passing_shot_by_match],
+
+                    x_axis_label="Match Index",
+                    y_axis_label=f"# of Cycles",
+                    title=f"Passing Cycles During Teleop Over Time",
+                    color_map=dict(zip(line_names, (GeneralConstants.GOLD_GRADIENT[0])))
                 )
             )
 
