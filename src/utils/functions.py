@@ -52,7 +52,7 @@ def retrieve_scouting_data() -> DataFrame:
     """
 
     scouting_data = DataFrame.from_dict(check_utf8(
-        loads(get(EventSpecificConstants.URL).text)
+        loads(get(EventSpecificConstants.URL).text.encode('unicode_escape'))
     ))
 
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
