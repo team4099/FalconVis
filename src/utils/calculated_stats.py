@@ -107,6 +107,18 @@ class CalculatedStats(BaseCalculatedStats):
             return (self.cycles_by_match(team_number, Queries.AUTO) + self.cycles_by_match(team_number, Queries.TELEOP)).mean()
 
     @_convert_to_float_from_numpy_type
+    def average_passing_cycles(self, team_number) -> float:
+        """Calculates the average passing cycles for a team
+
+        The following custom graphs are supported with this function:
+        - Bar graph
+
+        :param team_number: The team number to calculate the average cycles for.
+        :return: A float representing the average cycles for said team in the mode specified."""
+
+        return self.cycles_by_match(team_number, Queries.TELEOP_PASSING).mean()
+
+    @_convert_to_float_from_numpy_type
     def average_cycles_for_structure(self, team_number: int, structure: str) -> float:
         """Calculates the average cycles for a team for a structure (wrapper around `cycles_by_match`).
 
@@ -153,6 +165,22 @@ class CalculatedStats(BaseCalculatedStats):
                 team_data[Queries.AUTO_SPEAKER] + team_data[Queries.AUTO_AMP]
                 + team_data[Queries.TELEOP_SPEAKER] + team_data[Queries.TELEOP_AMP] + team_data[Queries.TELEOP_TRAP]
             )
+
+    def passing_shots_by_match(self, team_number: int) -> Series:
+        """Returns the cycles for a certain mode (autonomous/teleop) in a match
+
+        The following custom graphs are supported with this function:
+        - Line graph
+        - Box plot
+        - Multi line graph
+
+        :param team_number: The team number to calculate the cycles by match for.
+        :param mode: The mode to return cycles by match for (Auto/Teleop)
+        :return: A series containing the cycles per match for the mode specified.
+        """
+        team_data = scouting_data_for_team(team_number, self.data)
+
+        return team_data[Queries.TELEOP_PASSING]
 
     def cycles_by_structure_per_match(self, team_number: int, structure: str | tuple) -> Series:
         """Returns the cycles for a certain structure (auto speaker, auto amp, etc.) in a match

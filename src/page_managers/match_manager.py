@@ -635,6 +635,7 @@ class MatchManager(PageManager):
 
         speaker_cycles_over_time_col, amp_periods_over_time_col = st.columns(2, gap="large")
         climb_breakdown_by_team_col, climb_speed_by_team = st.columns(2, gap="large")
+        passing_shot_by_team_col = st.columns(1, gap="large")
 
         short_gradient = [
             GeneralConstants.LIGHT_RED,
@@ -741,6 +742,27 @@ class MatchManager(PageManager):
                     y_axis_title="# of Climb Speeds",
                     title="Climb Speeds by Team",
                     color_map={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN}
+                )
+            )
+
+        with passing_shot_by_team_col:
+            passing_shots_by_team = [
+                self.calculated_stats.passing_shots_by_match(team)
+                for team in team_numbers
+            ]
+            color_map = {
+                pair[0]: color
+                for pair, color in zip(best_teams, short_gradient)
+            }
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(amp_periods_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title="# of Cycles",
+                    title="Potential Passing Cycles by Alliance",
+                    color_map=color_map
                 )
             )
 

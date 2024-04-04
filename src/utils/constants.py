@@ -86,6 +86,7 @@ class Queries:
     TELEOP_SPEAKER = "TeleopSpeaker"
     TELEOP_AMP = "TeleopAmp"
     TELEOP_TRAP = "TeleopTrap"
+    TELEOP_PASSING = "TeleopPassing"
 
     PARKED_UNDER_STAGE = "Parked"
     CLIMBED_CHAIN = "ClimbStatus"
