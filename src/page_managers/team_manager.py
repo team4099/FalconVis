@@ -148,7 +148,8 @@ class TeamManager(PageManager, ContainsMetrics):
             colored_metric(
                 "Average Feeding Cycles",
                 average_feeding_cycles,
-                threshold=average_feeding_cycles_for_percentile
+                threshold=average_feeding_cycles_for_percentile,
+                value_formatter=lambda value: f"{value:.2f}"
             )
 
         # Metric for IQR of points contributed (consistency)
