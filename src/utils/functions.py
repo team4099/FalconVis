@@ -44,7 +44,7 @@ def populate_missing_data(distributions: list[list], sentinel: Any = None) -> tu
     )
 
 
-@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)git
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_scouting_data() -> DataFrame:
     """Retrieves the latest scouting data from team4099/ScoutingAppData on GitHub based on the current event.
 
