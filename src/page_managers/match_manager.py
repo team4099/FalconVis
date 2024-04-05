@@ -503,10 +503,10 @@ class MatchManager(PageManager):
             )
 
     def generate_autonomous_graphs(
-        self,
-        team_numbers: list[int],
-        type_of_graph: str,
-        color_gradient: list[str]
+            self,
+            team_numbers: list[int],
+            type_of_graph: str,
+            color_gradient: list[str]
     ) -> None:
         """Generates the autonomous graphs for the `Match` page.
 
@@ -534,7 +534,8 @@ class MatchManager(PageManager):
                 best_autos_by_team = sorted(
                     [
                         (
-                        team_number, self.calculated_stats.points_contributed_by_match(team_number, Queries.AUTO).max())
+                            team_number,
+                            self.calculated_stats.points_contributed_by_match(team_number, Queries.AUTO).max())
                         for team_number in team_numbers
                     ],
                     key=lambda pair: pair[1],
@@ -589,7 +590,8 @@ class MatchManager(PageManager):
                     ("Total Auto Cycles" if display_cycle_contributions else "Total Auto Points"),
                     title="Auto Scoring Breakdown",
                     color_map={
-                        ("Avg. Speaker Cycles" if display_cycle_contributions else "Avg. Speaker Points"): color_gradient[1],
+                        ("Avg. Speaker Cycles" if display_cycle_contributions else "Avg. Speaker Points"):
+                            color_gradient[1],
                         ("Avg. Amp Cycles" if display_cycle_contributions else "Avg. Amp Points"): color_gradient[2]
                     }
                 ).update_layout(xaxis={"categoryorder": "total descending"})
@@ -618,10 +620,10 @@ class MatchManager(PageManager):
             )
 
     def generate_teleop_graphs(
-        self,
-        team_numbers: list[int],
-        type_of_graph: str,
-        color_gradient: list[str]
+            self,
+            team_numbers: list[int],
+            type_of_graph: str,
+            color_gradient: list[str]
     ) -> None:
         """Generates the teleop graphs for the `Match` page.
 
@@ -633,7 +635,12 @@ class MatchManager(PageManager):
         teams_data = [scouting_data_for_team(team) for team in team_numbers]
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
+        st.write("## ⭕ Cycles")
         speaker_cycles_over_time_col, amp_periods_over_time_col = st.columns(2, gap="large")
+        passing_shot_by_team_col, = st.columns(1)
+
+        st.divider()
+        st.write("## ⛓️ Endgame")
         climb_breakdown_by_team_col, climb_speed_by_team = st.columns(2, gap="large")
 
         short_gradient = [
@@ -699,9 +706,31 @@ class MatchManager(PageManager):
                 )
             )
 
+        with passing_shot_by_team_col:
+            passing_shots_by_team = [
+                self.calculated_stats.passing_shots_by_match(team)
+                for team in team_numbers
+            ]
+            best_teams = sorted(zip(team_numbers, passing_shots_by_team), key=lambda pair: pair[1].mean())
+            color_map = {
+                pair[0]: color
+                for pair, color in zip(best_teams, short_gradient)
+            }
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(passing_shots_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title="# of Cycles",
+                    title="Passing Cycles by Alliance",
+                    color_map=color_map
+                )
+            )
+
         with climb_breakdown_by_team_col:
             harmonized_climbs_by_team = [
-                team_data[Queries.HARMONIZED_ON_CHAIN].sum() 
+                team_data[Queries.HARMONIZED_ON_CHAIN].sum()
                 for team_data in teams_data
             ]
             normal_climbs_by_team = [
@@ -726,7 +755,7 @@ class MatchManager(PageManager):
                 (team_data[Queries.CLIMB_SPEED] == "Slow").sum()
                 for team_data in teams_data
             ]
-            
+
             fast_climbs = [
                 (team_data[Queries.CLIMB_SPEED] == "Fast").sum()
                 for team_data in teams_data
@@ -745,9 +774,9 @@ class MatchManager(PageManager):
             )
 
     def generate_qualitative_graphs(
-        self,
-        team_numbers: list[int],
-        color_gradient: list[str]
+            self,
+            team_numbers: list[int],
+            color_gradient: list[str]
     ):
         """Generates the qualitative graphs for the `Match` page.
 
@@ -773,7 +802,7 @@ class MatchManager(PageManager):
                     color=color_gradient[0]
                 )
             )
-        
+
         with defense_rating_by_team_col:
             defense_rating_by_team = [
                 self.calculated_stats.average_defense_skill(team)
