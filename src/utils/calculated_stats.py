@@ -430,7 +430,7 @@ class CalculatedStats(BaseCalculatedStats):
 
         return (
             chance_of_coop,
-            chance_of_reaching_18_cycles * (1 - chance_of_coop) + chance_of_reaching_15_cycles * chance_of_coop,
+            chance_of_reaching_21_cycles * (1 - chance_of_coop) + chance_of_reaching_25_cycles * chance_of_coop,
             chance_of_ensemble_rp
         )
         
