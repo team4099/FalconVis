@@ -317,10 +317,17 @@ class MatchManager(PageManager):
                     ).sum()
                     for team in combined_teams
                 ]
+                if structures != Queries.TELEOP_PASSING
+                else [
+                    self.calculated_stats.stat_per_match(
+                        team, structures
+                    ).sum()
+                    for team in combined_teams
+                ]
                 for structures in (
                     (Queries.AUTO_AMP, Queries.TELEOP_AMP),
                     (Queries.AUTO_SPEAKER, Queries.TELEOP_SPEAKER),
-                    Queries.TELEOP_TRAP
+                    Queries.TELEOP_PASSING
                 )
             ]
 
@@ -329,13 +336,13 @@ class MatchManager(PageManager):
                     combined_teams,
                     structure_breakdown,
                     "Teams",
-                    ["# of Amp Cycles", "# of Speaker Cycles", "# of Trap Cycles"],
+                    ["# of Amp Cycles", "# of Speaker Cycles", "# of Feeding Cycles"],
                     "Total Cycles Scored into Structures",
                     title="Structure Breakdown",
                     color_map={
                         "# of Amp Cycles": GeneralConstants.GOLD_GRADIENT[0],
                         "# of Speaker Cycles": GeneralConstants.GOLD_GRADIENT[1],
-                        "# of Trap Cycles": GeneralConstants.GOLD_GRADIENT[2]
+                        "# of Feeding Cycles": GeneralConstants.GOLD_GRADIENT[2]
                     },
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
