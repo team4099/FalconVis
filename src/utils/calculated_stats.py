@@ -262,6 +262,13 @@ class CalculatedStats(BaseCalculatedStats):
         ).mean()
 
     @_convert_to_float_from_numpy_type
+    def average_feeding_cycles_without_full_field(self, team_number: int) -> float:
+        """Returns the average feeding cycles without matches where they ran full field cycles."""
+        team_scouting_data = scouting_data_for_team(team_number, self.data)
+        passing_cycles = team_scouting_data[team_scouting_data[Queries.TELEOP_PASSING] != 0][Queries.TELEOP_PASSING]
+        return (passing_cycles.mean()) if not passing_cycles.empty else 0
+
+    @_convert_to_float_from_numpy_type
     def average_defense_rating(self, team_number: int) -> float:
         """Returns a series of data representing the team's defense rating
 
