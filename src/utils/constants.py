@@ -18,7 +18,7 @@ class GeneralConstants:
         "Average Teleop Cycles",
         "Average Auto Cycles"
     ]
-    SECONDS_TO_CACHE = 60 * 3
+    SECONDS_TO_CACHE = 60 * 1.5
     PRIMARY_COLOR = "#EFAE09"
     AVERAGE_FOUL_RATE = 1.06
 
