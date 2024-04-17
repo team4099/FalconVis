@@ -407,11 +407,11 @@ class CalculatedStats(BaseCalculatedStats):
 
         # Melody RP calculations
         possible_cycle_combos = self.cartesian_product(*cycles_for_alliance, reduce_with_sum=True)
-        chance_of_reaching_15_cycles = (
-            len([combo for combo in possible_cycle_combos if combo >= 15]) / len(possible_cycle_combos)
+        chance_of_reaching_21_cycles = (
+            len([combo for combo in possible_cycle_combos if combo >= 21]) / len(possible_cycle_combos)
         )
-        chance_of_reaching_18_cycles = (
-            len([combo for combo in possible_cycle_combos if combo >= 18]) / len(possible_cycle_combos)
+        chance_of_reaching_25_cycles = (
+            len([combo for combo in possible_cycle_combos if combo >= 25]) / len(possible_cycle_combos)
         )
 
         # Ensemble RP calculations
