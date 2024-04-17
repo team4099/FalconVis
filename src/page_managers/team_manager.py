@@ -45,7 +45,7 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :return: The team number selected to create graphs for.
         """
-        queried_team = int(st.experimental_get_query_params().get("team_number", [0])[0])
+        queried_team = int(st.experimental_get_query_params().get("team_number", [0])[0]) or 4099
         return st.selectbox(
             "Team Number",
             (team_list := retrieve_team_list()),
