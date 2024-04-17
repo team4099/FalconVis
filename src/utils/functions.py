@@ -58,6 +58,7 @@ def retrieve_scouting_data() -> DataFrame:
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))
     )
+
     scouting_data[Queries.TEAM_NUMBER] = scouting_data[Queries.TEAM_NUMBER].apply(int)
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
