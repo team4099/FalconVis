@@ -1,7 +1,7 @@
 """Defines utility functions that are later used in FalconVis."""
 from io import StringIO
 from json import load, loads
-from re import search
+from re import search, sub
 from typing import Any
 
 import streamlit as st
@@ -50,12 +50,16 @@ def retrieve_scouting_data() -> DataFrame:
 
     :return: A dataframe containing the scouting data from an event.
     """
-    scouting_data = DataFrame.from_dict(
-        loads(get(EventSpecificConstants.URL).text)
-    )
+
+    scouting_data = DataFrame.from_dict(check_utf8(
+        loads(get(EventSpecificConstants.URL).text.replace("\n", "").replace("\t", "").encode('unicode_escape'))
+    ))
+
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))
     )
+
+    scouting_data[Queries.TEAM_NUMBER] = scouting_data[Queries.TEAM_NUMBER].apply(int)
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 
@@ -150,7 +154,7 @@ def retrieve_match_data() -> DataFrame:
                         and match["score_breakdown"]["blue"]["coopertitionBonusAchieved"]
                     )
                 }
-                for match in event_matches
+                for match in event_matches if match["score_breakdown"] is not None
             ]
         )
     else:
@@ -218,3 +222,18 @@ def _convert_to_float_from_numpy_type(function):
 
     return wrapper
 
+
+def check_utf8(list_of_dicts: list[dict]) -> list[dict]:
+    """
+    Removes all non-UTF-8 characters from values of dictionaries contained in lists, used to clean scouting data.
+
+    :param list_of_dicts: The list of dictionaries with values to be cleaned
+    :return: The cleaned list of dictionaries
+    """
+
+    for d in list_of_dicts:
+        for key, value in d.items():
+            if isinstance(value, str):
+                d[key] = sub(r'[\x00-\x1F\x7F-\x9F]', '', value)  # Replace illegal chars with ''
+
+    return list_of_dicts

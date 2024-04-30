@@ -18,7 +18,7 @@ class GeneralConstants:
         "Average Teleop Cycles",
         "Average Auto Cycles"
     ]
-    SECONDS_TO_CACHE = 60 * 3
+    SECONDS_TO_CACHE = 60 * 1.5
     PRIMARY_COLOR = "#EFAE09"
     AVERAGE_FOUL_RATE = 1.06
 
@@ -53,14 +53,14 @@ class GeneralConstants:
 class EventSpecificConstants:
     """Constants specific to an event."""
 
-    EVENT_CODE = "2024vaash"
-    EVENT_NAME = "Ashland"
+    EVENT_CODE = "2024cur"
+    EVENT_NAME = "Curie Division"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     NOTE_SCOUTING_URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
     PIT_SCOUTING_URL = (
         f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
     )
-    PICKLIST_URL = "https://www.notion.so/team4099/42836f096b83453e8f284956799be386?v=a20940a6d4bb4e9bb233a6581c2bf65a"
+    PICKLIST_URL = "https://www.notion.so/team4099/d19066533a8844d3aa2cd9e68e70f214?v=56e109b2298d46ebb00057f05d38bba8"
 
 
 class GraphType(Enum):
@@ -86,6 +86,7 @@ class Queries:
     TELEOP_SPEAKER = "TeleopSpeaker"
     TELEOP_AMP = "TeleopAmp"
     TELEOP_TRAP = "TeleopTrap"
+    TELEOP_PASSING = "TeleopPassing"
 
     PARKED_UNDER_STAGE = "Parked"
     CLIMBED_CHAIN = "ClimbStatus"

@@ -45,7 +45,7 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :return: The team number selected to create graphs for.
         """
-        queried_team = int(st.experimental_get_query_params().get("team_number", [0])[0])
+        queried_team = int(st.experimental_get_query_params().get("team_number", [0])[0]) or 4099
         return st.selectbox(
             "Team Number",
             (team_list := retrieve_team_list()),
@@ -57,7 +57,7 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :param team_number: The team number to calculate the metrics for.
         """
-        points_contributed_col, drivetrain_col, auto_cycle_col, teleop_cycle_col = st.columns(4)
+        points_contributed_col, auto_cycle_col, teleop_cycle_col, feeding_cycle_col = st.columns(4)
         iqr_col, trap_ability_col, climb_breakdown_col, disables_col = st.columns(4)
 
         # Metric for avg. points contributed
@@ -73,22 +73,6 @@ class TeamManager(PageManager, ContainsMetrics):
                 "Average Points Contributed",
                 round(average_points_contributed, 2),
                 threshold=points_contributed_for_percentile
-            )
-
-        # Metric for drivetrain
-        with drivetrain_col:
-            try:
-                drivetrain = self.pit_scouting_data[
-                    self.pit_scouting_data["Team Number"] == team_number
-                ].iloc[0]["Drivetrain"].split("/")[0]  # The splitting at / is used to shorten the drivetrain type.
-            except (IndexError, TypeError):
-                drivetrain = "—"
-
-            colored_metric(
-                "Drivetrain Type",
-                drivetrain,
-                background_color="#052e16",
-                opacity=0.5
             )
 
         # Metric for average auto cycles
@@ -145,6 +129,27 @@ class TeamManager(PageManager, ContainsMetrics):
                 round(average_teleop_amp_cycles, 2),
                 first_threshold=average_teleop_speaker_cycles_for_percentile,
                 second_threshold=average_teleop_amp_cycles_for_percentile
+            )
+
+        # Metric for feeding cycles of a team
+        with feeding_cycle_col:
+            average_feeding_cycles = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_PASSING
+            ).mean()
+            average_feeding_cycles_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cycles_by_structure_per_match(
+                    team,
+                    Queries.TELEOP_PASSING
+                ).mean()
+            )
+
+            colored_metric(
+                "Average Feeding Cycles",
+                average_feeding_cycles,
+                threshold=average_feeding_cycles_for_percentile,
+                value_formatter=lambda value: f"{value:.2f}"
             )
 
         # Metric for IQR of points contributed (consistency)
@@ -318,11 +323,11 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        speaker_amp_col, climb_speed_col = st.columns(2)
+        speaker_amp_feeding_col, climb_speed_col = st.columns(2)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        # Teleop Speaker/amp over time graph
-        with speaker_amp_col:
+        # Teleop Speaker/amp/feeding over time graph
+        with speaker_amp_feeding_col:
             speaker_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
                 team_number,
                 Queries.TELEOP_SPEAKER
@@ -331,19 +336,24 @@ class TeamManager(PageManager, ContainsMetrics):
                 team_number,
                 Queries.TELEOP_AMP
             ) * (1 if using_cycle_contributions else 2)
+            feeding_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_PASSING
+            )
             line_names = [
                 ("# of Speaker Cycles" if using_cycle_contributions else "# of Speaker Points"),
-                ("# of Amp Cycles" if using_cycle_contributions else "# of Amp Points")
+                ("# of Amp Cycles" if using_cycle_contributions else "# of Amp Points"),
+                "# of Passing Cycles"
             ]
 
             plotly_chart(
-                multi_line_graph(
+                stacked_bar_graph(
                     range(len(speaker_cycles_by_match)),
-                    [speaker_cycles_by_match, amp_cycles_by_match],
-                    x_axis_label="Match Index",
+                    [speaker_cycles_by_match, amp_cycles_by_match, feeding_cycles_by_match],
+                    x_axis_label="",
                     y_axis_label=line_names,
                     y_axis_title=f"# of Teleop {'Cycles' if using_cycle_contributions else 'Points'}",
-                    title=f"Speaker/Amp {'Cycles' if using_cycle_contributions else 'Points'} During Teleop Over Time",
+                    title=f"Speaker/Amp/Feeding {'Cycles' if using_cycle_contributions else 'Points'} During Teleop Over Time",
                     color_map=dict(zip(line_names, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
                 )
             )

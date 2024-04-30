@@ -107,6 +107,18 @@ class CalculatedStats(BaseCalculatedStats):
             return (self.cycles_by_match(team_number, Queries.AUTO) + self.cycles_by_match(team_number, Queries.TELEOP)).mean()
 
     @_convert_to_float_from_numpy_type
+    def average_passing_cycles(self, team_number) -> float:
+        """Calculates the average passing cycles for a team
+
+        The following custom graphs are supported with this function:
+        - Bar graph
+
+        :param team_number: The team number to calculate the average cycles for.
+        :return: A float representing the average cycles for said team in the mode specified."""
+
+        return self.cycles_by_match(team_number, Queries.TELEOP_PASSING).mean()
+
+    @_convert_to_float_from_numpy_type
     def average_cycles_for_structure(self, team_number: int, structure: str) -> float:
         """Calculates the average cycles for a team for a structure (wrapper around `cycles_by_match`).
 
@@ -153,6 +165,22 @@ class CalculatedStats(BaseCalculatedStats):
                 team_data[Queries.AUTO_SPEAKER] + team_data[Queries.AUTO_AMP]
                 + team_data[Queries.TELEOP_SPEAKER] + team_data[Queries.TELEOP_AMP] + team_data[Queries.TELEOP_TRAP]
             )
+
+    def passing_shots_by_match(self, team_number: int) -> Series:
+        """Returns the cycles for a certain mode (autonomous/teleop) in a match
+
+        The following custom graphs are supported with this function:
+        - Line graph
+        - Box plot
+        - Multi line graph
+
+        :param team_number: The team number to calculate the cycles by match for.
+        :param mode: The mode to return cycles by match for (Auto/Teleop)
+        :return: A series containing the cycles per match for the mode specified.
+        """
+        team_data = scouting_data_for_team(team_number, self.data)
+
+        return team_data[Queries.TELEOP_PASSING]
 
     def cycles_by_structure_per_match(self, team_number: int, structure: str | tuple) -> Series:
         """Returns the cycles for a certain structure (auto speaker, auto amp, etc.) in a match
@@ -232,6 +260,13 @@ class CalculatedStats(BaseCalculatedStats):
         return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].apply(
             lambda driver_rating: Criteria.DRIVER_RATING_CRITERIA.get(driver_rating, float("nan"))
         ).mean()
+
+    @_convert_to_float_from_numpy_type
+    def average_feeding_cycles_without_full_field(self, team_number: int) -> float:
+        """Returns the average feeding cycles without matches where they ran full field cycles."""
+        team_scouting_data = scouting_data_for_team(team_number, self.data)
+        passing_cycles = team_scouting_data[team_scouting_data[Queries.TELEOP_PASSING] != 0][Queries.TELEOP_PASSING]
+        return (passing_cycles.mean()) if not passing_cycles.empty else 0
 
     @_convert_to_float_from_numpy_type
     def average_defense_rating(self, team_number: int) -> float:
@@ -372,11 +407,11 @@ class CalculatedStats(BaseCalculatedStats):
 
         # Melody RP calculations
         possible_cycle_combos = self.cartesian_product(*cycles_for_alliance, reduce_with_sum=True)
-        chance_of_reaching_15_cycles = (
-            len([combo for combo in possible_cycle_combos if combo >= 15]) / len(possible_cycle_combos)
+        chance_of_reaching_21_cycles = (
+            len([combo for combo in possible_cycle_combos if combo >= 21]) / len(possible_cycle_combos)
         )
-        chance_of_reaching_18_cycles = (
-            len([combo for combo in possible_cycle_combos if combo >= 18]) / len(possible_cycle_combos)
+        chance_of_reaching_25_cycles = (
+            len([combo for combo in possible_cycle_combos if combo >= 25]) / len(possible_cycle_combos)
         )
 
         # Ensemble RP calculations
@@ -395,7 +430,7 @@ class CalculatedStats(BaseCalculatedStats):
 
         return (
             chance_of_coop,
-            chance_of_reaching_18_cycles * (1 - chance_of_coop) + chance_of_reaching_15_cycles * chance_of_coop,
+            chance_of_reaching_21_cycles * (1 - chance_of_coop) + chance_of_reaching_25_cycles * chance_of_coop,
             chance_of_ensemble_rp
         )
         
