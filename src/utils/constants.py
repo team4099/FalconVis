@@ -87,7 +87,6 @@ class Queries:
     AUTO_CORAL_L4 = "AutoCoralL4"
     AUTO_BARGE = "AutoBarge"
     AUTO_PROCESSOR = "AutoProcessor"
-    AUTO_CENTERLINE = "AutoCenterline"
 
     TELEOP_CORAL_L1 = "TeleopCoralL1"
     TELEOP_CORAL_L2 = "TeleopCoralL2"
@@ -95,6 +94,7 @@ class Queries:
     TELEOP_CORAL_L4 = "TeleopCoralL4"
     TELEOP_BARGE = "TeleopAlgaeBarge"
     TELEOP_PROCESSOR = "TeleopAlgaeProcessor"
+    TELEOP_ALGAE_REMOVAL = "TeleopAlgaeRemoval"
 
     PARKED_UNDER_BARGE = "Parked"
     CLIMBED_CAGE = "ClimbStatus"
@@ -142,9 +142,9 @@ class Criteria:
 
     # Endgame Criteria
     CLIMBING_POINTAGE = {
-        "Park": 2,
-        "Dock": 6,
-        "Engage": 10
+        "No Climb": 2,
+        "Shallow Climb": 6,
+        "Deep Climb": 12
     }
 
     # Ratings criteria
