@@ -65,10 +65,10 @@ class EventSpecificConstants:
 
 class GraphType(Enum):
     """Enum class representing the different graph types (cycle contribution graphs / point contribution graphs)."""
-    
+
     CYCLE_CONTRIBUTIONS = 0
     POINT_CONTRIBUTIONS = 1
-    
+
 
 class Queries:
     """Constants specific to fields in the scouting data."""
@@ -78,26 +78,33 @@ class Queries:
     MATCH_NUMBER = "MatchNumber"
     TEAM_NUMBER = "TeamNumber"
 
-    AUTO_SPEAKER = "AutoSpeaker"
-    AUTO_AMP = "AutoAmp"
-    AUTO_USED_CENTERLINE = "AutoCenterline"
+    STARTING_POSITION = "StartingPosition"
     LEFT_STARTING_ZONE = "AutoLeave"
+    SCORING_SIDE = "ScoringSide"
+    AUTO_CORAL_L1 = "AutoCoralL1"
+    AUTO_CORAL_L2 = "AutoCoralL2"
+    AUTO_CORAL_L3 = "AutoCoralL3"
+    AUTO_CORAL_L4 = "AutoCoralL4"
+    AUTO_BARGE = "AutoBarge"
+    AUTO_PROCESSOR = "AutoProcessor"
 
-    TELEOP_SPEAKER = "TeleopSpeaker"
-    TELEOP_AMP = "TeleopAmp"
-    TELEOP_TRAP = "TeleopTrap"
-    TELEOP_PASSING = "TeleopPassing"
+    TELEOP_CORAL_L1 = "TeleopCoralL1"
+    TELEOP_CORAL_L2 = "TeleopCoralL2"
+    TELEOP_CORAL_L3 = "TeleopCoralL3"
+    TELEOP_CORAL_L4 = "TeleopCoralL4"
+    TELEOP_BARGE = "TeleopAlgaeBarge"
+    TELEOP_PROCESSOR = "TeleopAlgaeProcessor"
+    TELEOP_ALGAE_REMOVAL = "TeleopAlgaeRemoval"
 
-    PARKED_UNDER_STAGE = "Parked"
-    CLIMBED_CHAIN = "ClimbStatus"
-    HARMONIZED_ON_CHAIN = "Harmonized"
+    PARKED_UNDER_BARGE = "Parked"
+    CLIMBED_CAGE = "ClimbStatus"
     CLIMB_SPEED = "ClimbSpeed"
 
     DRIVER_RATING = "DriverRating"
-    DEFENSE_TIME = "DefenseTime"
-    DEFENSE_SKILL = "DefenseSkill"
-    COUNTER_DEFENSE_SKIll = "CounterDefenseSkill"
+    ROBOT_STYLE_TYPE = "RobotStyleType"
+    INTAKE_DEFENSE_RATING = "IntakeDefenseRating"
     DISABLE = "Disabled"
+    STABILITY = "StabilityRating"
 
     # Notes
     AUTO_NOTES = "AutoNotes"
@@ -118,7 +125,7 @@ class Queries:
     ONE_TEAM_KEYWORD = "Used for custom graphs with one team."
     THREE_TEAMS_KEYWORD = "Used for custom graphs with three teams."
     FULL_EVENT_KEYWORD = "Used for custom graphs with a full event."
-    
+
 
 class Criteria:
     """Criteria used in `CalculatedStats`."""
@@ -135,9 +142,9 @@ class Criteria:
 
     # Endgame Criteria
     CLIMBING_POINTAGE = {
-        "Park": 2,
-        "Dock": 6,
-        "Engage": 10
+        "No Climb": 2,
+        "Shallow Climb": 6,
+        "Deep Climb": 12
     }
 
     # Ratings criteria
