@@ -25,7 +25,7 @@ class GeneralConstants:
     # Color sequences
     RED_ALLIANCE_GRADIENT = ["#731111", "#b04949", "#ed8282", "#f5b3b3"]
     BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1", "#a8c1e3"]
-    GOLD_GRADIENT = ["#ffbd4d", "#ff9000", "#dd5f00"]
+    GREEN_TO_PURPLE_GRADIENT = ["#68D391", "#B794F4"]
     LEVEL_GRADIENT = ["#f44a53", "#ff8800", "#f4c717"]
     RED_TO_GREEN_GRADIENT = ["#ffb6b3", "#ffd5d4", "#e7f1e8", "#bde7bd", "#77dd76"]
     SHORT_RED_TO_GREEN_GRADIENT = ["#ffb6b3", "#ffd5d4", "#bde7bd", "#77dd76"]
@@ -99,6 +99,8 @@ class Queries:
     PARKED_UNDER_BARGE = "Parked"
     CLIMBED_CAGE = "ClimbStatus"
     CLIMB_SPEED = "ClimbSpeed"
+    DEEP_CLIMB = "DeepClimb"
+    SHALLOW_CLIMB = "ShallowClimb"
 
     DRIVER_RATING = "DriverRating"
     ROBOT_STYLE_TYPE = "RobotStyleType"
@@ -143,8 +145,8 @@ class Criteria:
     # Endgame Criteria
     CLIMBING_POINTAGE = {
         "Park": 2,
-        "Dock": 6,
-        "Engage": 10
+        "Shallow Climb": 6,
+        "Deep Climb": 12
     }
 
     # Ratings criteria
