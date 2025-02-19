@@ -101,10 +101,10 @@ class RankingSimulatorManager(PageManager):
                 alliance = row["red_alliance"] if team in row["red_alliance"] else row["blue_alliance"]
                 opposing_alliance = row["blue_alliance"] if team in row["red_alliance"] else row["red_alliance"]
 
-                chance_of_coop, chance_of_melody, chance_of_ensemble = self.calculated_stats.chance_of_bonuses(alliance)
+                chance_of_coop, chance_of_auto, chance_of_coral, chance_of_barge = self.calculated_stats.chance_of_bonuses(alliance)
                 chance_of_winning, _, score, __ = self.calculated_stats.chance_of_winning(alliance, opposing_alliance)
 
-                total_rps = chance_of_melody + chance_of_ensemble + chance_of_winning * 2
+                total_rps = chance_of_auto + chance_of_coral + chance_of_barge + chance_of_winning * 3
                 simulated_rankings[team][0].append(total_rps)
                 simulated_rankings[team][1].append(chance_of_coop)
                 simulated_rankings[team][2].append(score)
