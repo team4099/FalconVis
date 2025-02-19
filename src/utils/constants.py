@@ -65,10 +65,10 @@ class EventSpecificConstants:
 
 class GraphType(Enum):
     """Enum class representing the different graph types (cycle contribution graphs / point contribution graphs)."""
-    
+
     CYCLE_CONTRIBUTIONS = 0
     POINT_CONTRIBUTIONS = 1
-    
+
 
 class Queries:
     """Constants specific to fields in the scouting data."""
@@ -87,7 +87,6 @@ class Queries:
     AUTO_CORAL_L4 = "AutoCoralL4"
     AUTO_BARGE = "AutoBarge"
     AUTO_PROCESSOR = "AutoProcessor"
-    AUTO_CENTERLINE = "AutoCenterline"
 
     TELEOP_CORAL_L1 = "TeleopCoralL1"
     TELEOP_CORAL_L2 = "TeleopCoralL2"
@@ -95,6 +94,7 @@ class Queries:
     TELEOP_CORAL_L4 = "TeleopCoralL4"
     TELEOP_BARGE = "TeleopAlgaeBarge"
     TELEOP_PROCESSOR = "TeleopAlgaeProcessor"
+    TELEOP_ALGAE_REMOVAL = "TeleopAlgaeRemoval"
 
     PARKED_UNDER_BARGE = "Parked"
     CLIMBED_CAGE = "ClimbStatus"
@@ -127,7 +127,7 @@ class Queries:
     ONE_TEAM_KEYWORD = "Used for custom graphs with one team."
     THREE_TEAMS_KEYWORD = "Used for custom graphs with three teams."
     FULL_EVENT_KEYWORD = "Used for custom graphs with a full event."
-    
+
 
 class Criteria:
     """Criteria used in `CalculatedStats`."""
@@ -144,7 +144,7 @@ class Criteria:
 
     # Endgame Criteria
     CLIMBING_POINTAGE = {
-        "Park": 2,
+        "No Climb": 2,
         "Shallow Climb": 6,
         "Deep Climb": 12
     }

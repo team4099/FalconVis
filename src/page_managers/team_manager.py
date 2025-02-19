@@ -57,8 +57,8 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :param team_number: The team number to calculate the metrics for.
         """
-        points_contributed_col, auto_cycle_col, teleop_cycle_col, feeding_cycle_col = st.columns(4)
-        iqr_col, trap_ability_col, climb_breakdown_col, disables_col = st.columns(4)
+        points_contributed_col, auto_cycle_col, teleop_coral_col, teleop_algae_col = st.columns(4)
+        iqr_col, algae_off_reef_col, climb_breakdown_col, disables_col = st.columns(4)
 
         # Metric for avg. points contributed
         with points_contributed_col:
@@ -77,79 +77,140 @@ class TeamManager(PageManager, ContainsMetrics):
 
         # Metric for average auto cycles
         with auto_cycle_col:
-            average_auto_speaker_cycles = self.calculated_stats.average_cycles_for_structure(
+            average_auto_coral_l1_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.AUTO_SPEAKER
+                Queries.AUTO_CORAL_L1
             )
-            average_auto_amp_cycles = self.calculated_stats.average_cycles_for_structure(
+            average_auto_coral_l2_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.AUTO_AMP
+                Queries.AUTO_CORAL_L2
             )
-            average_auto_speaker_cycles_for_percentile = self.calculated_stats.quantile_stat(
+            average_auto_coral_l3_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.AUTO_CORAL_L3
+            )
+            average_auto_coral_l4_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.AUTO_CORAL_L4
+            )
+            average_auto_algae_barge_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.AUTO_BARGE
+            )
+            average_auto_algae_processor_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.AUTO_PROCESSOR
+            )
+            average_auto_coral_cycles = average_auto_coral_l1_cycles + average_auto_coral_l2_cycles + average_auto_coral_l3_cycles + average_auto_coral_l4_cycles
+            average_auto_algae_cycles = average_auto_algae_barge_cycles + average_auto_algae_processor_cycles
+
+            average_auto_coral_l1_cycles_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_SPEAKER)
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_CORAL_L1)
             )
-            average_auto_amp_cycles_for_percentile = self.calculated_stats.quantile_stat(
+            average_auto_coral_l2_cycles_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_AMP)
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_CORAL_L2)
             )
+            average_auto_coral_l3_cycles_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_CORAL_L3)
+            )
+            average_auto_coral_l4_cycles_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_CORAL_L4)
+            )
+            average_auto_algae_barge_cycles_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_BARGE)
+            )
+            average_auto_algae_processor_cycles_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_PROCESSOR)
+            )
+
+            average_auto_coral_cycles_for_percentile = (average_auto_coral_l1_cycles_for_percentile + average_auto_coral_l2_cycles_for_percentile + average_auto_coral_l3_cycles_for_percentile + average_auto_coral_l4_cycles_for_percentile)/4.0
+            average_auto_algae_cycles_for_percentile = (average_auto_algae_processor_cycles_for_percentile + average_auto_algae_barge_cycles_for_percentile) / 2.0
+
 
             colored_metric_with_two_values(
                 "Average Auto Cycles",
-                "Speaker / Amp",
-                round(average_auto_speaker_cycles, 2),
-                round(average_auto_amp_cycles, 2),
-                first_threshold=average_auto_speaker_cycles_for_percentile,
-                second_threshold=average_auto_amp_cycles_for_percentile
+                "Coral / Algae",
+                round(average_auto_coral_cycles, 2),
+                round(average_auto_algae_cycles, 2),
+                first_threshold=average_auto_coral_cycles_for_percentile,
+                second_threshold=average_auto_algae_cycles_for_percentile
             )
 
-        # Metric for average teleop cycles
-        with teleop_cycle_col:
-            average_teleop_speaker_cycles = self.calculated_stats.average_cycles_for_structure(
+        # Metric for average teleop coral cycles
+        with teleop_coral_col:
+            average_teleop_coral_l1_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.TELEOP_SPEAKER
+                Queries.TELEOP_CORAL_L1
             )
-            average_teleop_amp_cycles = self.calculated_stats.average_cycles_for_structure(
+            average_teleop_coral_l2_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.TELEOP_AMP
+                Queries.TELEOP_CORAL_L2
             )
-            average_teleop_speaker_cycles_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_SPEAKER)
+            average_teleop_coral_l3_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.TELEOP_CORAL_L2
             )
-            average_teleop_amp_cycles_for_percentile = self.calculated_stats.quantile_stat(
+            average_teleop_coral_l4_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.TELEOP_CORAL_L2
+            )
+            average_teleop_coral_cycles = average_teleop_coral_l1_cycles + average_teleop_coral_l2_cycles + average_teleop_coral_l3_cycles + average_teleop_coral_l4_cycles
+
+            average_teleop_coral_l1_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_AMP)
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_CORAL_L1)
+            )
+            average_teleop_coral_l2_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_CORAL_L2)
+            )
+            average_teleop_coral_l3_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_CORAL_L3)
+            )
+            average_teleop_coral_l4_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_CORAL_L4)
+            )
+            average_teleop_coral_for_percentile = (average_teleop_coral_l1_for_percentile + average_teleop_coral_l2_for_percentile + average_teleop_coral_l3_for_percentile + average_teleop_coral_l4_for_percentile) / 4.0
+
+            colored_metric(
+                "Average Coral Teleop Cycles",
+                round(average_teleop_coral_cycles, 2),
+                threshold=average_teleop_coral_for_percentile
+            )
+
+        # Metric for algae cycles for a team
+        with teleop_algae_col:
+            average_teleop_algae_processor_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.TELEOP_PROCESSOR
+            )
+            average_teleop_algae_barge_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.TELEOP_BARGE
+            )
+
+            average_teleop_algae_processor_for_percentile = self.calculated_stats.quantile_stat(
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_PROCESSOR)
+            )
+            average_teleop_algae_barge_for_percentile = self.calculated_stats.quantile_stat(
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_BARGE)
             )
 
             colored_metric_with_two_values(
-                "Average Teleop Cycles",
-                "Speaker / Amp",
-                round(average_teleop_speaker_cycles, 2),
-                round(average_teleop_amp_cycles, 2),
-                first_threshold=average_teleop_speaker_cycles_for_percentile,
-                second_threshold=average_teleop_amp_cycles_for_percentile
-            )
-
-        # Metric for feeding cycles of a team
-        with feeding_cycle_col:
-            average_feeding_cycles = self.calculated_stats.cycles_by_structure_per_match(
-                team_number,
-                Queries.TELEOP_PASSING
-            ).mean()
-            average_feeding_cycles_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cycles_by_structure_per_match(
-                    team,
-                    Queries.TELEOP_PASSING
-                ).mean()
-            )
-
-            colored_metric(
-                "Average Feeding Cycles",
-                average_feeding_cycles,
-                threshold=average_feeding_cycles_for_percentile,
-                value_formatter=lambda value: f"{value:.2f}"
+                "Average Algae Teleop Cycles",
+                "Processor / Net",
+                round(average_teleop_algae_processor_cycles, 2),
+                round(average_teleop_algae_barge_cycles, 2),
+                first_threshold=average_teleop_algae_processor_for_percentile,
+                second_threshold=average_teleop_algae_barge_for_percentile
             )
 
         # Metric for IQR of points contributed (consistency)
@@ -173,15 +234,15 @@ class TeamManager(PageManager, ContainsMetrics):
             )
 
         # Metric for ability to score trap
-        with trap_ability_col:
-            average_trap_cycles = self.calculated_stats.average_stat(
+        with algae_off_reef_col:
+            average_algae_removal_value = self.calculated_stats.average_stat(
                 team_number,
-                Queries.TELEOP_TRAP,
+                Queries.TELEOP_ALGAE_REMOVAL,
                 Criteria.BOOLEAN_CRITERIA
             )
             colored_metric(
-                "Can they score in the trap?",
-                average_trap_cycles,
+                "Can they remove algae off the reef?",
+                average_algae_removal_value,
                 threshold=0.01,
                 value_formatter=lambda value: "Yes" if value > 0 else "No"
             )
@@ -190,31 +251,18 @@ class TeamManager(PageManager, ContainsMetrics):
         with climb_breakdown_col:
             times_climbed = self.calculated_stats.cumulative_stat(
                 team_number,
-                Queries.CLIMBED_CHAIN,
-                Criteria.BOOLEAN_CRITERIA
+                Queries.CLIMBED_CAGE,
+                Criteria.CLIMBING_POINTAGE
             )
             times_climbed_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CHAIN, Criteria.BOOLEAN_CRITERIA)
+                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CAGE, Criteria.CLIMBING_POINTAGE)
             )
 
-            times_harmonized = self.calculated_stats.cumulative_stat(
-                team_number,
-                Queries.HARMONIZED_ON_CHAIN,
-                Criteria.BOOLEAN_CRITERIA
-            )
-            times_harmonized_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.HARMONIZED_ON_CHAIN, Criteria.BOOLEAN_CRITERIA)
-            )
-
-            colored_metric_with_two_values(
+            colored_metric(
                 "Climb Breakdown",
-                "# of Times Climbed/Harmonized",
                 times_climbed,
-                times_harmonized,
-                first_threshold=times_climbed_for_percentile,
-                second_threshold=times_harmonized_for_percentile
+                threshold=times_climbed_for_percentile,
             )
 
         # Metric for number of disables
@@ -247,7 +295,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        leaves_col, centerline_col = st.columns(2)
+        leaves_col, scoring_side_col = st.columns(2)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         with leaves_col:
@@ -268,47 +316,97 @@ class TeamManager(PageManager, ContainsMetrics):
                 threshold=times_left_for_percentile
             )
 
-        with centerline_col:
+        with scoring_side_col:
             # Metric for how many times they went to the centerline for auto
-            times_went_to_centerline = self.calculated_stats.cumulative_stat(
+            times_went_to_far_side = self.calculated_stats.cumulative_stat(
                 team_number,
-                Queries.AUTO_USED_CENTERLINE,
-                Criteria.BOOLEAN_CRITERIA
+                Queries.SCORING_SIDE,
+                {"Far Coral Station": 1}
             )
-            centerline_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.AUTO_USED_CENTERLINE, Criteria.BOOLEAN_CRITERIA)
+            times_went_to_close_side = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.SCORING_SIDE,
+                {"Close Coral Station": 1}
             )
 
-            colored_metric(
-                "# of Centerline Autos",
-                times_went_to_centerline,
-                threshold=centerline_for_percentile
+            times_went_to_far_side_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Far Coral Station": 1})
+            )
+            times_went_to_close_side_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Close Coral Station": 1})
+            )
+
+            colored_metric_with_two_values(
+                "# of Times Scored on Side",
+                "Far Side / Close Side",
+                round(times_went_to_far_side, 2),
+                round(times_went_to_close_side, 2),
+                first_threshold=times_went_to_far_side_percentile,
+                second_threshold=times_went_to_close_side_percentile
             )
 
         # Auto Speaker/amp over time graph
-        speaker_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+        coral_l1_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
             team_number,
-            Queries.AUTO_SPEAKER
-        ) * (1 if using_cycle_contributions else 5)
-        amp_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            Queries.AUTO_CORAL_L1
+        ) * (1 if using_cycle_contributions else 3)
+        coral_l2_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
             team_number,
-            Queries.AUTO_AMP
-        ) * (1 if using_cycle_contributions else 2)
-        line_names = [
-            ("# of Speaker Cycles" if using_cycle_contributions else "# of Speaker Points"),
-            ("# of Amp Cycles" if using_cycle_contributions else "# of Amp Points")
+            Queries.AUTO_CORAL_L2
+        ) * (1 if using_cycle_contributions else 4)
+        coral_l3_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            team_number,
+            Queries.AUTO_CORAL_L3
+        ) * (1 if using_cycle_contributions else 6)
+        coral_l4_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            team_number,
+            Queries.AUTO_CORAL_L4
+        ) * (1 if using_cycle_contributions else 7)
+
+        algae_barge_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            team_number,
+            Queries.AUTO_BARGE
+        ) * (1 if using_cycle_contributions else 4)
+        algae_processor_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            team_number,
+            Queries.AUTO_PROCESSOR
+        ) * (1 if using_cycle_contributions else 6)
+
+        line_names_1 = [
+            ("# of Coral L1 Cycles" if using_cycle_contributions else "# of Coral L1 Points"),
+            ("# of Coral L2 Cycles" if using_cycle_contributions else "# of Coral L2 Points"),
+            ("# of Coral L3 Cycles" if using_cycle_contributions else "# of Coral L3 Points"),
+            ("# of Coral L4 Cycles" if using_cycle_contributions else "# of Coral L4 Points")
+        ]
+
+        line_names_2 = [
+            ("# of Algae Net Cycles" if using_cycle_contributions else "# of Algae Net Points"),
+            ("# of Algae Processor Cycles" if using_cycle_contributions else "# of Algae Processor Points")
         ]
 
         plotly_chart(
             multi_line_graph(
-                range(len(speaker_cycles_by_match)),
-                [speaker_cycles_by_match, amp_cycles_by_match],
+                range(len(coral_l1_cycles_by_match)),
+                [coral_l1_cycles_by_match, coral_l2_cycles_by_match, coral_l3_cycles_by_match, coral_l4_cycles_by_match],
                 x_axis_label="Match Index",
-                y_axis_label=line_names,
+                y_axis_label=line_names_1,
                 y_axis_title=f"# of Autonomous {'Cycles' if using_cycle_contributions else 'Points'}",
-                title=f"Speaker/Amp {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
-                color_map=dict(zip(line_names, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+                title=f"Coral {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
+                color_map=dict(zip(line_names_1, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+            )
+        )
+
+        plotly_chart(
+            multi_line_graph(
+                range(len(algae_processor_cycles_by_match)),
+                [algae_barge_cycles_by_match, algae_processor_cycles_by_match],
+                x_axis_label="Match Index",
+                y_axis_label=line_names_2,
+                y_axis_title=f"# of Autonomous {'Cycles' if using_cycle_contributions else 'Points'}",
+                title=f"Algae {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
+                color_map=dict(zip(line_names_2, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
             )
         )
 
@@ -323,37 +421,70 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        speaker_amp_feeding_col, climb_speed_col = st.columns(2)
+        coral_col, algae_col, climb_speed_col = st.columns(3)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        # Teleop Speaker/amp/feeding over time graph
-        with speaker_amp_feeding_col:
-            speaker_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+        # Teleop coral over time graph
+        with coral_col:
+            coral_l1_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
                 team_number,
-                Queries.TELEOP_SPEAKER
-            ) * (1 if using_cycle_contributions else 5)
-            amp_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
-                team_number,
-                Queries.TELEOP_AMP
+                Queries.TELEOP_CORAL_L1
             ) * (1 if using_cycle_contributions else 2)
-            feeding_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+            coral_l2_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
                 team_number,
-                Queries.TELEOP_PASSING
-            )
+                Queries.TELEOP_CORAL_L2
+            ) * (1 if using_cycle_contributions else 3)
+            coral_l3_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_CORAL_L3
+            ) * (1 if using_cycle_contributions else 4)
+            coral_l4_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_CORAL_L4
+            ) * (1 if using_cycle_contributions else 5)
             line_names = [
-                ("# of Speaker Cycles" if using_cycle_contributions else "# of Speaker Points"),
-                ("# of Amp Cycles" if using_cycle_contributions else "# of Amp Points"),
-                "# of Passing Cycles"
+                ("# of Coral L1 Cycles" if using_cycle_contributions else "# of Coral L1 Points"),
+                ("# of Coral L2 Cycles" if using_cycle_contributions else "# of Coral L2 Points"),
+                ("# of Coral L3 Cycles" if using_cycle_contributions else "# of Coral L3 Points"),
+                ("# of Coral L4 Cycles" if using_cycle_contributions else "# of Coral L4 Points")
             ]
 
             plotly_chart(
                 stacked_bar_graph(
-                    range(len(speaker_cycles_by_match)),
-                    [speaker_cycles_by_match, amp_cycles_by_match, feeding_cycles_by_match],
+                    range(len(coral_l1_cycles_by_match)),
+                    [coral_l1_cycles_by_match, coral_l2_cycles_by_match, coral_l3_cycles_by_match, coral_l4_cycles_by_match],
                     x_axis_label="",
                     y_axis_label=line_names,
                     y_axis_title=f"# of Teleop {'Cycles' if using_cycle_contributions else 'Points'}",
-                    title=f"Speaker/Amp/Feeding {'Cycles' if using_cycle_contributions else 'Points'} During Teleop Over Time",
+                    title=f"Coral {'Cycles' if using_cycle_contributions else 'Points'} During Teleop Over Time",
+                    color_map=dict(zip(line_names, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+                )
+            )
+
+        # Teleop algae over time graph
+        with algae_col:
+            barge_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_BARGE
+            ) * (1 if using_cycle_contributions else 4)
+            processor_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.TELEOP_PROCESSOR
+            ) * (1 if using_cycle_contributions else 6)
+
+            line_names = [
+                ("# of Algae Net Cycles" if using_cycle_contributions else "# of Algae Net Points"),
+                ("# of Algae Processor Cycles" if using_cycle_contributions else "# of Algae Processor Points")
+            ]
+
+            plotly_chart(
+                stacked_bar_graph(
+                    range(len(barge_cycles_by_match)),
+                    [barge_cycles_by_match, processor_cycles_by_match],
+                    x_axis_label="",
+                    y_axis_label=line_names,
+                    y_axis_title=f"# of Teleop {'Cycles' if using_cycle_contributions else 'Points'}",
+                    title=f"Algae {'Cycles' if using_cycle_contributions else 'Points'} During Teleop Over Time",
                     color_map=dict(zip(line_names, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
                 )
             )
@@ -403,7 +534,7 @@ class TeamManager(PageManager, ContainsMetrics):
         )
 
         with qualitative_graphs_tab:
-            driver_rating_col, defense_skill_col, counter_defense_skill = st.columns(3)
+            driver_rating_col, defense_skill_col = st.columns(2)
 
             with driver_rating_col:
                 driver_rating_types = Criteria.DRIVER_RATING_CRITERIA.keys()
@@ -440,29 +571,6 @@ class TeamManager(PageManager, ContainsMetrics):
                         title="Defense Skill Breakdown",
                         color=dict(zip(defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
                         color_indicator="Defense Skill"
-                    )
-                )
-
-            with counter_defense_skill:
-                counter_defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
-                counter_defense_skill_by_type = [
-                    self.calculated_stats.cumulative_stat(
-                        team_number,
-                        Queries.COUNTER_DEFENSE_SKIll,
-                        {counter_defense_skill_type: 1}
-                    )
-                    for counter_defense_skill_type in defense_skill_types
-                ]
-
-                plotly_chart(
-                    bar_graph(
-                        counter_defense_skill_types,
-                        counter_defense_skill_by_type,
-                        x_axis_label="Counter Defense Skill",
-                        y_axis_label="# of Occurrences",
-                        title="Counter Defense Skill Breakdown",
-                        color=dict(zip(counter_defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
-                        color_indicator="Counter Defense Skill"
                     )
                 )
 
