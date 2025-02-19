@@ -37,35 +37,31 @@ class PicklistManager(PageManager):
                 self.calculated_stats.average_cycles,
                 mode=Queries.TELEOP
             ),
-            "Average Speaker Cycles": partial(
+            "Average Coral Cycles": partial(
                 self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_SPEAKER, Queries.TELEOP_SPEAKER)
+                structure=(Queries.AUTO_CORAL, Queries.TELEOP_CORAL)
             ),
-            "Average Amp Cycles": partial(
+            "Average Algae Cycles": partial(
                 self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_AMP, Queries.TELEOP_AMP)
-            ),
-            "Average Feeding Cycles": self.calculated_stats.average_feeding_cycles_without_full_field,
-            "Avg. Adjusted Teleop Cycles (w/ Feeding)": (
-                lambda team: self.calculated_stats.average_cycles(team, Queries.TELEOP) + self.calculated_stats.average_feeding_cycles_without_full_field(team) / 2
+                structure=(Queries.AUTO_ALGAE, Queries.TELEOP_ALGAE)
             ),
             "Average Trap Cycles": partial(
                 self.calculated_stats.average_cycles_for_structure,
-                structure=Queries.TELEOP_TRAP
+                structure=Queries.TELEOP_BARGE
             ),
             "# of Times Climbed": partial(
                 self.calculated_stats.cumulative_stat,
-                stat=Queries.CLIMBED_CHAIN,
+                stat=Queries.CLIMBED_CAGE,
                 criteria=Criteria.BOOLEAN_CRITERIA
             ),
-            "# of Times Harmonized": partial(
+            "# of Coral RP": partial(
                 self.calculated_stats.cumulative_stat,
-                stat=Queries.HARMONIZED_ON_CHAIN,
+                stat=Queries.CORAL_RP,
                 criteria=Criteria.BOOLEAN_CRITERIA
             ),
-            "# of Disables": partial(
+            "# of Barge RP": partial(
                 self.calculated_stats.cumulative_stat,
-                stat=Queries.DISABLE,
+                stat=Queries.BARGE_RP,
                 criteria=Criteria.BOOLEAN_CRITERIA
             ),
             "Average Driver Rating": self.calculated_stats.average_driver_rating,
