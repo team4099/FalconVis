@@ -36,7 +36,7 @@ class TeamManager(PageManager, ContainsMetrics):
         self.calculated_stats = CalculatedStats(
             retrieve_scouting_data()
         )
-        self.pit_scouting_data = retrieve_pit_scouting_data()
+        # self.pit_scouting_data = retrieve_pit_scouting_data()
 
     def generate_input_section(self) -> int:
         """Creates the input section for the `Teams` page.
@@ -154,11 +154,11 @@ class TeamManager(PageManager, ContainsMetrics):
             )
             average_teleop_coral_l3_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.TELEOP_CORAL_L2
+                Queries.TELEOP_CORAL_L3
             )
             average_teleop_coral_l4_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.TELEOP_CORAL_L2
+                Queries.TELEOP_CORAL_L4
             )
             average_teleop_coral_cycles = average_teleop_coral_l1_cycles + average_teleop_coral_l2_cycles + average_teleop_coral_l3_cycles + average_teleop_coral_l4_cycles
 
@@ -186,7 +186,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 threshold=average_teleop_coral_for_percentile
             )
 
-        # Metric for algae cycles for a team
+        # Metric for average algae teleop cycles
         with teleop_algae_col:
             average_teleop_algae_processor_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
@@ -198,9 +198,11 @@ class TeamManager(PageManager, ContainsMetrics):
             )
 
             average_teleop_algae_processor_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
                 lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_PROCESSOR)
             )
             average_teleop_algae_barge_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
                 lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_BARGE)
             )
 
@@ -233,7 +235,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 invert_threshold=True
             )
 
-        # Metric for ability to score trap
+        # Metric for ability to remove algae off the reef
         with algae_off_reef_col:
             average_algae_removal_value = self.calculated_stats.average_stat(
                 team_number,
@@ -241,26 +243,26 @@ class TeamManager(PageManager, ContainsMetrics):
                 Criteria.BOOLEAN_CRITERIA
             )
             colored_metric(
-                "Can they remove algae off the reef?",
+                "Can robot remove algae off reef?",
                 average_algae_removal_value,
                 threshold=0.01,
                 value_formatter=lambda value: "Yes" if value > 0 else "No"
             )
 
-        # Metric for total times climbed and total harmonizes
+        # Metric for number of times robot climbed
         with climb_breakdown_col:
             times_climbed = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.CLIMBED_CAGE,
-                Criteria.CLIMBING_POINTAGE
+                Criteria.CLIMBING_CRITERIA
             )
             times_climbed_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CAGE, Criteria.CLIMBING_POINTAGE)
+                lambda self, team: self.cumulative_stat(team, Queries.CLIMBED_CAGE, Criteria.CLIMBING_CRITERIA)
             )
 
             colored_metric(
-                "Climb Breakdown",
+                "# of Times Climbed",
                 times_climbed,
                 threshold=times_climbed_for_percentile,
             )
@@ -494,22 +496,27 @@ class TeamManager(PageManager, ContainsMetrics):
             slow_climbs = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.CLIMB_SPEED,
-                {"Slow": 1}
+                {"Slow (>10 seconds)": 1}
+            )
+            average_climbs = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.CLIMB_SPEED,
+                {"Average (5-10 seconds)": 1}
             )
             fast_climbs = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.CLIMB_SPEED,
-                {"Fast": 1}
+                {"Fast (<5 seconds)": 1}
             )
 
             plotly_chart(
                 bar_graph(
-                    ["Slow Climbs", "Fast Climbs"],
-                    [slow_climbs, fast_climbs],
+                    ["Slow Climbs", "Average Climbs", "Fast Climbs"],
+                    [slow_climbs, average_climbs, fast_climbs],
                     x_axis_label="Type of Climb",
                     y_axis_label="# of Climbs",
                     title=f"Climb Speed Breakdown",
-                    color={"Slow Climbs": GeneralConstants.LIGHT_RED, "Fast Climbs": GeneralConstants.LIGHT_GREEN},
+                    color={"Slow Climbs": GeneralConstants.LIGHT_RED, "Average Climbs": GeneralConstants.GOLD_GRADIENT[0], "Fast Climbs": GeneralConstants.LIGHT_GREEN},
                     color_indicator="Type of Climb"
                 )
             )
@@ -558,7 +565,7 @@ class TeamManager(PageManager, ContainsMetrics):
             with defense_skill_col:
                 defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
                 defense_skill_by_type = [
-                    self.calculated_stats.cumulative_stat(team_number, Queries.DEFENSE_SKILL, {defense_skill_type: 1})
+                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_DEFENSE_RATING, {defense_skill_type: 1})
                     for defense_skill_type in defense_skill_types
                 ]
 

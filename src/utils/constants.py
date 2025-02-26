@@ -25,6 +25,7 @@ class GeneralConstants:
     # Color sequences
     RED_ALLIANCE_GRADIENT = ["#731111", "#b04949", "#ed8282", "#f5b3b3"]
     BLUE_ALLIANCE_GRADIENT = ["#0b2e61", "#355687", "#7da0d1", "#a8c1e3"]
+    GOLD_GRADIENT = ["#ffbd4d", "#ff9000", "#dd5f00"]
     GREEN_TO_PURPLE_GRADIENT = ["#68D391", "#B794F4"]
     LEVEL_GRADIENT = ["#f44a53", "#ff8800", "#f4c717"]
     RED_TO_GREEN_GRADIENT = ["#ffb6b3", "#ffd5d4", "#e7f1e8", "#bde7bd", "#77dd76"]
@@ -52,9 +53,8 @@ class GeneralConstants:
 
 class EventSpecificConstants:
     """Constants specific to an event."""
-
-    EVENT_CODE = "2024cur"
-    EVENT_NAME = "Curie Division"
+    EVENT_CODE = "2025vapor"
+    EVENT_NAME = "Portsmouth"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     NOTE_SCOUTING_URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
     PIT_SCOUTING_URL = (
@@ -99,8 +99,6 @@ class Queries:
     PARKED_UNDER_BARGE = "Parked"
     CLIMBED_CAGE = "ClimbStatus"
     CLIMB_SPEED = "ClimbSpeed"
-    DEEP_CLIMB = "DeepClimb"
-    SHALLOW_CLIMB = "ShallowClimb"
 
     DRIVER_RATING = "DriverRating"
     ROBOT_STYLE_TYPE = "RobotStyleType"
@@ -120,11 +118,7 @@ class Queries:
 
     # Modes
     AUTO = "Auto"
-    AUTO_CORAL= "AutoCoral"
-    CORAL_L1= "CoralL1"
-    CORAL_L2= "CoralL2"
-    CORAL_L3= "CoralL3"
-    CORAL_L4= "CoralL4"
+    AUTO_CORAL = "AutoCoral"
     TELEOP = "Teleop"
     ENDGAME = "Endgame"
 
@@ -152,6 +146,12 @@ class Criteria:
         "No Climb": 2,
         "Shallow Climb": 6,
         "Deep Climb": 12
+    }
+
+    CLIMBING_CRITERIA = {
+        "No Climb": 0,
+        "Shallow Climb": 1,
+        "Deep Climb": 1
     }
 
     # Ratings criteria

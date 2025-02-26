@@ -186,7 +186,8 @@ class EventManager(PageManager):
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
         teams = retrieve_team_list()
         auto_cycles_col, teleop_cycles_col = st.columns(2, gap="large")
-        L1Coral_cycles_col, L2Coral_cycles_col, L3Coral_cycles_col, L4Coral_cycles_col, barge_cycles_col, processor_cycles_col = st.columns(2, gap="large")
+        coral_cycles_l1_col, coral_l2_cycles_col, coral_l3_cycles_col, coral_l4_cycles_col = st.columns(4, gap="small")
+        barge_cycles_col, processor_cycles_col = st.columns(2, gap="small")
 
         # Display event-wide graph surrounding each team and their cycle distributions in the Autonomous period.
         with auto_cycles_col:
@@ -306,31 +307,31 @@ class EventManager(PageManager):
                 st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
                 st.experimental_rerun()
 
-        # Display event-wide graph surrounding each team and their cycle distributions with L1 Coral.
-        with L1Coral_cycles_col:
-            variable_key = f"L1Coral_cycles_col_{type_of_graph}"
+        # Display event-wide graph surrounding each team and their cycle distributions with L1 Coral
+        with coral_cycles_l1_col:
+            variable_key = f"coral_cycles_l1_col_{type_of_graph}"
 
-            L1Coral_distributions = self._retrieve_L1Coral_cycle_distributions()
-            L1Coral_sorted_distributions = dict(
+            coral_l1_distributions = self._retrieve_L1Coral_cycle_distributions()
+            coral_l1_sorted_distributions = dict(
                 sorted(
-                    zip(teams, L1Coral_distributions),
+                    zip(teams, coral_l1_distributions),
                     key=lambda pair: (pair[1].median(), pair[1].mean()),
                     reverse=True
                 )
             )
 
-            L1Coral_sorted_teams = list(L1Coral_sorted_distributions.keys())
-            L1Coral_distributions = list(L1Coral_sorted_distributions.values())
+            coral_l1_sorted_teams = list(coral_l1_sorted_distributions.keys())
+            coral_l1_distributions = list(coral_l1_sorted_distributions.values())
 
             if not st.session_state.get(variable_key):
                 st.session_state[variable_key] = 0
 
             plotly_chart(
                 box_plot(
-                    L1Coral_sorted_teams[
+                    coral_l1_sorted_teams[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
-                    L1Coral_distributions[
+                    coral_l1_distributions[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
                     x_axis_label="Teams",
@@ -361,30 +362,31 @@ class EventManager(PageManager):
                 st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
                 st.experimental_rerun()
 
-        with L2Coral_cycles_col:
-            variable_key = f"L2Coral_cycles_col_{type_of_graph}"
+        # Display event-wide graph surrounding each team and their cycle distributions with L2 Coral
+        with coral_l2_cycles_col:
+            variable_key = f"coral_l2_cycles_col_{type_of_graph}"
 
-            L2Coral_distributions = self._retrieve_L2Coral_cycle_distributions()
-            L2Coral_sorted_distributions = dict(
+            coral_l2_distributions = self._retrieve_L2Coral_cycle_distributions()
+            coral_l2_sorted_distributions = dict(
                 sorted(
-                    zip(teams, L2Coral_distributions),
+                    zip(teams, coral_l2_distributions),
                     key=lambda pair: (pair[1].median(), pair[1].mean()),
                     reverse=True
                 )
             )
 
-            L2Coral_sorted_teams = list(L2Coral_sorted_distributions.keys())
-            L2Coral_distributions = list(L2Coral_sorted_distributions.values())
+            coral_l2_sorted_teams = list(coral_l2_sorted_distributions.keys())
+            coral_l2_distributions = list(coral_l2_sorted_distributions.values())
 
             if not st.session_state.get(variable_key):
                 st.session_state[variable_key] = 0
 
             plotly_chart(
                 box_plot(
-                    L2Coral_sorted_teams[
+                    coral_l2_sorted_teams[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
-                    L2Coral_distributions[
+                    coral_l2_distributions[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
                     x_axis_label="Teams",
@@ -414,30 +416,32 @@ class EventManager(PageManager):
             ):
                 st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
                 st.experimental_rerun()
-        with L3Coral_cycles_col:
-            variable_key = f"L3Coral_cycles_col_{type_of_graph}"
 
-            L3Coral_distributions = self._retrieve_L3Coral_cycle_distributions()
-            L3Coral_sorted_distributions = dict(
+        # Display event-wide graph surrounding each team and their cycle distributions with L3 Coral
+        with coral_l3_cycles_col:
+            variable_key = f"coral_l3_cycles_col_{type_of_graph}"
+
+            coral_l3_distributions = self._retrieve_L3Coral_cycle_distributions()
+            coral_l3_sorted_distributions = dict(
                 sorted(
-                    zip(teams, L3Coral_distributions),
+                    zip(teams, coral_l3_distributions),
                     key=lambda pair: (pair[1].median(), pair[1].mean()),
                     reverse=True
                 )
             )
 
-            L3Coral_sorted_teams = list(L3Coral_sorted_distributions.keys())
-            L3Coral_distributions = list(L3Coral_sorted_distributions.values())
+            coral_l3_sorted_teams = list(coral_l3_sorted_distributions.keys())
+            coral_l3_distributions = list(coral_l3_sorted_distributions.values())
 
             if not st.session_state.get(variable_key):
                 st.session_state[variable_key] = 0
 
             plotly_chart(
                 box_plot(
-                    L3Coral_sorted_teams[
+                    coral_l3_sorted_teams[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
-                    L3Coral_distributions[
+                    coral_l3_distributions[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
                     x_axis_label="Teams",
@@ -467,30 +471,32 @@ class EventManager(PageManager):
             ):
                 st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
                 st.experimental_rerun()
-        with L4Coral_cycles_col:
-            variable_key = f"L4Coral_cycles_col_{type_of_graph}"
 
-            L4Coral_distributions = self._retrieve_L4Coral_cycle_distributions()
-            L4Coral_sorted_distributions = dict(
+        # Display event-wide graph surrounding each team and their cycle distributions with L4 Coral
+        with coral_l4_cycles_col:
+            variable_key = f"coral_l4_cycles_col_{type_of_graph}"
+
+            coral_l4_distributions = self._retrieve_L4Coral_cycle_distributions()
+            coral_l4_sorted_distributions = dict(
                 sorted(
-                    zip(teams, L4Coral_distributions),
+                    zip(teams, coral_l4_distributions),
                     key=lambda pair: (pair[1].median(), pair[1].mean()),
                     reverse=True
                 )
             )
 
-            L4Coral_sorted_teams = list(L4Coral_sorted_distributions.keys())
-            L4Coral_distributions = list(L4Coral_sorted_distributions.values())
+            coral_l4_sorted_teams = list(coral_l4_sorted_distributions.keys())
+            coral_l4_distributions = list(coral_l4_sorted_distributions.values())
 
             if not st.session_state.get(variable_key):
                 st.session_state[variable_key] = 0
 
             plotly_chart(
                 box_plot(
-                    L4Coral_sorted_teams[
+                    coral_l4_sorted_teams[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
-                    L4Coral_distributions[
+                    coral_l4_distributions[
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
                     x_axis_label="Teams",
@@ -520,7 +526,7 @@ class EventManager(PageManager):
             ):
                 st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
                 st.experimental_rerun()
-        
+
         # Display event-wide graph surrounding each team and their cycle contributions to the Barge.
         with barge_cycles_col:
             variable_key = f"barge_cycles_col_{type_of_graph}"
@@ -575,6 +581,8 @@ class EventManager(PageManager):
             ):
                 st.session_state[variable_key] += self.TEAMS_TO_SPLIT_BY
                 st.experimental_rerun()
+
+        # Display event-wide graph surrounding each team and their cycle distributions with the Processor
         with processor_cycles_col:
             variable_key = f"processor_cycles_col_{type_of_graph}"
 

@@ -58,7 +58,7 @@ class CalculatedStats(BaseCalculatedStats):
         auto_barge_points = team_data[Queries.AUTO_BARGE].apply(lambda cycle: cycle * 4)
         auto_processor_points = team_data[Queries.AUTO_PROCESSOR].apply(lambda cycle: cycle * 6)
         auto_leave_points = team_data[Queries.LEFT_STARTING_ZONE].apply(
-            lambda left_starting_zone: Criteria.BOOLEAN_CRITERIA[left_starting_zone]
+            lambda left_starting_zone: Criteria.BOOLEAN_CRITERIA[left_starting_zone] * 3
         )
         total_auto_points = auto_coral_l1_points + auto_coral_l2_points + auto_coral_l3_points + auto_coral_l4_points + auto_barge_points + auto_processor_points + auto_leave_points
         # Teleop calculations
@@ -69,14 +69,13 @@ class CalculatedStats(BaseCalculatedStats):
         teleop_barge_points = team_data[Queries.TELEOP_BARGE].apply(lambda cycle: cycle * 4)
         teleop_processor_points = team_data[Queries.TELEOP_PROCESSOR].apply(lambda cycle: cycle * 6)
         total_teleop_points = teleop_coral_l1_points + teleop_coral_l2_points + teleop_coral_l3_points + teleop_coral_l4_points + teleop_barge_points + teleop_processor_points
-        
 
         # Endgame (stage) calculations
         park_points = team_data[Queries.PARKED_UNDER_BARGE].apply(
             lambda parking_state: Criteria.BOOLEAN_CRITERIA[parking_state]
         )
         climb_points = team_data[Queries.CLIMBED_CAGE].apply(
-            lambda climbing_state: Criteria.BOOLEAN_CRITERIA[climbing_state] * 3 if climbing_state == "Deep Climb" else Criteria.BOOLEAN_CRITERIA[climbing_state] * 3
+            lambda climbing_state: Criteria.CLIMBING_POINTAGE[climbing_state]
         )
        
         total_endgame_points = park_points + climb_points 
@@ -176,7 +175,7 @@ class CalculatedStats(BaseCalculatedStats):
             return reduce(lambda x, y: x + y, [team_data[struct] for struct in structure])
         else:
             return team_data[structure]
-        i
+
     # Alliance-wide methods
     @_convert_to_float_from_numpy_type
     def average_coop_bonus_rate(self, team_number: int) -> float:

@@ -34,7 +34,7 @@ class MatchManager(PageManager):
 
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
-        self.pit_scouting_data = retrieve_pit_scouting_data()
+        # self.pit_scouting_data = retrieve_pit_scouting_data()
 
     def generate_input_section(self) -> list[list, list]:
         """Creates the input section for the `Match` page.
@@ -567,19 +567,19 @@ class MatchManager(PageManager):
         # Auto cycle breakdown graph
         with auto_cycles_breakdown_col:
             if display_cycle_contributions:
-                average_L1Coral_cycles_by_team = [
+                average_l1_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L1)
                     for team in team_numbers
                 ]
-                average_L2Coral_cycles_by_team = [
+                average_l2_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L2)
                     for team in team_numbers
                 ]
-                average_L3Coral_cycles_by_team = [
+                average_l3_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L3)
                     for team in team_numbers
                 ]
-                average_L4Coral_cycles_by_team = [
+                average_l4_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L4)
                     for team in team_numbers
                 ]
@@ -592,19 +592,19 @@ class MatchManager(PageManager):
                     for team in team_numbers
                 ]
             else:
-                average_L1Coral_cycles_by_team = [
+                average_l1_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L1) * 3
                     for team in team_numbers
                 ]
-                average_L2Coral_cycles_by_team = [
+                average_l2_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L2) * 4
                     for team in team_numbers
                 ]
-                average_L3Coral_cycles_by_team = [
+                average_l3_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L3) * 6
                     for team in team_numbers
                 ]
-                average_L4Coral_cycles_by_team = [
+                average_l4_coral_cycles_by_team = [
                     self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L4) * 7
                     for team in team_numbers
                 ]
@@ -620,7 +620,7 @@ class MatchManager(PageManager):
             plotly_chart(
                 stacked_bar_graph(
                     team_numbers,
-                    [average_L1Coral_cycles_by_team, average_L2Coral_cycles_by_team, average_L3Coral_cycles_by_team, average_L4Coral_cycles_by_team, average_barge_cycles_by_team, average_processor_cycles_by_team],
+                    [average_l1_coral_cycles_by_team, average_l2_coral_cycles_by_team, average_l3_coral_cycles_by_team, average_l4_coral_cycles_by_team, average_barge_cycles_by_team, average_processor_cycles_by_team],
                     "Teams",
                     [
                         ("Avg. L1 Coral Cycles" if display_cycle_contributions else "Avg. L1 Coral Points"),
@@ -667,8 +667,8 @@ class MatchManager(PageManager):
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         st.write("## ⭕ Cycles")
-        L1Coral_cycles_over_time_col, L2Coral_cycles_over_time_col, L3Coral_cycles_over_time_col, L4Coral_cycles_over_time_col, barge_cycles_over_time_col, processor_cycles_over_time_col = st.columns(6, gap="large")
-        passing_shot_by_team_col, = st.columns(1)
+        l1_coral_cycles_over_time_col, l2_coral_cycles_over_time_col, l3_coral_cycles_over_time_col, l4_coral_cycles_over_time_col = st.columns(4, gap="small")
+        barge_cycles_over_time_col, processor_cycles_over_time_col = st.columns(2, gap="small")
 
         st.divider()
         st.write("## ⛓️ Endgame")
@@ -681,7 +681,7 @@ class MatchManager(PageManager):
         ]
 
         # Display the teleop L1 Coral cycles of each team over time
-        with L1Coral_cycles_over_time_col:
+        with l1_coral_cycles_over_time_col:
             cycles_by_team = [
                 self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L1) *
                 (
@@ -715,11 +715,11 @@ class MatchManager(PageManager):
             )
        
         # Display the teleop L2 Coral cycles of each team over time
-        with L2Coral_cycles_over_time_col:
+        with l2_coral_cycles_over_time_col:
             cycles_by_team = [
                 self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L2) *
                 (
-                    1 if display_cycle_contributions else 2
+                    1 if display_cycle_contributions else 3
                 )
                 for team in team_numbers
             ]
@@ -749,11 +749,11 @@ class MatchManager(PageManager):
             )
 
         # Display the teleop L3 Coral cycles of each team over time            
-        with L3Coral_cycles_over_time_col:
+        with l3_coral_cycles_over_time_col:
             cycles_by_team = [
                 self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L3) *
                 (
-                    1 if display_cycle_contributions else 2
+                    1 if display_cycle_contributions else 4
                 )
                 for team in team_numbers
             ]
@@ -783,11 +783,11 @@ class MatchManager(PageManager):
             )
 
         # Display the teleop L4 Coral cycles of each team over time
-        with L4Coral_cycles_over_time_col:
+        with l4_coral_cycles_over_time_col:
             cycles_by_team = [
                 self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L4) *
                 (
-                    1 if display_cycle_contributions else 2
+                    1 if display_cycle_contributions else 5
                 )
                 for team in team_numbers
             ]
@@ -884,36 +884,14 @@ class MatchManager(PageManager):
                 )
             )
 
-        with passing_shot_by_team_col:
-            passing_shots_by_team = [
-                self.calculated_stats.passing_shots_by_match(team)
-                for team in team_numbers
-            ]
-            best_teams = sorted(zip(team_numbers, passing_shots_by_team), key=lambda pair: pair[1].mean())
-            color_map = {
-                pair[0]: color
-                for pair, color in zip(best_teams, short_gradient)
-            }
-
-            plotly_chart(
-                multi_line_graph(
-                    *populate_missing_data(passing_shots_by_team),
-                    x_axis_label="Match Index",
-                    y_axis_label=team_numbers,
-                    y_axis_title="# of Cycles",
-                    title="Passing Cycles by Alliance",
-                    color_map=color_map
-                )
-            )
-
         with climb_breakdown_by_team_col:
             deep_climbs_by_team = [
-                team_data[Queries.DEEP_CLIMB].sum()
+                (team_data[Queries.CLIMBED_CAGE] == "Deep Climb").sum()
                 for team_data in teams_data
             ]
             shallow_climbs_by_team = [
-                team_data[Queries.SHALLOW_CLIMB].sum() - deep_climbs 
-                for team_data, deep_climbs in zip(teams_data, deep_climbs_by_team)
+                (team_data[Queries.CLIMBED_CAGE] == "Shallow Climb").sum()
+                for team_data in teams_data
             ]
 
             plotly_chart(
@@ -962,7 +940,7 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        driver_rating_by_team_col, defense_rating_by_team_col, disables_by_team_col = st.columns(3)
+        driver_rating_by_team_col, counter_defense_rating_by_team_col, disables_by_team_col = st.columns(3)
 
         with driver_rating_by_team_col:
             driver_rating_by_team = [
@@ -981,19 +959,19 @@ class MatchManager(PageManager):
                 )
             )
 
-        with defense_rating_by_team_col:
-            defense_rating_by_team = [
-                self.calculated_stats.average_defense_skill(team)
+        with counter_defense_rating_by_team_col:
+            counter_defense_rating_by_team = [
+                self.calculated_stats.average_counter_defense_skill(team)
                 for team in team_numbers
             ]
 
             plotly_chart(
                 bar_graph(
                     team_numbers,
-                    defense_rating_by_team,
+                    counter_defense_rating_by_team,
                     x_axis_label="Teams",
-                    y_axis_label="Defense Rating (1-5)",
-                    title="Average Defense Rating by Team",
+                    y_axis_label="Intake Defense Rating (1-5)",
+                    title="Average Intake Defense Rating by Team",
                     color=color_gradient[1]
                 )
             )

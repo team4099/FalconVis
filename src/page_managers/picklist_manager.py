@@ -39,34 +39,25 @@ class PicklistManager(PageManager):
             ),
             "Average Coral Cycles": partial(
                 self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_CORAL, Queries.TELEOP_CORAL)
+                structure=(Queries.AUTO_CORAL_L1, Queries.AUTO_CORAL_L2, Queries.AUTO_CORAL_L3, Queries.AUTO_CORAL_L4,
+                           Queries.TELEOP_CORAL_L1, Queries.TELEOP_CORAL_L2, Queries.TELEOP_CORAL_L3, Queries.TELEOP_CORAL_L4)
             ),
             "Average Algae Cycles": partial(
                 self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_ALGAE, Queries.TELEOP_ALGAE)
-            ),
-            "Average Trap Cycles": partial(
-                self.calculated_stats.average_cycles_for_structure,
-                structure=Queries.TELEOP_BARGE
+                structure=(Queries.AUTO_BARGE, Queries.AUTO_PROCESSOR,
+                           Queries.TELEOP_BARGE, Queries.TELEOP_PROCESSOR)
             ),
             "# of Times Climbed": partial(
                 self.calculated_stats.cumulative_stat,
                 stat=Queries.CLIMBED_CAGE,
-                criteria=Criteria.BOOLEAN_CRITERIA
+                criteria=Criteria.CLIMBING_CRITERIA
             ),
-            "# of Coral RP": partial(
+            "# of Disables": partial(
                 self.calculated_stats.cumulative_stat,
-                stat=Queries.CORAL_RP,
-                criteria=Criteria.BOOLEAN_CRITERIA
-            ),
-            "# of Barge RP": partial(
-                self.calculated_stats.cumulative_stat,
-                stat=Queries.BARGE_RP,
+                stat=Queries.DISABLE,
                 criteria=Criteria.BOOLEAN_CRITERIA
             ),
             "Average Driver Rating": self.calculated_stats.average_driver_rating,
-            "Average Defense Skill": self.calculated_stats.average_defense_skill,
-            "Average Defense Time": self.calculated_stats.average_defense_time,
             "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill
         }
 
