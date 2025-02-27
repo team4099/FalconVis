@@ -120,7 +120,7 @@ def retrieve_match_schedule() -> DataFrame:
             ]
         )
     else:  # Load match schedule from local files
-        with open("src/data/match_schedule.json") as file:
+        with open("mount/src/data/match_schedule.json") as file:
             return DataFrame.from_dict(load(file))
 
 
