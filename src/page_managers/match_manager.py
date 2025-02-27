@@ -372,12 +372,12 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     auto_alliance_distributions,
                     y_axis_label=(
-                        "Notes Scored"
+                        "Coral + Algae Scored"
                         if display_cycle_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Notes During Autonomous (N={len(auto_alliance_distributions[0])})"
+                        f"Coral + Algae During Autonomous (N={len(auto_alliance_distributions[0])})"
                         if display_cycle_contributions
                         else f"Points Contributed During Autonomous (N={len(auto_alliance_distributions[0])})"
                     ),
@@ -411,12 +411,12 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     teleop_alliance_distributions,
                     y_axis_label=(
-                        "Notes Scored"
+                        "Coral + Algae Scored"
                         if display_cycle_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Notes During Teleop (N={len(teleop_alliance_distributions[0])})"
+                        f"Coral + Algae During Teleop (N={len(teleop_alliance_distributions[0])})"
                         if display_cycle_contributions
                         else f"Points Contributed During Teleop (N={len(teleop_alliance_distributions[0])})"
                     ),
@@ -438,7 +438,7 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     cumulative_alliance_distributions,
                     y_axis_label=(
-                        "Notes Scored"
+                        "Coral + Algae Scored"
                         if display_cycle_contributions
                         else "Points Contributed"
                     ),
