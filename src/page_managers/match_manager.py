@@ -443,7 +443,7 @@ class MatchManager(PageManager):
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Notes During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
+                        f"Coral + Algae During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
                         if display_cycle_contributions
                         else f"Points Contributed During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
                     ),
