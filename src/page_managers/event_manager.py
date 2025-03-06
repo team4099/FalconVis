@@ -64,18 +64,6 @@ class EventManager(PageManager):
             _self.calculated_stats.cycles_by_structure_per_match(team, (Queries.AUTO_CORAL_L1, Queries.TELEOP_CORAL_L1))
             for team in teams
         ]
-
-    @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
-    def _retrieve_L1Coral_point_distributions(_self) -> list:
-        """Retrieves the distribution of L1Coral cycles for each team across an event for auto/teleop.
-
-        :return: A list containing the L1Coral cycle distributions for each team.
-        """
-        teams = retrieve_team_list()
-        return [
-            _self.calculated_stats.points_contributed_by_match(team, (Queries.AUTO_CORAL_L1, Queries.TELEOP_CORAL_L1))
-            for team in teams
-        ]
     
     @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
     def _retrieve_L2Coral_cycle_distributions(_self) -> list:
@@ -323,9 +311,7 @@ class EventManager(PageManager):
         with coral_cycles_l1_col:
             variable_key = f"coral_cycles_l1_col_{type_of_graph}"
 
-            coral_l1_distributions = (self._retrieve_L1Coral_cycle_distributions()
-                                      if display_cycle_contributions
-                                      else self._retrieve_L1Coral_point_distributions())
+            coral_l1_distributions = self._retrieve_L1Coral_cycle_distributions()
             coral_l1_sorted_distributions = dict(
                 sorted(
                     zip(teams, coral_l1_distributions),
@@ -349,8 +335,8 @@ class EventManager(PageManager):
                     st.session_state[variable_key]:st.session_state[variable_key] + self.TEAMS_TO_SPLIT_BY
                     ],
                     x_axis_label="Teams",
-                    y_axis_label="Cycle Distribution" if display_cycle_contributions else "Point Distribution",
-                    title=f"L1 Coral Cycle Distributions by Team" if display_cycle_contributions else "L1 Coral Point Contributions in Teleop"
+                    y_axis_label=f"Cycle Distribution",
+                    title=f"L1 Coral Cycle Distributions by Team"
                 ).update_layout(
                     showlegend=False
                 )

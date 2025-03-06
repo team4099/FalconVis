@@ -573,11 +573,11 @@ class TeamManager(PageManager, ContainsMetrics):
                     bar_graph(
                         defense_skill_types,
                         defense_skill_by_type,
-                        x_axis_label="Defense Skill",
+                        x_axis_label="Counter Defense Skill",
                         y_axis_label="# of Occurrences",
-                        title="Defense Skill Breakdown",
+                        title="Counter Defense Skill Breakdown",
                         color=dict(zip(defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
-                        color_indicator="Defense Skill"
+                        color_indicator="Counter Defense Skill"
                     )
                 )
 
