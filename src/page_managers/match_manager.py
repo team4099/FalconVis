@@ -34,7 +34,7 @@ class MatchManager(PageManager):
 
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
-        self.pit_scouting_data = retrieve_pit_scouting_data()
+        # self.pit_scouting_data = retrieve_pit_scouting_data()
 
     def generate_input_section(self) -> list[list, list]:
         """Creates the input section for the `Match` page.
@@ -317,17 +317,13 @@ class MatchManager(PageManager):
                     ).sum()
                     for team in combined_teams
                 ]
-                if structures != Queries.TELEOP_PASSING
-                else [
-                    self.calculated_stats.stat_per_match(
-                        team, structures
-                    ).sum()
-                    for team in combined_teams
-                ]
                 for structures in (
-                    (Queries.AUTO_AMP, Queries.TELEOP_AMP),
-                    (Queries.AUTO_SPEAKER, Queries.TELEOP_SPEAKER),
-                    Queries.TELEOP_PASSING
+                    (Queries.AUTO_BARGE, Queries.TELEOP_BARGE),
+                    (Queries.AUTO_PROCESSOR, Queries.TELEOP_PROCESSOR),
+                    (Queries.AUTO_CORAL_L1, Queries.TELEOP_CORAL_L1),
+                    (Queries.AUTO_CORAL_L2, Queries.TELEOP_CORAL_L2),
+                    (Queries.AUTO_CORAL_L3, Queries.TELEOP_CORAL_L3),
+                    (Queries.AUTO_CORAL_L4, Queries.TELEOP_CORAL_L4)
                 )
             ]
 
@@ -336,13 +332,16 @@ class MatchManager(PageManager):
                     combined_teams,
                     structure_breakdown,
                     "Teams",
-                    ["# of Amp Cycles", "# of Speaker Cycles", "# of Feeding Cycles"],
+                    ["# of Barge Cycles", "# of Processor Cycles", "# of L1 Coral Cycles", "# of L2 Coral Cycles", "# of L3 Coral Cycles", "# of L4 Coral Cycles"],
                     "Total Cycles Scored into Structures",
                     title="Structure Breakdown",
                     color_map={
-                        "# of Amp Cycles": GeneralConstants.GOLD_GRADIENT[0],
-                        "# of Speaker Cycles": GeneralConstants.GOLD_GRADIENT[1],
-                        "# of Feeding Cycles": GeneralConstants.GOLD_GRADIENT[2]
+                        "# of L1 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
+                        "# of L2 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
+                        "# of L3 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
+                        "# of L4 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
+                        "# of Barge Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[1],
+                        "# of Processor Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[1]
                     },
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
@@ -373,12 +372,12 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     auto_alliance_distributions,
                     y_axis_label=(
-                        "Notes Scored"
+                        "Coral + Algae Scored"
                         if display_cycle_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Notes During Autonomous (N={len(auto_alliance_distributions[0])})"
+                        f"Coral + Algae During Autonomous (N={len(auto_alliance_distributions[0])})"
                         if display_cycle_contributions
                         else f"Points Contributed During Autonomous (N={len(auto_alliance_distributions[0])})"
                     ),
@@ -412,12 +411,12 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     teleop_alliance_distributions,
                     y_axis_label=(
-                        "Notes Scored"
+                        "Coral + Algae Scored"
                         if display_cycle_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Notes During Teleop (N={len(teleop_alliance_distributions[0])})"
+                        f"Coral + Algae During Teleop (N={len(teleop_alliance_distributions[0])})"
                         if display_cycle_contributions
                         else f"Points Contributed During Teleop (N={len(teleop_alliance_distributions[0])})"
                     ),
@@ -439,12 +438,12 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     cumulative_alliance_distributions,
                     y_axis_label=(
-                        "Notes Scored"
+                        "Coral + Algae Scored"
                         if display_cycle_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Notes During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
+                        f"Coral + Algae During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
                         if display_cycle_contributions
                         else f"Points Contributed During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
                     ),
@@ -499,7 +498,7 @@ class MatchManager(PageManager):
                 border_opacity=0.9
             )
 
-        # Colored metric displaying the chance of reaching the co-op bonus (1 amp cycle in 45 seconds + auto)
+        # Colored metric displaying the chance of reaching the co-op bonus (2 Processor Cycles)
         with reaches_coop_col:
             colored_metric(
                 "Chance of Co-Op Bonus",
@@ -524,7 +523,8 @@ class MatchManager(PageManager):
         """
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        best_auto_config_col, auto_cycles_breakdown_col, centerline_auto_col = st.columns(3)
+        best_auto_config_col, auto_cycles_breakdown_col = st.columns(2)
+
 
         # Best auto configuration graph
         with best_auto_config_col:
@@ -567,64 +567,88 @@ class MatchManager(PageManager):
         # Auto cycle breakdown graph
         with auto_cycles_breakdown_col:
             if display_cycle_contributions:
-                average_speaker_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_SPEAKER)
+                average_l1_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L1)
                     for team in team_numbers
                 ]
-                average_amp_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_AMP)
+                average_l2_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L2)
+                    for team in team_numbers
+                ]
+                average_l3_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L3)
+                    for team in team_numbers
+                ]
+                average_l4_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L4)
+                    for team in team_numbers
+                ]
+                average_barge_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_BARGE)
+                    for team in team_numbers
+                ]
+                average_processor_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_PROCESSOR)
                     for team in team_numbers
                 ]
             else:
-                average_speaker_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_SPEAKER) * 5
+                average_l1_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L1) * 3
                     for team in team_numbers
                 ]
-                average_amp_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_AMP) * 2
+                average_l2_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L2) * 4
+                    for team in team_numbers
+                ]
+                average_l3_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L3) * 6
+                    for team in team_numbers
+                ]
+                average_l4_coral_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L4) * 7
+                    for team in team_numbers
+                ]
+                average_barge_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_BARGE) * 4
+                    for team in team_numbers
+                ]
+                average_processor_cycles_by_team = [
+                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_PROCESSOR) * 6
                     for team in team_numbers
                 ]
 
             plotly_chart(
                 stacked_bar_graph(
                     team_numbers,
-                    [average_speaker_cycles_by_team, average_amp_cycles_by_team],
+                    [average_l1_coral_cycles_by_team, average_l2_coral_cycles_by_team, average_l3_coral_cycles_by_team, average_l4_coral_cycles_by_team, average_barge_cycles_by_team, average_processor_cycles_by_team],
                     "Teams",
                     [
-                        ("Avg. Speaker Cycles" if display_cycle_contributions else "Avg. Speaker Points"),
-                        ("Avg. Amp Cycles" if display_cycle_contributions else "Avg. Amp Points")
+                        ("Avg. L1 Coral Cycles" if display_cycle_contributions else "Avg. L1 Coral Points"),
+                        ("Avg. L2 Coral Cycles" if display_cycle_contributions else "Avg. L2 Coral Points"),
+                        ("Avg. L3 Coral Cycles" if display_cycle_contributions else "Avg. L3 Coral Points"),
+                        ("Avg. L4 Coral Cycles" if display_cycle_contributions else "Avg. L4 Coral Points"),
+                        ("Avg. Barge Cycles" if display_cycle_contributions else "Avg. Barge Points"),
+                        ("Avg. Processor Cycles" if display_cycle_contributions else "Avg. Processor Points")
                     ],
                     ("Total Auto Cycles" if display_cycle_contributions else "Total Auto Points"),
                     title="Auto Scoring Breakdown",
                     color_map={
-                        ("Avg. Speaker Cycles" if display_cycle_contributions else "Avg. Speaker Points"):
-                            color_gradient[1],
-                        ("Avg. Amp Cycles" if display_cycle_contributions else "Avg. Amp Points"): color_gradient[2]
+                        ("Avg. L1 Coral Cycles" if display_cycle_contributions else "Avg. L1 Coral Points"):
+                            color_gradient[0],
+                        ("Avg. L2 Coral Cycles" if display_cycle_contributions else "Avg. L2 Coral Points"): 
+                        color_gradient[1],
+                        ("Avg. L3 Coral Cycles" if display_cycle_contributions else "Avg. L3 Coral Points"):
+                            color_gradient[2],
+                        ("Avg. L4 Coral Cycles" if display_cycle_contributions else "Avg. L4 Coral Points"):
+                            color_gradient[3],
+                        ("Avg. Barge Cycles" if display_cycle_contributions else "Avg. Barge Points"):
+                            color_gradient[2],
+                        ("Avg. Processor Cycles" if display_cycle_contributions else "Avg. Processor Points"):
+                            color_gradient[1]
                     }
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
 
-        # Number of times they intook from the centerline by team
-        with centerline_auto_col:
-            autos_in_centerline_by_team = [
-                self.calculated_stats.cumulative_stat(
-                    team,
-                    Queries.AUTO_USED_CENTERLINE,
-                    Criteria.BOOLEAN_CRITERIA
-                )
-                for team in team_numbers
-            ]
-
-            plotly_chart(
-                bar_graph(
-                    team_numbers,
-                    autos_in_centerline_by_team,
-                    x_axis_label="Teams",
-                    y_axis_label="# of Centerline Autos Achieved",
-                    title="Centerline Autos Achieved By Team",
-                    color=color_gradient[-1]
-                ).update_layout(xaxis={"categoryorder": "total descending"})
-            )
 
     def generate_teleop_graphs(
             self,
@@ -643,8 +667,8 @@ class MatchManager(PageManager):
         display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         st.write("## ⭕ Cycles")
-        speaker_cycles_over_time_col, amp_periods_over_time_col = st.columns(2, gap="large")
-        passing_shot_by_team_col, = st.columns(1)
+        l1_coral_cycles_over_time_col, l2_coral_cycles_over_time_col, l3_coral_cycles_over_time_col, l4_coral_cycles_over_time_col = st.columns(4, gap="small")
+        barge_cycles_over_time_col, processor_cycles_over_time_col = st.columns(2, gap="small")
 
         st.divider()
         st.write("## ⛓️ Endgame")
@@ -656,10 +680,10 @@ class MatchManager(PageManager):
             GeneralConstants.LIGHT_GREEN
         ]
 
-        # Display the teleop speaker cycles of each team over time
-        with speaker_cycles_over_time_col:
+        # Display the teleop L1 Coral cycles of each team over time
+        with l1_coral_cycles_over_time_col:
             cycles_by_team = [
-                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_SPEAKER) *
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L1) *
                 (
                     1 if display_cycle_contributions else 2
                 )
@@ -682,21 +706,58 @@ class MatchManager(PageManager):
                         else "Points Contributed"
                     ),
                     title=(
-                        "Teleop Speaker Cycles Over Time"
+                        "Teleop L1 Coral Cycles Over Time"
                         if display_cycle_contributions
-                        else "Points Contributed in the Speaker Over Time"
+                        else "Points Contributed through L1 Coral Over Time"
+                    ),
+                    color_map=color_map
+                )
+            )
+       
+        # Display the teleop L2 Coral cycles of each team over time
+        with l2_coral_cycles_over_time_col:
+            cycles_by_team = [
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L2) *
+                (
+                    1 if display_cycle_contributions else 3
+                )
+                for team in team_numbers
+            ]
+            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
+            color_map = {
+                pair[0]: color
+                for pair, color in zip(best_teams, short_gradient)
+            }
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(cycles_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop L2 Coral Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed through L2 Coral Over Time"
                     ),
                     color_map=color_map
                 )
             )
 
-        # Display the teleop speaker cycles of each team over time
-        with amp_periods_over_time_col:
-            amp_periods_by_team = [
-                self.calculated_stats.potential_amplification_periods_by_match(team)
+        # Display the teleop L3 Coral cycles of each team over time            
+        with l3_coral_cycles_over_time_col:
+            cycles_by_team = [
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L3) *
+                (
+                    1 if display_cycle_contributions else 4
+                )
                 for team in team_numbers
             ]
-            best_teams = sorted(zip(team_numbers, amp_periods_by_team), key=lambda pair: pair[1].mean())
+            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
             color_map = {
                 pair[0]: color
                 for pair, color in zip(best_teams, short_gradient)
@@ -704,21 +765,33 @@ class MatchManager(PageManager):
 
             plotly_chart(
                 multi_line_graph(
-                    *populate_missing_data(amp_periods_by_team),
+                    *populate_missing_data(cycles_by_team),
                     x_axis_label="Match Index",
                     y_axis_label=team_numbers,
-                    y_axis_title="# of Potential Amplification Periods",
-                    title="Potential Amplification Periods Produced by Alliance",
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop L3 Coral Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed through L3 Coral Over Time"
+                    ),
                     color_map=color_map
                 )
             )
 
-        with passing_shot_by_team_col:
-            passing_shots_by_team = [
-                self.calculated_stats.passing_shots_by_match(team)
+        # Display the teleop L4 Coral cycles of each team over time
+        with l4_coral_cycles_over_time_col:
+            cycles_by_team = [
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L4) *
+                (
+                    1 if display_cycle_contributions else 5
+                )
                 for team in team_numbers
             ]
-            best_teams = sorted(zip(team_numbers, passing_shots_by_team), key=lambda pair: pair[1].mean())
+            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
             color_map = {
                 pair[0]: color
                 for pair, color in zip(best_teams, short_gradient)
@@ -726,34 +799,110 @@ class MatchManager(PageManager):
 
             plotly_chart(
                 multi_line_graph(
-                    *populate_missing_data(passing_shots_by_team),
+                    *populate_missing_data(cycles_by_team),
                     x_axis_label="Match Index",
                     y_axis_label=team_numbers,
-                    y_axis_title="# of Cycles",
-                    title="Passing Cycles by Alliance",
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop L4 Coral Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed through L4 Coral Over Time"
+                    ),
+                    color_map=color_map
+                )
+            )
+
+        # Display the teleop barge cycles of each team over time            
+        with barge_cycles_over_time_col:
+            cycles_by_team = [
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_BARGE) *
+                (
+                    1 if display_cycle_contributions else 2
+                )
+                for team in team_numbers
+            ]
+            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
+            color_map = {
+                pair[0]: color
+                for pair, color in zip(best_teams, short_gradient)
+            }
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(cycles_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop Barge Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed in the Barge Over Time"
+                    ),
+                    color_map=color_map
+                )
+            )
+
+        # Display the teleop processor cycles of each team over time
+        with processor_cycles_over_time_col:
+            cycles_by_team = [
+                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_PROCESSOR) *
+                (
+                    1 if display_cycle_contributions else 2
+                )
+                for team in team_numbers
+            ]
+            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
+            color_map = {
+                pair[0]: color
+                for pair, color in zip(best_teams, short_gradient)
+            }
+
+            plotly_chart(
+                multi_line_graph(
+                    *populate_missing_data(cycles_by_team),
+                    x_axis_label="Match Index",
+                    y_axis_label=team_numbers,
+                    y_axis_title=(
+                        "# of Cycles"
+                        if display_cycle_contributions
+                        else "Points Contributed"
+                    ),
+                    title=(
+                        "Teleop Processor Cycles Over Time"
+                        if display_cycle_contributions
+                        else "Points Contributed in the Processor Over Time"
+                    ),
                     color_map=color_map
                 )
             )
 
         with climb_breakdown_by_team_col:
-            harmonized_climbs_by_team = [
-                team_data[Queries.HARMONIZED_ON_CHAIN].sum()
+            deep_climbs_by_team = [
+                (team_data[Queries.CLIMBED_CAGE] == "Deep Climb").sum()
                 for team_data in teams_data
             ]
-            normal_climbs_by_team = [
-                team_data[Queries.CLIMBED_CHAIN].sum() - harmonized_climbs
-                for team_data, harmonized_climbs in zip(teams_data, harmonized_climbs_by_team)
+            shallow_climbs_by_team = [
+                (team_data[Queries.CLIMBED_CAGE] == "Shallow Climb").sum()
+                for team_data in teams_data
             ]
 
             plotly_chart(
                 stacked_bar_graph(
                     team_numbers,
-                    [normal_climbs_by_team, harmonized_climbs_by_team],
+                    [shallow_climbs_by_team, deep_climbs_by_team],
                     x_axis_label="Teams",
-                    y_axis_label=["Normal Climbs", "Harmonized Climbs"],
+                    y_axis_label=["Shallow Climbs", "Deep Climbs"],
                     y_axis_title="# of Climb Types",
                     title="Climbs by Team",
-                    color_map={"Normal Climbs": color_gradient[0], "Harmonized Climbs": color_gradient[1]}
+                    color_map={"Shallow Climbs": color_gradient[0], "Deep Climbs": color_gradient[1]}
                 )
             )
 
@@ -791,7 +940,7 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        driver_rating_by_team_col, defense_rating_by_team_col, disables_by_team_col = st.columns(3)
+        driver_rating_by_team_col, counter_defense_rating_by_team_col, disables_by_team_col = st.columns(3)
 
         with driver_rating_by_team_col:
             driver_rating_by_team = [
@@ -810,19 +959,19 @@ class MatchManager(PageManager):
                 )
             )
 
-        with defense_rating_by_team_col:
-            defense_rating_by_team = [
-                self.calculated_stats.average_defense_skill(team)
+        with counter_defense_rating_by_team_col:
+            counter_defense_rating_by_team = [
+                self.calculated_stats.average_counter_defense_skill(team)
                 for team in team_numbers
             ]
 
             plotly_chart(
                 bar_graph(
                     team_numbers,
-                    defense_rating_by_team,
+                    counter_defense_rating_by_team,
                     x_axis_label="Teams",
-                    y_axis_label="Defense Rating (1-5)",
-                    title="Average Defense Rating by Team",
+                    y_axis_label="Intake Defense Rating (1-5)",
+                    title="Average Intake Defense Rating by Team",
                     color=color_gradient[1]
                 )
             )

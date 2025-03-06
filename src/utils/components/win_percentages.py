@@ -14,7 +14,7 @@ def win_percentages(red_odds: float, blue_odds: float) -> None:
     :param blue_odds: The probability (0-1) of the blue alliance winning (eg. 0.8).
     :return:
     """
-    with open("./src/utils/components/win_percentages_component.html") as html_file:
+    with open("/mount/src/falconvis/src/utils/components/win_percentages_component.html") as html_file:
         html_template = html_file.read()
         formatted_html = html_template.replace(
             "{red}", f"{red_odds * 100:.1f}"

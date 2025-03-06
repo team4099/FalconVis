@@ -37,31 +37,20 @@ class PicklistManager(PageManager):
                 self.calculated_stats.average_cycles,
                 mode=Queries.TELEOP
             ),
-            "Average Speaker Cycles": partial(
+            "Average Coral Cycles": partial(
                 self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_SPEAKER, Queries.TELEOP_SPEAKER)
+                structure=(Queries.AUTO_CORAL_L1, Queries.AUTO_CORAL_L2, Queries.AUTO_CORAL_L3, Queries.AUTO_CORAL_L4,
+                           Queries.TELEOP_CORAL_L1, Queries.TELEOP_CORAL_L2, Queries.TELEOP_CORAL_L3, Queries.TELEOP_CORAL_L4)
             ),
-            "Average Amp Cycles": partial(
+            "Average Algae Cycles": partial(
                 self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_AMP, Queries.TELEOP_AMP)
-            ),
-            "Average Feeding Cycles": self.calculated_stats.average_feeding_cycles_without_full_field,
-            "Avg. Adjusted Teleop Cycles (w/ Feeding)": (
-                lambda team: self.calculated_stats.average_cycles(team, Queries.TELEOP) + self.calculated_stats.average_feeding_cycles_without_full_field(team) / 2
-            ),
-            "Average Trap Cycles": partial(
-                self.calculated_stats.average_cycles_for_structure,
-                structure=Queries.TELEOP_TRAP
+                structure=(Queries.AUTO_BARGE, Queries.AUTO_PROCESSOR,
+                           Queries.TELEOP_BARGE, Queries.TELEOP_PROCESSOR)
             ),
             "# of Times Climbed": partial(
                 self.calculated_stats.cumulative_stat,
-                stat=Queries.CLIMBED_CHAIN,
-                criteria=Criteria.BOOLEAN_CRITERIA
-            ),
-            "# of Times Harmonized": partial(
-                self.calculated_stats.cumulative_stat,
-                stat=Queries.HARMONIZED_ON_CHAIN,
-                criteria=Criteria.BOOLEAN_CRITERIA
+                stat=Queries.CLIMBED_CAGE,
+                criteria=Criteria.CLIMBING_CRITERIA
             ),
             "# of Disables": partial(
                 self.calculated_stats.cumulative_stat,
@@ -69,8 +58,6 @@ class PicklistManager(PageManager):
                 criteria=Criteria.BOOLEAN_CRITERIA
             ),
             "Average Driver Rating": self.calculated_stats.average_driver_rating,
-            "Average Defense Skill": self.calculated_stats.average_defense_skill,
-            "Average Defense Time": self.calculated_stats.average_defense_time,
             "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill
         }
 

@@ -20,9 +20,9 @@ def alliance_breakdown(
     :return:
     """
     with (
-        open("./src/utils/components/alliance_breakdown_component.html") as html_file,
-        open("./src/utils/components/defense_svg.html") as defense_svg_file,
-        open("./src/utils/components/offense_svg.html") as offense_svg_file
+        open("/mount/src/falconvis/src/utils/components/alliance_breakdown_component.html") as html_file,
+        open("/mount/src/falconvis/src/utils/components/defense_svg.html") as defense_svg_file,
+        open("/mount/src/falconvis/src/utils/components/offense_svg.html") as offense_svg_file
     ):
         defense_svg = defense_svg_file.read()
         offense_svg = offense_svg_file.read()
