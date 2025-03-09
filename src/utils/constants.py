@@ -119,6 +119,10 @@ class Queries:
     # Modes
     AUTO = "Auto"
     AUTO_CORAL = "AutoCoral"
+    CORAL_L1 = "CoralL1"
+    CORAL_L2 = "CoralL2"
+    CORAL_L3 = "CoralL3"
+    CORAL_L4 = "CoralL4"
     TELEOP = "Teleop"
     ENDGAME = "Endgame"
 
