@@ -150,7 +150,7 @@ def retrieve_match_data() -> DataFrame:
                     "red_score": match["alliances"]["red"]["score"],
                     "blue_score": match["alliances"]["blue"]["score"],
                     "reached_coop": (
-                        match["alliances"]["red"]["coopertitionCriteriaMet"] and match["alliances"]["blue"]["coopertitionCriteriaMet"]
+                        match["score_breakdown"]["red"]["coopertitionCriteriaMet"] and match["score_breakdown"]["blue"]["coopertitionCriteriaMet"]
                     )
                 }
                 for match in event_matches if match["score_breakdown"] is not None
