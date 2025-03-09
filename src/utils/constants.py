@@ -153,6 +153,7 @@ class Criteria:
     }
 
     CLIMBING_CRITERIA = {
+        "": 0,
         "No Climb": 0,
         "Shallow Climb": 1,
         "Deep Climb": 1
