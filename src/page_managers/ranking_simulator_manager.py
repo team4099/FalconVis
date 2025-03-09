@@ -121,10 +121,11 @@ class RankingSimulatorManager(PageManager):
             _, rps, avg_coop, avg_match_score, matches_played = rankings[rankings["team"] == team].iloc[0]
             total_matches_played = matches_played + simulated_rankings[team][3]
             print(team, total_matches_played)
-            total_avg_rp = (rps * matches_played + sum(simulated_rankings[team][0])) / total_matches_played
-            total_avg_coop = (avg_coop * matches_played + sum(simulated_rankings[team][1])) / total_matches_played
-            total_avg_score = (avg_match_score * matches_played + sum(simulated_rankings[team][2])) / total_matches_played
-            new_rankings.append((team, total_avg_rp, total_avg_coop, total_avg_score))
+            if total_matches_played > 0:
+                total_avg_rp = (rps * matches_played + sum(simulated_rankings[team][0])) / total_matches_played
+                total_avg_coop = (avg_coop * matches_played + sum(simulated_rankings[team][1])) / total_matches_played
+                total_avg_score = (avg_match_score * matches_played + sum(simulated_rankings[team][2])) / total_matches_played
+                new_rankings.append((team, total_avg_rp, total_avg_coop, total_avg_score))
 
         ranking_df = DataFrame(
             sorted(new_rankings, key=lambda ranking: ranking[1:], reverse=True),
