@@ -243,7 +243,8 @@ class CalculatedStats(BaseCalculatedStats):
 
         return scouting_data_for_team(team_number, self.data)[Queries.DEFENSE_RATING].apply(
             lambda defense_rating: Criteria.BASIC_RATING_CRITERIA.get(defense_rating, float("nan"))
-        )
+        ).mean()
+
     @_convert_to_float_from_numpy_type
     def average_counter_defense_skill(self, team_number: int) -> float:
         """Returns the average counter defense skill (ability to swerve past defense) of a team.
