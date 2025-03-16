@@ -340,33 +340,33 @@ class TeamManager(PageManager, ContainsMetrics):
 
         with scoring_side_col:
             # Metric for how many times they went to the centerline for auto
-            times_went_to_far_side = self.calculated_stats.cumulative_stat(
+            times_went_to_non_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Far Coral Station": 1}
+                {"Non-Processor Side": 1}
             )
-            times_went_to_close_side = self.calculated_stats.cumulative_stat(
+            times_went_to_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Close Coral Station": 1}
+                {"Processor Side": 1}
             )
 
-            times_went_to_far_side_percentile = self.calculated_stats.quantile_stat(
+            times_went_to_non_processor_side_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Far Coral Station": 1})
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Non-Processor Side": 1})
             )
-            times_went_to_close_side_percentile = self.calculated_stats.quantile_stat(
+            times_went_to_processor_side_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Close Coral Station": 1})
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Processor Side": 1})
             )
 
             colored_metric_with_two_values(
                 "# of Times Scored on Side",
-                "Far Side / Close Side",
-                round(times_went_to_far_side, 2),
-                round(times_went_to_close_side, 2),
-                first_threshold=times_went_to_far_side_percentile,
-                second_threshold=times_went_to_close_side_percentile
+                "Non-Processor Side / Processor Side",
+                round(times_went_to_non_processor_side, 2),
+                round(times_went_to_processor_side, 2),
+                first_threshold=times_went_to_non_processor_side_percentile,
+                second_threshold=times_went_to_processor_side_percentile
             )
 
         # Auto Speaker/amp over time graph
