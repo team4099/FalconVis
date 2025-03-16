@@ -64,7 +64,7 @@ class PicklistManager(PageManager):
             "Average Driver Rating": self.calculated_stats.average_driver_rating,
             "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill,
             "Average Defense Skill": self.calculated_stats.average_defense_rating,
-            "Average Intake Speed": self.calculated_stats.average_intake_speed,
+            "Average Intake Speed": self.calculated_stats.average_intake_speed_rating,
 
         }
 

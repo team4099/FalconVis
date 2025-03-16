@@ -232,7 +232,8 @@ class TeamManager(PageManager, ContainsMetrics):
                 round(average_auto_misses, 2),
                 round(average_teleop_misses, 2),
                 first_threshold=average_auto_misses_for_percentile,
-                second_threshold=average_teleop_misses_for_percentile
+                second_threshold=average_teleop_misses_for_percentile,
+                invert_threshold=True
             )
 
         # Metric for IQR of points contributed (consistency)
