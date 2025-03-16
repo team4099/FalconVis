@@ -223,6 +223,17 @@ class CalculatedStats(BaseCalculatedStats):
         ).mean()
 
     @_convert_to_float_from_numpy_type
+    def average_intake_speed_rating(self, team_number: int) -> float:
+        """Returns the average intake speed rating of a team.
+
+        :param team_number: The team to determine the intake speed rating for.
+        :return: A float representing the average intake speed rating of said team.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.INTAKE_SPEED].apply(
+            lambda intake_speed: Criteria.INTAKE_SPEED_CRITERIA.get(intake_speed, float("nan"))
+        ).mean()
+
+    @_convert_to_float_from_numpy_type
     def average_defense_rating(self, team_number: int) -> float:
         """Returns a series of data representing the team's defense rating
 
@@ -230,8 +241,8 @@ class CalculatedStats(BaseCalculatedStats):
         :return: A series with the teams defense data.
         """
 
-        return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].apply(
-            lambda driver_rating: Criteria.BASIC_RATING_CRITERIA.get(driver_rating, float("nan"))
+        return scouting_data_for_team(team_number, self.data)[Queries.DEFENSE_RATING].apply(
+            lambda defense_rating: Criteria.BASIC_RATING_CRITERIA.get(defense_rating, float("nan"))
         )
     @_convert_to_float_from_numpy_type
     def average_counter_defense_skill(self, team_number: int) -> float:

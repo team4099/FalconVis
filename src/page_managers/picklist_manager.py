@@ -47,6 +47,10 @@ class PicklistManager(PageManager):
                 structure=(Queries.AUTO_BARGE, Queries.AUTO_PROCESSOR,
                            Queries.TELEOP_BARGE, Queries.TELEOP_PROCESSOR)
             ),
+            "Average Misses": partial(
+                self.calculated_stats.average_cycles_for_structure,
+                structure=(Queries.AUTO_CORAL_MISSES, Queries.TELEOP_CORAL_MISSES)
+            ),
             "# of Times Climbed": partial(
                 self.calculated_stats.cumulative_stat,
                 stat=Queries.CLIMBED_CAGE,
@@ -58,7 +62,10 @@ class PicklistManager(PageManager):
                 criteria=Criteria.BOOLEAN_CRITERIA
             ),
             "Average Driver Rating": self.calculated_stats.average_driver_rating,
-            "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill
+            "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill,
+            "Average Defense Skill": self.calculated_stats.average_defense_skill,
+            "Average Intake Speed": self.calculated_stats.average_intake_speed,
+
         }
 
     def generate_input_section(self) -> list[list, list]:
