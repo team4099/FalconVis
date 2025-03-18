@@ -364,7 +364,7 @@ class TeamManager(PageManager, ContainsMetrics):
                     [times_went_to_non_processor_side, times_went_to_middle, times_went_to_processor_side],
                     x_axis_label="Scoring Position",
                     y_axis_label="# of Times Scored At Position",
-                    title=f"Scoring Side Breakdown",
+                    title="Scoring Side Breakdown",
                     color={"Non-Processor Side": GeneralConstants.LIGHT_RED, "Middle": GeneralConstants.GOLD_GRADIENT[0], "Processor Side": GeneralConstants.LIGHT_GREEN},
                     color_indicator="Scoring Side"
                 )
