@@ -345,12 +345,15 @@ class TeamManager(PageManager, ContainsMetrics):
             times_went_to_non_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Non-Processor Side" in Queries.SCORING_SIDE: 1}
+                1 if "Non-Processor Side" in Queries.SCORING_SIDE else 0
             )
+
+            print(Queries.SCORING_SIDE)
+
             times_went_to_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Processor Side" in Queries.SCORING_SIDE: 1}
+                1 if "Processor Side" in Queries.SCORING_SIDE else 0
             )
 
             times_went_to_non_processor_side_percentile = self.calculated_stats.quantile_stat(
