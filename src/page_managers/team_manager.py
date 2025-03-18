@@ -319,6 +319,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :return:
         """
         leaves_col, scoring_side_col = st.columns(2)
+        coral_graph_col, algae_graph_col = st.columns(2)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         with leaves_col:
@@ -344,21 +345,21 @@ class TeamManager(PageManager, ContainsMetrics):
             times_went_to_non_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Non-Processor Side": 1}
+                {"Non-Processor Side" in Queries.SCORING_SIDE: 1}
             )
             times_went_to_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Processor Side": 1}
+                {"Processor Side" in Queries.SCORING_SIDE: 1}
             )
 
             times_went_to_non_processor_side_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Non-Processor Side": 1})
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Non-Processor Side" in Queries.SCORING_SIDE: 1})
             )
             times_went_to_processor_side_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Processor Side": 1})
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Processor Side" in Queries.SCORING_SIDE: 1})
             )
 
             colored_metric_with_two_values(
@@ -370,68 +371,70 @@ class TeamManager(PageManager, ContainsMetrics):
                 second_threshold=times_went_to_processor_side_percentile
             )
 
-        # Auto Speaker/amp over time graph
-        coral_l1_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
-            team_number,
-            Queries.AUTO_CORAL_L1
-        ) * (1 if using_cycle_contributions else 3)
-        coral_l2_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
-            team_number,
-            Queries.AUTO_CORAL_L2
-        ) * (1 if using_cycle_contributions else 4)
-        coral_l3_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
-            team_number,
-            Queries.AUTO_CORAL_L3
-        ) * (1 if using_cycle_contributions else 6)
-        coral_l4_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
-            team_number,
-            Queries.AUTO_CORAL_L4
-        ) * (1 if using_cycle_contributions else 7)
+        with coral_graph_col:
+            # Auto coral over time graph
+            coral_l1_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.AUTO_CORAL_L1
+            ) * (1 if using_cycle_contributions else 3)
+            coral_l2_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.AUTO_CORAL_L2
+            ) * (1 if using_cycle_contributions else 4)
+            coral_l3_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.AUTO_CORAL_L3
+            ) * (1 if using_cycle_contributions else 6)
+            coral_l4_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.AUTO_CORAL_L4
+            ) * (1 if using_cycle_contributions else 7)
 
-        algae_barge_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
-            team_number,
-            Queries.AUTO_BARGE
-        ) * (1 if using_cycle_contributions else 4)
-        algae_processor_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
-            team_number,
-            Queries.AUTO_PROCESSOR
-        ) * (1 if using_cycle_contributions else 6)
+            line_names_1 = [
+                ("# of Coral L1 Cycles" if using_cycle_contributions else "# of Coral L1 Points"),
+                ("# of Coral L2 Cycles" if using_cycle_contributions else "# of Coral L2 Points"),
+                ("# of Coral L3 Cycles" if using_cycle_contributions else "# of Coral L3 Points"),
+                ("# of Coral L4 Cycles" if using_cycle_contributions else "# of Coral L4 Points")
+            ]
 
-        line_names_1 = [
-            ("# of Coral L1 Cycles" if using_cycle_contributions else "# of Coral L1 Points"),
-            ("# of Coral L2 Cycles" if using_cycle_contributions else "# of Coral L2 Points"),
-            ("# of Coral L3 Cycles" if using_cycle_contributions else "# of Coral L3 Points"),
-            ("# of Coral L4 Cycles" if using_cycle_contributions else "# of Coral L4 Points")
-        ]
-
-        line_names_2 = [
-            ("# of Algae Net Cycles" if using_cycle_contributions else "# of Algae Net Points"),
-            ("# of Algae Processor Cycles" if using_cycle_contributions else "# of Algae Processor Points")
-        ]
-
-        plotly_chart(
-            multi_line_graph(
-                range(len(coral_l1_cycles_by_match)),
-                [coral_l1_cycles_by_match, coral_l2_cycles_by_match, coral_l3_cycles_by_match, coral_l4_cycles_by_match],
-                x_axis_label="Match Index",
-                y_axis_label=line_names_1,
-                y_axis_title=f"# of Autonomous {'Cycles' if using_cycle_contributions else 'Points'}",
-                title=f"Coral {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
-                color_map=dict(zip(line_names_1, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+            plotly_chart(
+                multi_line_graph(
+                    range(len(coral_l1_cycles_by_match)),
+                    [coral_l1_cycles_by_match, coral_l2_cycles_by_match, coral_l3_cycles_by_match, coral_l4_cycles_by_match],
+                    x_axis_label="Match Index",
+                    y_axis_label=line_names_1,
+                    y_axis_title=f"# of Autonomous {'Cycles' if using_cycle_contributions else 'Points'}",
+                    title=f"Coral {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
+                    color_map=dict(zip(line_names_1, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+                )
             )
-        )
 
-        plotly_chart(
-            multi_line_graph(
-                range(len(algae_processor_cycles_by_match)),
-                [algae_barge_cycles_by_match, algae_processor_cycles_by_match],
-                x_axis_label="Match Index",
-                y_axis_label=line_names_2,
-                y_axis_title=f"# of Autonomous {'Cycles' if using_cycle_contributions else 'Points'}",
-                title=f"Algae {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
-                color_map=dict(zip(line_names_2, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+        with algae_graph_col:
+            algae_barge_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.AUTO_BARGE
+            ) * (1 if using_cycle_contributions else 4)
+            algae_processor_cycles_by_match = self.calculated_stats.cycles_by_structure_per_match(
+                team_number,
+                Queries.AUTO_PROCESSOR
+            ) * (1 if using_cycle_contributions else 6)
+
+            line_names_2 = [
+                ("# of Algae Net Cycles" if using_cycle_contributions else "# of Algae Net Points"),
+                ("# of Algae Processor Cycles" if using_cycle_contributions else "# of Algae Processor Points")
+            ]
+
+            plotly_chart(
+                multi_line_graph(
+                    range(len(algae_processor_cycles_by_match)),
+                    [algae_barge_cycles_by_match, algae_processor_cycles_by_match],
+                    x_axis_label="Match Index",
+                    y_axis_label=line_names_2,
+                    y_axis_title=f"# of Autonomous {'Cycles' if using_cycle_contributions else 'Points'}",
+                    title=f"Algae {'Cycles' if using_cycle_contributions else 'Points'} During Autonomous Over Time",
+                    color_map=dict(zip(line_names_2, (GeneralConstants.GOLD_GRADIENT[0], GeneralConstants.GOLD_GRADIENT[-1])))
+                )
             )
-        )
 
     def generate_teleop_graphs(
         self,
