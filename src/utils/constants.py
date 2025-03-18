@@ -85,6 +85,7 @@ class Queries:
     AUTO_CORAL_L2 = "AutoCoralL2"
     AUTO_CORAL_L3 = "AutoCoralL3"
     AUTO_CORAL_L4 = "AutoCoralL4"
+    AUTO_CORAL_MISSES = "AutoCoralMisses"
     AUTO_BARGE = "AutoBarge"
     AUTO_PROCESSOR = "AutoProcessor"
 
@@ -92,6 +93,7 @@ class Queries:
     TELEOP_CORAL_L2 = "TeleopCoralL2"
     TELEOP_CORAL_L3 = "TeleopCoralL3"
     TELEOP_CORAL_L4 = "TeleopCoralL4"
+    TELEOP_CORAL_MISSES = "TeleopCoralMisses"
     TELEOP_BARGE = "TeleopAlgaeBarge"
     TELEOP_PROCESSOR = "TeleopAlgaeProcessor"
     TELEOP_ALGAE_REMOVAL = "TeleopAlgaeRemoval"
@@ -102,6 +104,8 @@ class Queries:
 
     DRIVER_RATING = "DriverRating"
     ROBOT_STYLE_TYPE = "RobotStyleType"
+    INTAKE_SPEED = "IntakeSpeed"
+    DEFENSE_RATING = "DefenseRating"
     INTAKE_DEFENSE_RATING = "IntakeDefenseRating"
     DISABLE = "Disabled"
     STABILITY = "StabilityRating"
@@ -161,6 +165,13 @@ class Criteria:
         "Average": 3,
         "Poor": 2,
         "Very Poor": 1
+    }
+    INTAKE_SPEED_CRITERIA = {
+        "Very Fast": 5,
+        "Fast": 4,
+        "Average": 3,
+        "Slow": 2,
+        "Very Slow": 1
     }
     DEFENSE_TIME_CRITERIA = {
         "Very Often": 5,

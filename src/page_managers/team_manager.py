@@ -57,7 +57,7 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :param team_number: The team number to calculate the metrics for.
         """
-        points_contributed_col, auto_cycle_col, teleop_coral_col, teleop_algae_col = st.columns(4)
+        points_contributed_col, auto_cycle_col, teleop_col, misses_col = st.columns(4)
         iqr_col, algae_off_reef_col, climb_breakdown_col, disables_col = st.columns(4)
 
         # Metric for avg. points contributed
@@ -143,7 +143,24 @@ class TeamManager(PageManager, ContainsMetrics):
             )
 
         # Metric for average teleop coral cycles
-        with teleop_coral_col:
+        with teleop_col:
+            average_teleop_algae_processor_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.TELEOP_PROCESSOR
+            )
+            average_teleop_algae_barge_cycles = self.calculated_stats.average_cycles_for_structure(
+                team_number,
+                Queries.TELEOP_BARGE
+            )
+
+            average_teleop_algae_processor_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_PROCESSOR)
+            )
+            average_teleop_algae_barge_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_BARGE)
+            )
             average_teleop_coral_l1_cycles = self.calculated_stats.average_cycles_for_structure(
                 team_number,
                 Queries.TELEOP_CORAL_L1
@@ -180,39 +197,43 @@ class TeamManager(PageManager, ContainsMetrics):
             )
             average_teleop_coral_for_percentile = (average_teleop_coral_l1_for_percentile + average_teleop_coral_l2_for_percentile + average_teleop_coral_l3_for_percentile + average_teleop_coral_l4_for_percentile) / 4.0
 
-            colored_metric(
-                "Average Coral Teleop Cycles",
+            colored_metric_with_two_values(
+                "Average Teleop Cycles",
+                "Coral / Algae",
                 round(average_teleop_coral_cycles, 2),
-                threshold=average_teleop_coral_for_percentile
+                round(average_teleop_algae_barge_cycles + average_teleop_algae_processor_cycles, 2),
+                first_threshold=average_teleop_coral_for_percentile,
+                second_threshold=average_teleop_algae_processor_for_percentile + average_teleop_algae_barge_for_percentile
             )
 
         # Metric for average algae teleop cycles
-        with teleop_algae_col:
-            average_teleop_algae_processor_cycles = self.calculated_stats.average_cycles_for_structure(
+        with misses_col:
+            average_auto_misses = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.TELEOP_PROCESSOR
+                Queries.AUTO_CORAL_MISSES
             )
-            average_teleop_algae_barge_cycles = self.calculated_stats.average_cycles_for_structure(
+            average_teleop_misses = self.calculated_stats.average_cycles_for_structure(
                 team_number,
-                Queries.TELEOP_BARGE
+                Queries.TELEOP_CORAL_MISSES
             )
 
-            average_teleop_algae_processor_for_percentile = self.calculated_stats.quantile_stat(
+            average_auto_misses_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_PROCESSOR)
+                lambda self, team: self.average_cycles_for_structure(team, Queries.AUTO_CORAL_MISSES)
             )
-            average_teleop_algae_barge_for_percentile = self.calculated_stats.quantile_stat(
+            average_teleop_misses_for_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_BARGE)
+                lambda self, team: self.average_cycles_for_structure(team, Queries.TELEOP_CORAL_MISSES)
             )
 
             colored_metric_with_two_values(
-                "Average Algae Teleop Cycles",
-                "Processor / Net",
-                round(average_teleop_algae_processor_cycles, 2),
-                round(average_teleop_algae_barge_cycles, 2),
-                first_threshold=average_teleop_algae_processor_for_percentile,
-                second_threshold=average_teleop_algae_barge_for_percentile
+                "Average Misses",
+                "Auto / Teleop",
+                round(average_auto_misses, 2),
+                round(average_teleop_misses, 2),
+                first_threshold=average_auto_misses_for_percentile,
+                second_threshold=average_teleop_misses_for_percentile,
+                invert_threshold=True
             )
 
         # Metric for IQR of points contributed (consistency)
@@ -320,33 +341,33 @@ class TeamManager(PageManager, ContainsMetrics):
 
         with scoring_side_col:
             # Metric for how many times they went to the centerline for auto
-            times_went_to_far_side = self.calculated_stats.cumulative_stat(
+            times_went_to_non_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Far Coral Station": 1}
+                {"Non-Processor Side": 1}
             )
-            times_went_to_close_side = self.calculated_stats.cumulative_stat(
+            times_went_to_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Close Coral Station": 1}
+                {"Processor Side": 1}
             )
 
-            times_went_to_far_side_percentile = self.calculated_stats.quantile_stat(
+            times_went_to_non_processor_side_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Far Coral Station": 1})
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Non-Processor Side": 1})
             )
-            times_went_to_close_side_percentile = self.calculated_stats.quantile_stat(
+            times_went_to_processor_side_percentile = self.calculated_stats.quantile_stat(
                 0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Close Coral Station": 1})
+                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Processor Side": 1})
             )
 
             colored_metric_with_two_values(
                 "# of Times Scored on Side",
-                "Far Side / Close Side",
-                round(times_went_to_far_side, 2),
-                round(times_went_to_close_side, 2),
-                first_threshold=times_went_to_far_side_percentile,
-                second_threshold=times_went_to_close_side_percentile
+                "Non-Processor Side / Processor Side",
+                round(times_went_to_non_processor_side, 2),
+                round(times_went_to_processor_side, 2),
+                first_threshold=times_went_to_non_processor_side_percentile,
+                second_threshold=times_went_to_processor_side_percentile
             )
 
         # Auto Speaker/amp over time graph
@@ -541,7 +562,8 @@ class TeamManager(PageManager, ContainsMetrics):
         )
 
         with qualitative_graphs_tab:
-            driver_rating_col, defense_skill_col = st.columns(2)
+            driver_rating_col, intake_defense_skill_col = st.columns(2)
+            intake_speed_col, defense_skill_col = st.columns(2)
 
             with driver_rating_col:
                 driver_rating_types = Criteria.DRIVER_RATING_CRITERIA.keys()
@@ -562,10 +584,29 @@ class TeamManager(PageManager, ContainsMetrics):
                     )
                 )
 
+            with intake_defense_skill_col:
+                intake_defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
+                intake_defense_skill_by_type = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_DEFENSE_RATING, {intake_defense_skill_type: 1})
+                    for intake_defense_skill_type in intake_defense_skill_types
+                ]
+
+                plotly_chart(
+                    bar_graph(
+                        intake_defense_skill_types,
+                        intake_defense_skill_by_type,
+                        x_axis_label="Counter Defense Skill",
+                        y_axis_label="# of Occurrences",
+                        title="Counter Defense Skill Breakdown",
+                        color=dict(zip(intake_defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                        color_indicator="Counter Defense Skill"
+                    )
+                )
+
             with defense_skill_col:
                 defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
                 defense_skill_by_type = [
-                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_DEFENSE_RATING, {defense_skill_type: 1})
+                    self.calculated_stats.cumulative_stat(team_number, Queries.DEFENSE_RATING, {defense_skill_type: 1})
                     for defense_skill_type in defense_skill_types
                 ]
 
@@ -573,14 +614,32 @@ class TeamManager(PageManager, ContainsMetrics):
                     bar_graph(
                         defense_skill_types,
                         defense_skill_by_type,
-                        x_axis_label="Counter Defense Skill",
+                        x_axis_label="Defense Skill",
                         y_axis_label="# of Occurrences",
-                        title="Counter Defense Skill Breakdown",
+                        title="Defense Skill Breakdown",
                         color=dict(zip(defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
-                        color_indicator="Counter Defense Skill"
+                        color_indicator="Defense Skill"
                     )
                 )
 
+            with intake_speed_col:
+                intake_speed_types = Criteria.INTAKE_SPEED_CRITERIA.keys()
+                intake_speed_by_type = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_SPEED, {intake_speed_type: 1})
+                    for intake_speed_type in intake_speed_types
+                ]
+
+                plotly_chart(
+                    bar_graph(
+                        intake_speed_types,
+                        intake_speed_by_type,
+                        x_axis_label="Intake Speed",
+                        y_axis_label="# of Occurrences",
+                        title="Intake Speed Breakdown",
+                        color=dict(zip(intake_speed_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                        color_indicator="Intake Speed"
+                    )
+                )
         with note_scouting_analysis_tab:
             notes_col, metrics_col = st.columns(2, gap="medium")
             notes_by_match = dict(
