@@ -318,25 +318,27 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        scoring_side_col, coral_graph_col, algae_graph_col = st.columns(3)
+        leaves_col, scoring_side_col = st.columns(2)
+        coral_graph_col, algae_graph_col = st.columns(2)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
-        # Metric for how many times they left the starting zone
-        times_left_starting_zone = self.calculated_stats.cumulative_stat(
-            team_number,
-            Queries.LEFT_STARTING_ZONE,
-            Criteria.BOOLEAN_CRITERIA
-        )
-        times_left_for_percentile = self.calculated_stats.quantile_stat(
-            0.5,
-            lambda self, team: self.cumulative_stat(team, Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA)
-        )
+        with leaves_col:
+            # Metric for how many times they left the starting zone
+            times_left_starting_zone = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.LEFT_STARTING_ZONE,
+                Criteria.BOOLEAN_CRITERIA
+            )
+            times_left_for_percentile = self.calculated_stats.quantile_stat(
+                0.5,
+                lambda self, team: self.cumulative_stat(team, Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA)
+            )
 
-        colored_metric(
-            "# of Leaves from the Starting Zone",
-            times_left_starting_zone,
-            threshold=times_left_for_percentile
-        )
+            colored_metric(
+                "# of Leaves from the Starting Zone",
+                times_left_starting_zone,
+                threshold=times_left_for_percentile
+            )
 
         with scoring_side_col:
             # Metric for how many times they went to the centerline for auto
