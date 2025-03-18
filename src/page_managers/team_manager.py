@@ -366,7 +366,7 @@ class TeamManager(PageManager, ContainsMetrics):
                     y_axis_label="# of Times Scored At Position",
                     title="Scoring Side Breakdown",
                     color={"Non-Processor Side": GeneralConstants.LIGHT_RED, "Middle": GeneralConstants.GOLD_GRADIENT[0], "Processor Side": GeneralConstants.LIGHT_GREEN},
-                    color_indicator="Scoring Side"
+                    color_indicator="Scoring Position"
                 )
             )
 
