@@ -318,8 +318,8 @@ class TeamManager(PageManager, ContainsMetrics):
         :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
         :return:
         """
-        leaves_col, scoring_side_col = st.columns(2)
-        coral_graph_col, algae_graph_col = st.columns(2)
+        leaves_col = st.columns(1)
+        scoring_side_col, coral_graph_col, algae_graph_col = st.columns(2)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         with leaves_col:
@@ -345,33 +345,31 @@ class TeamManager(PageManager, ContainsMetrics):
             times_went_to_non_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Non-Processor Side" in Queries.SCORING_SIDE: 1}
+                {"Non-Processor Side": 1}
             )
-
-            print(Queries.SCORING_SIDE)
 
             times_went_to_processor_side = self.calculated_stats.cumulative_stat(
                 team_number,
                 Queries.SCORING_SIDE,
-                {"Processor Side" in Queries.SCORING_SIDE: 1}
+                {"Processor Side": 1}
             )
 
-            times_went_to_non_processor_side_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Non-Processor Side" in Queries.SCORING_SIDE: 1})
-            )
-            times_went_to_processor_side_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(team, Queries.SCORING_SIDE, {"Processor Side" in Queries.SCORING_SIDE: 1})
+            times_went_to_middle = self.calculated_stats.cumulative_stat(
+                team_number,
+                Queries.SCORING_SIDE,
+                {"Middle": 1}
             )
 
-            colored_metric_with_two_values(
-                "# of Times Scored on Side",
-                "Non-Processor Side / Processor Side",
-                round(times_went_to_non_processor_side, 2),
-                round(times_went_to_processor_side, 2),
-                first_threshold=times_went_to_non_processor_side_percentile,
-                second_threshold=times_went_to_processor_side_percentile
+            plotly_chart(
+                bar_graph(
+                    ["Non-Processor Side", "Middle", "Processor Side"],
+                    [times_went_to_non_processor_side, times_went_to_middle, times_went_to_processor_side],
+                    x_axis_label="Scoring Position",
+                    y_axis_label="# of Times Scored At Position",
+                    title=f"Scoring Side Breakdown",
+                    color={"Non-Processor Side": GeneralConstants.LIGHT_RED, "Middle": GeneralConstants.GOLD_GRADIENT[0], "Processor Side": GeneralConstants.LIGHT_GREEN},
+                    color_indicator="Scoring Side"
+                )
             )
 
         with coral_graph_col:
