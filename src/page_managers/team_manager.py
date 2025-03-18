@@ -319,7 +319,7 @@ class TeamManager(PageManager, ContainsMetrics):
         :return:
         """
         leaves_col = st.columns(1)
-        scoring_side_col, coral_graph_col, algae_graph_col = st.columns(2)
+        scoring_side_col, coral_graph_col, algae_graph_col = st.columns(3)
         using_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
 
         with leaves_col:
