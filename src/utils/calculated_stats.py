@@ -117,7 +117,7 @@ class CalculatedStats(BaseCalculatedStats):
         - Bar graph
 
         :param team_number: The team number to calculate the average cycles for.
-        :param structure: The structure to return cycles for (AutoSpeaker/AutoAmp/TeleopSpeaker/TeleopAmp/TeleopTrap)
+        :param structure: The structure to return cycles for (AutoCoralL1/AutoCoralL2/AutoCoralL3/AutoCoralL4/AutoBarge/AutoProcessor/TeleopCoralL1/TeleopCoralL2/TeleopCoralL3/TeleopCoralL4/TeleopBarge/TeleopProcessor)
         :return: A float representing the average cycles for said team in the structure specified.
         """
         return self.cycles_by_structure_per_match(team_number, structure).mean()
@@ -165,7 +165,7 @@ class CalculatedStats(BaseCalculatedStats):
         - Multi line graph
 
         :param team_number: The team number to calculate the cycles by height per match for.
-        :param structure: The structure to return cycles for (AutoSpeaker/AutoAmp/TeleopSpeaker/TeleopAmp/TeleopTrap)
+        :param structure: The structure to return cycles for (AutoCoralL1/AutoCoralL2/AutoCoralL3/AutoCoralL4/AutoBarge/AutoProcessor/TeleopCoralL1/TeleopCoralL2/TeleopCoralL3/TeleopCoralL4/TeleopBarge/TeleopProcessor)
         :return: A series containing the cycles per match for the structure specified.
         """
         team_data = scouting_data_for_team(team_number, self.data)
@@ -188,6 +188,7 @@ class CalculatedStats(BaseCalculatedStats):
         :return: A float representing the % rate of the alliance reaching the coopertition bonus.
         """
         return self.reaches_coop_bonus_by_match(team_number).astype(int).mean()
+
     def reaches_coop_bonus_by_match(self, team_number: int) -> Series:
         """Returns whether three teams within an alliance are able to reach the coopertition bonus within the first
         45 seconds of a match by match. (ignore)
@@ -198,7 +199,7 @@ class CalculatedStats(BaseCalculatedStats):
         - Multi line graph
 
         :param team_number: The team to determine the coop bonus rate by match for.
-        :return: Whether or not the alliance would reach the coopertition bonus requirement of one amp cycle in 45 sec.
+        :return: Whether the alliance would reach the coopertition bonus requirement of one amp cycle in 45 sec.
         """
         auto_processor_sufficient = self.cycles_by_structure_per_match(
             team_number, Queries.AUTO_PROCESSOR
@@ -259,7 +260,7 @@ class CalculatedStats(BaseCalculatedStats):
         """Returns a float representing the teams drivetrain width
 
         :param team_number: The team to find disable data for.
-        :return: A float with the team drivtrain width in inches
+        :return: A float with the team drivetrain width in inches
         """
         pit_scouting_data = retrieve_pit_scouting_data()
         return pit_scouting_data[
