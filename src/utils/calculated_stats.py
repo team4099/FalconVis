@@ -25,7 +25,6 @@ class CalculatedStats(BaseCalculatedStats):
         super().__init__(data)
 
     # Point contribution methods
-    @_convert_to_float_from_numpy_type
     def average_points_contributed(self, team_number: int) -> float:
         """Returns the average points contributed by a team.
 
