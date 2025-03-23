@@ -1,9 +1,10 @@
 """Defines utility functions that are later used in FalconVis."""
 from io import StringIO
-from json import load, loads
+from json import load, loads, JSONDecodeError
 from re import search, sub
 from typing import Any
 
+import warnings
 import streamlit as st
 from numpy import int64
 from pandas import DataFrame, read_csv
@@ -51,9 +52,21 @@ def retrieve_scouting_data() -> DataFrame:
     :return: A dataframe containing the scouting data from an event.
     """
 
-    scouting_data = DataFrame.from_dict(check_utf8(
-        loads(get(EventSpecificConstants.URL).text.replace("\n", "").replace("\t", "").encode('unicode_escape'))
-    ))
+    try:
+        scouting_data = DataFrame.from_dict(check_utf8(
+            loads(get(EventSpecificConstants.URL).text.replace("\n", "").replace("\t", "").encode('unicode_escape'))
+        ))
+    except ConnectionError:
+        warnings.warn("No connection found, running off of local FalconVis data.", RuntimeWarning)
+        try:
+            with open(EventSpecificConstants.LOCAL_MATCH_DATA, 'r') as data_json:
+                scouting_data = DataFrame.from_dict(check_utf8(
+                    load(data_json)
+                ))
+        except FileNotFoundError:
+            raise FileNotFoundError("No connection, cannot find local scouting data.")
+        except JSONDecodeError:
+            raise JSONDecodeError("Local scouting data not in correct JSON format.")
 
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))

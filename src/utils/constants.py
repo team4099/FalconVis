@@ -61,6 +61,7 @@ class EventSpecificConstants:
         f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
     )
     PICKLIST_URL = "https://www.notion.so/team4099/d19066533a8844d3aa2cd9e68e70f214?v=56e109b2298d46ebb00057f05d38bba8"
+    LOCAL_MATCH_DATA = f"./src/data/{EVENT_CODE}_match_data.json"
 
 
 class GraphType(Enum):
