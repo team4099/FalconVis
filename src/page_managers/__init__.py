@@ -3,4 +3,5 @@ from .event_manager import EventManager
 from .match_manager import MatchManager
 from .picklist_manager import PicklistManager
 from .ranking_simulator_manager import RankingSimulatorManager
+from .scouting_accuracy_manager import ScoutingAccuracyManager
 from .team_manager import TeamManager

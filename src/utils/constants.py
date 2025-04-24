@@ -74,6 +74,7 @@ class Queries:
     """Constants specific to fields in the scouting data."""
 
     # Constants relating to fields
+    SCOUT_ID = "ScoutId"
     MATCH_KEY = "MatchKey"
     MATCH_NUMBER = "MatchNumber"
     TEAM_NUMBER = "TeamNumber"
