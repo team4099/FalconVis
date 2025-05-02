@@ -15,7 +15,11 @@ if __name__ == '__main__':
     # Write the name of the page.
     st.write("# Scouting Accuracy")
 
+    # Name input Section
+    member_name = scouting_accuracy_manager.generate_input_section()
+
     # Generate the Scouting Accuracy Table
-    generated_scouting_accuracy = scouting_accuracy_manager.generate_accuracy_table()
+
+    generated_scouting_accuracy = scouting_accuracy_manager.generate_accuracy_table(member_name)
 
     returned_dataframe = st.dataframe(generated_scouting_accuracy)
