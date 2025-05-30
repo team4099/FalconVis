@@ -10,6 +10,11 @@ from utils import (
     retrieve_match_data
 )
 import requests
+import os
+from dotenv import load_dotenv
+from pandas import DataFrame
+
+load_dotenv()
 
 
 class ScoutingAccuracyManager(PageManager):
@@ -34,40 +39,63 @@ class ScoutingAccuracyManager(PageManager):
             placeholder="Type here..."
         )
 
-    def generate_accuracy_table(self, member_name):
+    def generate_accuracy_table(self, member_name) -> DataFrame:
         """Generates the scouting accuracy table for the `Scouting Accuracy` page."""
-        headers = {
-            "X-TBA-Auth-Key": "6lcmneN5bBDYpC47FolBxp2RZa4AbQCVpmKMSKw9x9btKt7da5yMzVamJYk0XDBm"
-        }
-
         for index, row in self.match_data.iterrows():
             match_key = row["match_key"]
             red_alliance = row["red_alliance"]
-            print(red_alliance)
             blue_alliance = row["blue_alliance"]
-            red_alliance_score = row["red_score"]
-            blue_alliance_score = row["blue_score"]
+            headers = {
+                "X-TBA-Auth-Key": os.getenv("HEADERS")
+            }
 
             scouting_match_filter = self.raw_scouting_data[self.raw_scouting_data[Queries.MATCH_KEY] == match_key]
 
-            # TODO: Figure out if there's a better way to do this than just iterating through the list
-            for team_key in red_alliance.split(","):
-                red_tba_matches = requests.get(f"https://www.thebluealliance.com/api/v3/team/frc{team_key}/event/{EventSpecificConstants.EVENT_CODE}/matches", headers=headers).json()
-                for match in red_tba_matches:
-                    if (match["comp_level"] + str(match["match_number"])) == match_key:
-                        red_total_score = match["score_breakdown"]["red"]["totalPoints"]
-                        red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
-                        red_adjust_score = match["score_breakdown"]["red"]["adjustPoints"]
-                        red_calculated_score = red_total_score - red_foul_score - red_adjust_score
-                        print(red_calculated_score)
-                        break
+            # Red alliance score from TBA
+            team_list = red_alliance.split(",")
+            red_tba_matches = requests.get(f"https://www.thebluealliance.com/api/v3/team/frc{team_list[0]}/event/{EventSpecificConstants.EVENT_CODE}/matches", headers=headers).json()
+            for match in red_tba_matches:
+                if (match["comp_level"] + str(match["match_number"])) == match_key:
+                    red_total_score = match["score_breakdown"]["red"]["totalPoints"]
+                    red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
+                    red_calculated_score = red_total_score - red_foul_score
+                    break
 
+            red_scouting_alliance_score = 0
+
+            for team_key in team_list:
                 scouting_team_filter = self.raw_scouting_data[self.raw_scouting_data[Queries.TEAM_NUMBER] == int(team_key)]
                 scouting_team_filter = scouting_team_filter.reset_index(drop=True)
                 match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
                 if len(match_index_list) != 0:
                     match_index = match_index_list[0]
-                    print(match_index)
+                    points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
+                    red_scouting_alliance_score += points_per_match[match_index]
+
+            red_alliance_accuracy = (red_scouting_alliance_score-red_calculated_score)/red_calculated_score
+
+
+            # Blue Alliance score from TBA
+            team_list = blue_alliance.split(",")
+            blue_tba_matches = requests.get(f"https://www.thebluealliance.com/api/v3/team/frc{team_list[0]}/event/{EventSpecificConstants.EVENT_CODE}/matches", headers=headers).json()
+            for match in blue_tba_matches:
+                if (match["comp_level"] + str(match["match_number"])) == match_key:
+                    blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
+                    blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]
+                    blue_calculated_score = blue_total_score - blue_foul_score
+                    break
+
+            blue_scouting_alliance_score = 0
 
             for team_key in blue_alliance.split(","):
-                blue_tba_matches = requests.get(f"https://www.thebluealliance.com/api/v3/team/frc{team_key}/event/{EventSpecificConstants.EVENT_CODE}/matches", headers=headers).json()
+                scouting_team_filter = self.raw_scouting_data[self.raw_scouting_data[Queries.TEAM_NUMBER] == int(team_key)]
+                scouting_team_filter = scouting_team_filter.reset_index(drop=True)
+                match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
+                if len(match_index_list) != 0:
+                    match_index = match_index_list[0]
+                    points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
+                    blue_scouting_alliance_score += points_per_match[match_index]
+                self.calculated_stats.points_contributed_by_match(team_key)
+                blue_scouting_alliance_score += self.calculated_stats.points_contributed_by_match(team_key).sum()
+
+            blue_alliance_accuracy = (blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score
