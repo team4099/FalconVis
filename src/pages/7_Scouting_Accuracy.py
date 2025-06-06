@@ -24,6 +24,4 @@ if __name__ == '__main__':
     generated_scouting_accuracy: DataFrame = scouting_accuracy_manager.generate_accuracy_table(member_name)
 
     # teams, scouted, tba, accuracy ?
-
-
-    returned_dataframe = st.dataframe(generated_scouting_accuracy)
+    returned_dataframe = st.dataframe(generated_scouting_accuracy, hide_index = True)

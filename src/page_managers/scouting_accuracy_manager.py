@@ -81,12 +81,12 @@ class ScoutingAccuracyManager(PageManager):
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     red_scouting_alliance_score += points_per_match[match_index]
                     scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
-                    scouters_names_list_r.append(scout_name)
+                    scouters_names_list_r.append(scout_name.title().replace(" ", ""))
 
-            red_alliance_accuracy = (1 - abs(red_scouting_alliance_score-red_calculated_score)/red_calculated_score) * 100
+            red_alliance_accuracy = (1 - abs((red_scouting_alliance_score-red_calculated_score)/red_calculated_score)) * 100
             scouters_names = ", ".join(scouters_names_list_r)
 
-            if member_name in scouters_names:
+            if member_name.replace(" ", "").lower() in scouters_names.lower():
                 if scouters_names not in accuracy_dict['ScoutersNames']:
                     accuracy_dict['ScoutersNames'].append(scouters_names)
                     accuracy_dict['CumulativeAccuracy'].append(red_alliance_accuracy)
@@ -119,15 +119,15 @@ class ScoutingAccuracyManager(PageManager):
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     blue_scouting_alliance_score += points_per_match[match_index]
                     scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
-                    scouters_names_list_b.append(scout_name)
+                    scouters_names_list_b.append(scout_name.title().replace(" ", ""))
 
                 self.calculated_stats.points_contributed_by_match(team_key)
                 blue_scouting_alliance_score += self.calculated_stats.points_contributed_by_match(team_key).sum()
 
-            blue_alliance_accuracy = (1 - abs(blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score) * 100
+            blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score)) * 100
 
             scouters_names = ", ".join(scouters_names_list_b)
-            if member_name in scouters_names:
+            if member_name.replace(" ", "").lower() in scouters_names.lower():
                 if scouters_names not in accuracy_dict['ScoutersNames']:
                     accuracy_dict['ScoutersNames'].append(scouters_names)
                     accuracy_dict['CumulativeAccuracy'].append(blue_alliance_accuracy)
