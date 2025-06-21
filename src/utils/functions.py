@@ -51,9 +51,16 @@ def retrieve_scouting_data() -> DataFrame:
     :return: A dataframe containing the scouting data from an event.
     """
 
-    scouting_data = DataFrame.from_dict(check_utf8(
-        loads(get(EventSpecificConstants.URL).text.replace("\n", "").replace("\t", "").encode('unicode_escape'))
-    ))
+    scouting_data: DataFrame
+
+    try:
+        scouting_data = DataFrame.from_dict(check_utf8(
+            loads(get(EventSpecificConstants.URL).text.replace("\n", "").replace("\t", "").encode('unicode_escape'))
+        ))
+    except:
+        with open(EventSpecificConstants.LOCAL_JSON_PATH, encoding='utf-8') as f:
+            data = load(f)
+        scouting_data = DataFrame.from_dict(check_utf8(data))
 
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))
@@ -120,7 +127,7 @@ def retrieve_match_schedule() -> DataFrame:
             ]
         )
     else:  # Load match schedule from local files
-        with open("/mount/src/falconvis/src/data/match_schedule.json") as file:
+        with open("./src/data/match_schedule.json") as file:
             return DataFrame.from_dict(load(file))
 
 
