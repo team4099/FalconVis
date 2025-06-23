@@ -53,14 +53,16 @@ class GeneralConstants:
 
 class EventSpecificConstants:
     """Constants specific to an event."""
-    EVENT_CODE = "2025vapor"
-    EVENT_NAME = "Portsmouth"
+    EVENT_CODE = "2025njdd"
+    EVENT_NAME = "Duel on the Delaware"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     NOTE_SCOUTING_URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
     PIT_SCOUTING_URL = (
         f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
     )
     PICKLIST_URL = "https://www.notion.so/team4099/d19066533a8844d3aa2cd9e68e70f214?v=56e109b2298d46ebb00057f05d38bba8"
+    # if no connection
+    LOCAL_JSON_PATH = "./src/utils/backup_match_data.json"
 
 
 class GraphType(Enum):
