@@ -53,8 +53,8 @@ class GeneralConstants:
 
 class EventSpecificConstants:
     """Constants specific to an event."""
-    EVENT_CODE = "2025njdd"
-    EVENT_NAME = "Duel on the Delaware"
+    EVENT_CODE = "2025cri"
+    EVENT_NAME = "Chesapeake Robotics Icebreaker"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     NOTE_SCOUTING_URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
     PIT_SCOUTING_URL = (
