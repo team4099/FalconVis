@@ -4,3 +4,4 @@ FalconVis is a powerful data visualization and strategy generation platform buil
 
 ### Developing with FalconVis
  - [Contributing to FalconVis](/docs/CONTRIBUTING.md)
+ - [Deploying Falconvis](/docs/DEPLOYMENT.md)
