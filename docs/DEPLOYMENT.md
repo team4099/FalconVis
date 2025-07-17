@@ -20,6 +20,7 @@ We use Streamlit to deploy FalconVis for competitions.
 2. Deploy app
    - Use the branch you just created
    - Use `Teams.py` as your file path
+   - Use the naming scheme falconvis-[event code][event year]
 
 ![](streamlit.png)
 
