@@ -48,13 +48,13 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :param team_number: The team number to calculate the metrics for.
         """
-        # What we'll be working on this workshop (SP10)
+        # What we'll be working on this workshop (SP06)
 
     def generate_teleop_graphs(self, team_number: int) -> None:
         """Creates the teleop graphs for the `Teams` page.
 
         :param team_number: The team number to calculate the teleop graphs for.
         """
-        # What we'll be working on the next workshop (SP11)
+        # What we'll be working on the next workshop (SP06)
 
     
