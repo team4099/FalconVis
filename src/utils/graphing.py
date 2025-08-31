@@ -1,4 +1,6 @@
 """Defines graphing functions that are later used in FalconVis that wrap around Plotly."""
+from __future__ import annotations
+
 import numpy as np
 import plotly.express as px
 import streamlit as st
@@ -136,16 +138,22 @@ def _create_multicolumn_df(
 
   
 # Wrapper around `st.plotly_chart` for attaching a configuration making graphs static.
-def plotly_chart(fig: Figure, use_container_width: bool = True, **kwargs) -> None:
+def plotly_chart(fig: Figure, use_container_width: bool = True, legend_on_bottom: bool = False, **kwargs) -> None:
     """A wrapper around `st.plotly_chart` for plotting Plotly figures.
 
     Used for attaching configurations and other valuable arguments for our app.
 
     :param fig: A Plotly figure.
     :param use_container_width: Whether or not to use the full container.
+    :param legend_on_bottom: Whether or not to anchor the legend to the bottom.
     """
     st.plotly_chart(
-        fig,
+        fig if not legend_on_bottom else fig.update_layout(
+            legend=dict(
+                y=-0.5,
+                x=0
+            )
+        ),
         use_container_width=use_container_width,
         config={"staticPlot": True},
         **kwargs
@@ -160,7 +168,8 @@ def bar_graph(
     y_axis_label: str = "",
     title: str = "",
     horizontal: bool = False,
-    color: str | None = None,
+    color: dict | str | None = None,
+    color_indicator: str | None = None,
     hover_data: list = None
 ) -> Figure:
     """
@@ -180,9 +189,19 @@ def bar_graph(
         title=title,
         orientation=("h" if horizontal else "v"),
         hover_data=hover_data,
-        color_discrete_sequence=[
-            GeneralConstants.PRIMARY_COLOR if color is None else color
-        ]
+        **(
+            {
+                "color_discrete_sequence": [GeneralConstants.PRIMARY_COLOR if color is None else color]
+            } if isinstance(color, str) or color is None else (
+                {
+                    "color_discrete_sequence": color
+                } if isinstance(color, list)
+                else {
+                    "color": color_indicator,
+                    "color_discrete_map": color
+                }
+            )
+        )
     ).update_xaxes(
         type="category"
     )
@@ -287,6 +306,8 @@ def multi_line_graph(
         color_discrete_map=color_map
     ).update_traces(
         line=dict(width=4)
+    ).update_layout(
+        legend=dict(y=-0.4, x=0)
     )
 
 
