@@ -24,6 +24,9 @@ We use Streamlit to deploy FalconVis for competitions.
 
 ![](streamlit.png)
 
+3. In Advanced Settings, change the python version to 3.10
+![](advanced-settings.png)
+
 ---
 
 ### Local Deployment
