@@ -122,8 +122,13 @@ class MatchAccuracyManager(PageManager):
                 accuracy_rows.append({
                     "Match": match_key,
                     "# of Scouters": total_scouts,
-                    "Accuracy (%)": f"{average_accuracy}%"
-                })
+                    "Accuracy (%)": f"{average_accuracy}%",
+                    "# of Red Scouters": len(scouters_names_r),
+                    "Red Accuracy (%)": f"{round(red_accuracy, 2)}%",
+                    "# of Blue Scouters": len(scouters_names_b),
+                    "Blue Accuracy (%)": f"{round(blue_accuracy, 2)}%"
+})
 
+        accuracy_rows.sort(key = lambda row: int(row["Match"][2:]))
         df = pd.DataFrame(accuracy_rows)
         return df
