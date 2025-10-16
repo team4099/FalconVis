@@ -18,11 +18,8 @@ if __name__ == "__main__":
     # Write the name of the page
     st.write("# Match Accuracy")
 
-    # Match selection section
-    match_name = match_accuracy_manager.generate_input_section()
+    generated_match_accuracy: DataFrame = match_accuracy_manager.generate_accuracy_table()
 
-    # Generate the Match Accuracy Table
-    generated_match_accuracy: DataFrame = match_accuracy_manager.generate_accuracy_table(match_name)
 
     # Display the dataframe in Streamlit
     returned_dataframe = st.dataframe(generated_match_accuracy, hide_index=True, use_container_width=True)

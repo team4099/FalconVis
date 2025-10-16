@@ -8,4 +8,4 @@ python-dotenv==0.21.1
 vaderSentiment==3.3.2
 st-annotated-text==4.0.2
 notion-client==2.2.1
-scipy==1.14.2
+scipy==1.11.2
