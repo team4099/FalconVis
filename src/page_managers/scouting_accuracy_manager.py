@@ -15,6 +15,8 @@ import os
 from dotenv import load_dotenv
 from pandas import DataFrame
 
+from ..utils import Criteria
+
 load_dotenv()
 
 
@@ -96,6 +98,8 @@ class ScoutingAccuracyManager(PageManager):
                     coral_points = [3, 4, 6, 7]
                     for i in range(len(auto_coral_per_match)):
                         red_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+                    leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
+                    red_scouting_auto_score += (leave_points[match_index] * 2)
 
                     # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
@@ -155,6 +159,8 @@ class ScoutingAccuracyManager(PageManager):
                     coral_points = [3, 4, 6, 7]
                     for i in range(len(auto_coral_per_match)):
                         blue_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+                    leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
+                    blue_scouting_auto_score += (leave_points[match_index] * 2)
 
                     # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
