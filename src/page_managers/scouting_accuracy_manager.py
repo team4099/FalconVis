@@ -99,7 +99,7 @@ class ScoutingAccuracyManager(PageManager):
                         red_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
                     algae_per_match = [
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_BARGE).values,
-                        self.calculated_stats.cycle_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
                     ]
                     algae_points = [4, 6]
                     for i in range(len(algae_per_match)):
@@ -167,7 +167,7 @@ class ScoutingAccuracyManager(PageManager):
                         blue_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
                     algae_per_match = [
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_BARGE).values,
-                        self.calculated_stats.cycle_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
                     ]
                     algae_points = [4, 6]
                     for i in range(len(algae_per_match)):
