@@ -185,6 +185,7 @@ class ScoutingAccuracyManager(PageManager):
         df = pd.DataFrame(data={
             'Scouters': accuracy_dict['ScoutersNames'],
             'Average Accuracy %': [round(accuracy_dict['CumulativeAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
+            'Average Auto Accuracy %': [round(accuracy_dict['AutoAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
             'NumberOfScoutedMatches': accuracy_dict['NumberOfScoutedMatches']
         })
 
