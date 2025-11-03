@@ -45,6 +45,9 @@ class ScoutingAccuracyManager(PageManager):
         accuracy_dict = {
             'ScoutersNames': [],
             'CumulativeAccuracy': [],
+            'AutoAccuracy': [],
+            'TeleopAccuracy': [],
+            'EndgameAccuracy': [],
             'NumberOfScoutedMatches': []
         }
 
@@ -65,10 +68,14 @@ class ScoutingAccuracyManager(PageManager):
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     red_total_score = match["score_breakdown"]["red"]["totalPoints"]
                     red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
+                    red_auto_score = match["score_breakdown"]["red"]["autoPoints"]
+                    red_teleop_score = match["score_breakdown"]["red"]["teleopPoints"]
+                    red_endgame_score = match["score_breakdown"]["red"]["endGameBargePoints"]
                     red_calculated_score = red_total_score - red_foul_score
                     break
 
             red_scouting_alliance_score = 0
+            red_scouting_auto_score = 0
 
             scouters_names_list_r = []
 
@@ -78,22 +85,39 @@ class ScoutingAccuracyManager(PageManager):
                 match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
                 if len(match_index_list) != 0:
                     match_index = match_index_list[0]
+
+                    # Auto Accuracy Retrieval
+                    auto_coral_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L1).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L2).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L3).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L4).values
+                    ]
+                    coral_points = [3, 4, 6, 7]
+                    for i in range(len(auto_coral_per_match)):
+                        red_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+
+                    # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     red_scouting_alliance_score += points_per_match[match_index]
+
                     scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
                     scouters_names_list_r.append(scout_name.title().replace(" ", ""))
 
             red_alliance_accuracy = (1 - abs((red_scouting_alliance_score-red_calculated_score)/red_calculated_score)) * 100
+            red_auto_accuracy = (1 - abs((red_scouting_auto_score - red_auto_score)/red_auto_score)) * 100
             scouters_names = ", ".join(scouters_names_list_r)
 
             if member_name.replace(" ", "").lower() in scouters_names.lower():
                 if scouters_names not in accuracy_dict['ScoutersNames']:
                     accuracy_dict['ScoutersNames'].append(scouters_names)
                     accuracy_dict['CumulativeAccuracy'].append(red_alliance_accuracy)
+                    accuracy_dict['AutoAccuracy'].append(red_auto_accuracy)
                     accuracy_dict['NumberOfScoutedMatches'].append(1)
                 else:
                     accuracy_scouts_index = accuracy_dict['ScoutersNames'].index(scouters_names)
                     accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index] += red_alliance_accuracy
+                    accuracy_dict['AutoAccuracy'][accuracy_scouts_index] += red_auto_accuracy
                     accuracy_dict['NumberOfScoutedMatches'][accuracy_scouts_index] += 1
 
             # Blue Alliance score from TBA
@@ -103,10 +127,14 @@ class ScoutingAccuracyManager(PageManager):
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
                     blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]
+                    blue_auto_score = match["score_breakdown"]["blue"]["autoPoints"]
+                    blue_teleop_score = match["score_breakdown"]["blue"]["teleopPoints"]
+                    blue_endgame_score = match["score_breakdown"]["blue"]["endGameBargePoints"]
                     blue_calculated_score = blue_total_score - blue_foul_score
                     break
 
             blue_scouting_alliance_score = 0
+            blue_scouting_auto_score = 0
 
             scouters_names_list_b = []
 
@@ -116,8 +144,22 @@ class ScoutingAccuracyManager(PageManager):
                 match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
                 if len(match_index_list) != 0:
                     match_index = match_index_list[0]
+
+                    # Auto Accuracy Retrieval
+                    auto_coral_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L1).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L2).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L3).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L4).values
+                    ]
+                    coral_points = [3, 4, 6, 7]
+                    for i in range(len(auto_coral_per_match)):
+                        blue_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+
+                    # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     blue_scouting_alliance_score += points_per_match[match_index]
+
                     scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
                     scouters_names_list_b.append(scout_name.title().replace(" ", ""))
 
@@ -125,16 +167,19 @@ class ScoutingAccuracyManager(PageManager):
                 blue_scouting_alliance_score += self.calculated_stats.points_contributed_by_match(team_key).sum()
 
             blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score)) * 100
+            blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score)/blue_auto_score)) * 100
 
             scouters_names = ", ".join(scouters_names_list_b)
             if member_name.replace(" ", "").lower() in scouters_names.lower():
                 if scouters_names not in accuracy_dict['ScoutersNames']:
                     accuracy_dict['ScoutersNames'].append(scouters_names)
                     accuracy_dict['CumulativeAccuracy'].append(blue_alliance_accuracy)
+                    accuracy_dict['AutoAccuracy'].append(blue_auto_accuracy)
                     accuracy_dict['NumberOfScoutedMatches'].append(1)
                 else:
                     accuracy_scouts_index = accuracy_dict['ScoutersNames'].index(scouters_names)
                     accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index] += blue_alliance_accuracy
+                    accuracy_dict['AutoAccuracy'][accuracy_scouts_index] += blue_auto_accuracy
                     accuracy_dict['NumberOfScoutedMatches'][accuracy_scouts_index] += 1
 
         df = pd.DataFrame(data={
