@@ -224,6 +224,9 @@ class ScoutingAccuracyManager(PageManager):
                 self.calculated_stats.points_contributed_by_match(team_key)
                 blue_scouting_alliance_score += self.calculated_stats.points_contributed_by_match(team_key).sum()
 
+            print(blue_scouting_auto_score)
+            print(blue_auto_score)
+
             blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score)) * 100
             blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score)/blue_auto_score)) * 100
             blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score)/blue_teleop_score)) * 100
