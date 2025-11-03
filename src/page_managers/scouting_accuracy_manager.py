@@ -77,6 +77,7 @@ class ScoutingAccuracyManager(PageManager):
 
             red_scouting_alliance_score = 0
             red_scouting_auto_score = 0
+            red_scouting_teleop_score = 0
 
             scouters_names_list_r = []
 
@@ -97,15 +98,32 @@ class ScoutingAccuracyManager(PageManager):
                     coral_points = [3, 4, 6, 7]
                     for i in range(len(auto_coral_per_match)):
                         red_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
-                    algae_per_match = [
+                    auto_algae_per_match = [
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_BARGE).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
                     ]
                     algae_points = [4, 6]
-                    for i in range(len(algae_per_match)):
-                        red_scouting_auto_score += algae_per_match[i][match_index] * algae_points[i]
+                    for i in range(len(auto_algae_per_match)):
+                        red_scouting_auto_score += auto_algae_per_match[i][match_index] * algae_points[i]
                     leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
                     red_scouting_auto_score += (leave_points[match_index] * 2)
+
+                    # Teleop Accuracy Retrieval
+                    teleop_coral_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L1).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L2).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L3).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L4).values
+                    ]
+                    coral_points = [2, 3, 4, 5]
+                    for i in range(len(teleop_coral_per_match)):
+                        red_scouting_teleop_score += teleop_coral_per_match[i][match_index] * coral_points[i]
+                    teleop_algae_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_BARGE).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_PROCESSOR).values
+                    ]
+                    for i in range(len(teleop_algae_per_match)):
+                        red_scouting_teleop_score += teleop_algae_per_match[i][match_index] * algae_points[i]
 
                     # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
@@ -116,6 +134,7 @@ class ScoutingAccuracyManager(PageManager):
 
             red_alliance_accuracy = (1 - abs((red_scouting_alliance_score-red_calculated_score)/red_calculated_score)) * 100
             red_auto_accuracy = (1 - abs((red_scouting_auto_score - red_auto_score)/red_auto_score)) * 100
+            red_teleop_accuracy = (1 - abs((red_scouting_teleop_score - red_teleop_score)/red_teleop_score)) * 100
             scouters_names = ", ".join(scouters_names_list_r)
 
             if member_name.replace(" ", "").lower() in scouters_names.lower():
@@ -123,11 +142,13 @@ class ScoutingAccuracyManager(PageManager):
                     accuracy_dict['ScoutersNames'].append(scouters_names)
                     accuracy_dict['CumulativeAccuracy'].append(red_alliance_accuracy)
                     accuracy_dict['AutoAccuracy'].append(red_auto_accuracy)
+                    accuracy_dict['TeleopAccuracy'].append(red_teleop_accuracy)
                     accuracy_dict['NumberOfScoutedMatches'].append(1)
                 else:
                     accuracy_scouts_index = accuracy_dict['ScoutersNames'].index(scouters_names)
                     accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index] += red_alliance_accuracy
                     accuracy_dict['AutoAccuracy'][accuracy_scouts_index] += red_auto_accuracy
+                    accuracy_dict['TeleopAccuracy'][accuracy_scouts_index] = red_teleop_accuracy
                     accuracy_dict['NumberOfScoutedMatches'][accuracy_scouts_index] += 1
 
             # Blue Alliance score from TBA
@@ -145,6 +166,7 @@ class ScoutingAccuracyManager(PageManager):
 
             blue_scouting_alliance_score = 0
             blue_scouting_auto_score = 0
+            blue_scouting_teleop_score = 0
 
             scouters_names_list_b = []
 
@@ -175,6 +197,23 @@ class ScoutingAccuracyManager(PageManager):
                     leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
                     blue_scouting_auto_score += (leave_points[match_index] * 2)
 
+                    # Teleop Accuracy Retrieval
+                    teleop_coral_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L1).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L2).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L3).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L4).values
+                    ]
+                    coral_points = [2, 3, 4, 5]
+                    for i in range(len(teleop_coral_per_match)):
+                        blue_scouting_teleop_score += teleop_coral_per_match[i][match_index] * coral_points[i]
+                    teleop_algae_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_BARGE).values,
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_PROCESSOR).values
+                    ]
+                    for i in range(len(teleop_algae_per_match)):
+                        blue_scouting_teleop_score += teleop_algae_per_match[i][match_index] * algae_points[i]
+
                     # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     blue_scouting_alliance_score += points_per_match[match_index]
@@ -187,6 +226,7 @@ class ScoutingAccuracyManager(PageManager):
 
             blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score)) * 100
             blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score)/blue_auto_score)) * 100
+            blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score)/blue_teleop_score)) * 100
 
             scouters_names = ", ".join(scouters_names_list_b)
             if member_name.replace(" ", "").lower() in scouters_names.lower():
@@ -194,17 +234,20 @@ class ScoutingAccuracyManager(PageManager):
                     accuracy_dict['ScoutersNames'].append(scouters_names)
                     accuracy_dict['CumulativeAccuracy'].append(blue_alliance_accuracy)
                     accuracy_dict['AutoAccuracy'].append(blue_auto_accuracy)
+                    accuracy_dict['TeleopAccuracy'].append(blue_teleop_accuracy)
                     accuracy_dict['NumberOfScoutedMatches'].append(1)
                 else:
                     accuracy_scouts_index = accuracy_dict['ScoutersNames'].index(scouters_names)
                     accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index] += blue_alliance_accuracy
                     accuracy_dict['AutoAccuracy'][accuracy_scouts_index] += blue_auto_accuracy
+                    accuracy_dict['TeleopAccuracy'][accuracy_scouts_index] += blue_teleop_accuracy
                     accuracy_dict['NumberOfScoutedMatches'][accuracy_scouts_index] += 1
 
         df = pd.DataFrame(data={
             'Scouters': accuracy_dict['ScoutersNames'],
             'Average Accuracy %': [round(accuracy_dict['CumulativeAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
             'Average Auto Accuracy %': [round(accuracy_dict['AutoAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
+            'Average Teleop Accuracy %': [round(accuracy_dict['TeleopAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
             'NumberOfScoutedMatches': accuracy_dict['NumberOfScoutedMatches']
         })
 
