@@ -8,14 +8,13 @@ from utils import (
     Queries,
     retrieve_scouting_data,
     retrieve_match_schedule,
-    retrieve_match_data
+    retrieve_match_data,
+    Criteria
 )
 import requests
 import os
 from dotenv import load_dotenv
 from pandas import DataFrame
-
-from ..utils import Criteria
 
 load_dotenv()
 
