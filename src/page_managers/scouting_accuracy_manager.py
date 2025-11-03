@@ -97,6 +97,13 @@ class ScoutingAccuracyManager(PageManager):
                     coral_points = [3, 4, 6, 7]
                     for i in range(len(auto_coral_per_match)):
                         red_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+                    algae_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_BARGE).values,
+                        self.calculated_stats.cycle_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
+                    ]
+                    algae_points = [4, 6]
+                    for i in range(len(algae_per_match)):
+                        red_scouting_auto_score += algae_per_match[i][match_index] * algae_points[i]
                     leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
                     red_scouting_auto_score += (leave_points[match_index] * 2)
 
@@ -158,6 +165,13 @@ class ScoutingAccuracyManager(PageManager):
                     coral_points = [3, 4, 6, 7]
                     for i in range(len(auto_coral_per_match)):
                         blue_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+                    algae_per_match = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_BARGE).values,
+                        self.calculated_stats.cycle_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
+                    ]
+                    algae_points = [4, 6]
+                    for i in range(len(algae_per_match)):
+                        blue_scouting_auto_score += algae_per_match[i][match_index] * algae_points[i]
                     leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
                     blue_scouting_auto_score += (leave_points[match_index] * 2)
 
