@@ -8,7 +8,8 @@ from utils import (
     Queries,
     retrieve_scouting_data,
     retrieve_match_schedule,
-    retrieve_match_data
+    retrieve_match_data,
+    retrieve_match_data_raw
 )
 import requests
 import os
@@ -19,11 +20,6 @@ load_dotenv()
 
 
 class ScoutingAccuracyManager(PageManager):
-    EVENT_MATCHES = requests.get(
-        f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
-        headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
-    ).json()
-
     """The scouting accuracy page manager for the `Scouting Accuracy` page."""
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
@@ -53,19 +49,18 @@ class ScoutingAccuracyManager(PageManager):
             'NumberOfScoutedMatches': []
         }
 
+        matches = retrieve_match_data_raw()
+
         for index, row in self.match_data.iterrows():
             match_key = row["match_key"]
             red_alliance = row["red_alliance"]
             blue_alliance = row["blue_alliance"]
-            headers = {
-                "X-TBA-Auth-Key": os.getenv("HEADERS")
-            }
 
             scouting_match_filter = self.raw_scouting_data[self.raw_scouting_data[Queries.MATCH_KEY] == match_key]
 
             # Red alliance score from TBA
             team_list = red_alliance.split(",")
-            for match in ScoutingAccuracyManager.EVENT_MATCHES:
+            for match in matches:
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     red_total_score = match["score_breakdown"]["red"]["totalPoints"]
                     red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
@@ -101,8 +96,7 @@ class ScoutingAccuracyManager(PageManager):
                     accuracy_dict['NumberOfScoutedMatches'][accuracy_scouts_index] += 1
 
             # Blue Alliance score from TBA
-            team_list = blue_alliance.split(",")
-            for match in ScoutingAccuracyManager.EVENT_MATCHES:
+            for match in matches:
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
                     blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]

@@ -8,7 +8,8 @@ from utils import (
     Queries,
     retrieve_scouting_data,
     retrieve_match_schedule,
-    retrieve_match_data
+    retrieve_match_data,
+    retrieve_match_data_raw
 )
 import requests
 import os
@@ -27,10 +28,19 @@ class MatchAccuracyManager(PageManager):
         self.match_schedule = retrieve_match_schedule()
         self.match_data = retrieve_match_data()
 
+    def generate_input_section(self) -> str:
+        """Generates the input section of the `Match Accuracy` page.
+
+        Not implemented since there is no need to filter a list sorted by number.
+
+        :return: Returns the string entered by the user.
+        """
+        return ""
+
     def generate_accuracy_table(self) -> DataFrame:
         """Generates the match accuracy table for all matches."""
         accuracy_rows = []
-        headers = {"X-TBA-Auth-Key": os.getenv("HEADERS")}
+        matches = retrieve_match_data_raw()
 
         with st.spinner("Calculating match accuracy..."):
             for index, row in self.match_data.iterrows():
@@ -40,13 +50,9 @@ class MatchAccuracyManager(PageManager):
 
                 # --- Red Alliance ---
                 red_team_list = red_alliance.split(",")
-                red_tba_matches = requests.get(
-                    f"https://www.thebluealliance.com/api/v3/team/frc{red_team_list[0]}/event/{EventSpecificConstants.EVENT_CODE}/matches",
-                    headers=headers
-                ).json()
 
                 red_calculated_score = None
-                for match in red_tba_matches:
+                for match in matches:
                     if (match["comp_level"] + str(match["match_number"])) == match_key:
                         red_total_score = match["score_breakdown"]["red"]["totalPoints"]
                         red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
@@ -79,13 +85,9 @@ class MatchAccuracyManager(PageManager):
 
                 # --- Blue Alliance ---
                 blue_team_list = blue_alliance.split(",")
-                blue_tba_matches = requests.get(
-                    f"https://www.thebluealliance.com/api/v3/team/frc{blue_team_list[0]}/event/{EventSpecificConstants.EVENT_CODE}/matches",
-                    headers=headers
-                ).json()
 
                 blue_calculated_score = None
-                for match in blue_tba_matches:
+                for match in matches:
                     if (match["comp_level"] + str(match["match_number"])) == match_key:
                         blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
                         blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]
