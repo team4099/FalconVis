@@ -1,3 +1,5 @@
+# TODO: Debug teleop and maybe auto later
+
 """Creates the `ScoutingAccuracyManager` class used to set up the Scouting Accuracy page and generate its table."""
 import pandas as pd
 import streamlit as st
@@ -125,6 +127,14 @@ class ScoutingAccuracyManager(PageManager):
                     for i in range(len(teleop_algae_per_match)):
                         red_scouting_teleop_score += teleop_algae_per_match[i][match_index] * algae_points[i]
 
+                    # Endgame Accuracy Retrieval
+                    park_points = self.calculated_stats.stat_per_match(int(team_key), Queries.PARKED_UNDER_BARGE, Criteria.BOOLEAN_CRITERIA).values
+                    climb_points = self.calculated_stats.stat_per_match(int(team_key), Queries.CLIMBED_CAGE, Criteria.CLIMBING_POINTAGE).values
+
+                    print("Park Points: " + str(park_points))
+                    print("Climb Points: " + str(climb_points))
+                    print("\n")
+
                     # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     red_scouting_alliance_score += points_per_match[match_index]
@@ -224,14 +234,12 @@ class ScoutingAccuracyManager(PageManager):
                 self.calculated_stats.points_contributed_by_match(team_key)
                 blue_scouting_alliance_score += self.calculated_stats.points_contributed_by_match(team_key).sum()
 
-            print(blue_scouting_auto_score)
-            print(blue_auto_score)
-
             blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score)) * 100
             blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score)/blue_auto_score)) * 100
             blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score)/blue_teleop_score)) * 100
 
             scouters_names = ", ".join(scouters_names_list_b)
+
             if member_name.replace(" ", "").lower() in scouters_names.lower():
                 if scouters_names not in accuracy_dict['ScoutersNames']:
                     accuracy_dict['ScoutersNames'].append(scouters_names)
