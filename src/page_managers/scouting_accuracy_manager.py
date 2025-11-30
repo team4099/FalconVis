@@ -19,6 +19,11 @@ load_dotenv()
 
 
 class ScoutingAccuracyManager(PageManager):
+    EVENT_MATCHES = requests.get(
+        f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
+        headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
+    ).json()
+
     """The scouting accuracy page manager for the `Scouting Accuracy` page."""
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
@@ -60,8 +65,7 @@ class ScoutingAccuracyManager(PageManager):
 
             # Red alliance score from TBA
             team_list = red_alliance.split(",")
-            red_tba_matches = requests.get(f"https://www.thebluealliance.com/api/v3/team/frc{team_list[0]}/event/{EventSpecificConstants.EVENT_CODE}/matches", headers=headers).json()
-            for match in red_tba_matches:
+            for match in ScoutingAccuracyManager.EVENT_MATCHES:
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     red_total_score = match["score_breakdown"]["red"]["totalPoints"]
                     red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
@@ -86,7 +90,7 @@ class ScoutingAccuracyManager(PageManager):
             red_alliance_accuracy = (1 - abs((red_scouting_alliance_score-red_calculated_score)/red_calculated_score)) * 100
             scouters_names = ", ".join(scouters_names_list_r)
 
-            if member_name.replace(" ", "").lower() in scouters_names.lower():
+            if member_name.replace(" ", "").lower() in scouters_names.replace(" ", "").lower():
                 if scouters_names not in accuracy_dict['ScoutersNames']:
                     accuracy_dict['ScoutersNames'].append(scouters_names)
                     accuracy_dict['CumulativeAccuracy'].append(red_alliance_accuracy)
@@ -98,8 +102,7 @@ class ScoutingAccuracyManager(PageManager):
 
             # Blue Alliance score from TBA
             team_list = blue_alliance.split(",")
-            blue_tba_matches = requests.get(f"https://www.thebluealliance.com/api/v3/team/frc{team_list[0]}/event/{EventSpecificConstants.EVENT_CODE}/matches", headers=headers).json()
-            for match in blue_tba_matches:
+            for match in ScoutingAccuracyManager.EVENT_MATCHES:
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
                     blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]
