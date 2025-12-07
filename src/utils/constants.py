@@ -148,6 +148,28 @@ class Criteria:
         True: 1
     }
 
+    # Autogame Criteria
+    AUTO_CORAL_POINTAGE = {
+        1: 2,
+        2: 3,
+        3: 4,
+        4: 5
+    }
+
+    # Teleop Criteria
+    TELEOP_CORAL_POINTAGE = {
+        1: 3,
+        2: 4,
+        3: 6,
+        4: 7
+    }
+
+    # Algae Criteria
+    ALGAE_POINTAGE = {
+        1: 4,
+        2: 6
+    }
+
     # Endgame Criteria
     CLIMBING_POINTAGE = {
         "No Climb": 2,

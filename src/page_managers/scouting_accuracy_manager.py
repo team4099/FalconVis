@@ -98,16 +98,14 @@ class ScoutingAccuracyManager(PageManager):
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L3).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L4).values
                     ]
-                    coral_points = [3, 4, 6, 7]
                     for i in range(len(auto_coral_per_match)):
-                        red_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+                        red_scouting_auto_score += auto_coral_per_match[i][match_index] * Criteria.AUTO_CORAL_POINTAGE[i + 1]
                     auto_algae_per_match = [
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_BARGE).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
                     ]
-                    algae_points = [4, 6]
                     for i in range(len(auto_algae_per_match)):
-                        red_scouting_auto_score += auto_algae_per_match[i][match_index] * algae_points[i]
+                        red_scouting_auto_score += auto_algae_per_match[i][match_index] * Criteria.ALGAE_POINTAGE[i + 1]
                     leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
                     red_scouting_auto_score += (leave_points[match_index] * 2)
 
@@ -118,15 +116,14 @@ class ScoutingAccuracyManager(PageManager):
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L3).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L4).values
                     ]
-                    coral_points = [2, 3, 4, 5]
                     for i in range(len(teleop_coral_per_match)):
-                        red_scouting_teleop_score += teleop_coral_per_match[i][match_index] * coral_points[i]
+                        red_scouting_teleop_score += teleop_coral_per_match[i][match_index] * Criteria.TELEOP_CORAL_POINTAGE[i + 1]
                     teleop_algae_per_match = [
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_BARGE).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_PROCESSOR).values
                     ]
                     for i in range(len(teleop_algae_per_match)):
-                        red_scouting_teleop_score += teleop_algae_per_match[i][match_index] * algae_points[i]
+                        red_scouting_teleop_score += teleop_algae_per_match[i][match_index] * Criteria.ALGAE_POINTAGE[i + 1]
 
                     # Endgame Accuracy Retrieval
                     park_points = self.calculated_stats.stat_per_match(int(team_key), Queries.PARKED_UNDER_BARGE, Criteria.BOOLEAN_CRITERIA).values
@@ -156,8 +153,6 @@ class ScoutingAccuracyManager(PageManager):
                     accuracy_dict['NumberOfScoutedMatches'].append(1)
                 else:
                     accuracy_scouts_index = accuracy_dict['ScoutersNames'].index(scouters_names)
-                    print(red_endgame_accuracy)
-                    print(accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index])
                     accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index] += red_alliance_accuracy
                     accuracy_dict['AutoAccuracy'][accuracy_scouts_index] += red_auto_accuracy
                     accuracy_dict['TeleopAccuracy'][accuracy_scouts_index] += red_teleop_accuracy
@@ -198,16 +193,14 @@ class ScoutingAccuracyManager(PageManager):
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L3).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_CORAL_L4).values
                     ]
-                    coral_points = [3, 4, 6, 7]
                     for i in range(len(auto_coral_per_match)):
-                        blue_scouting_auto_score += auto_coral_per_match[i][match_index] * coral_points[i]
+                        blue_scouting_auto_score += auto_coral_per_match[i][match_index] * Criteria.AUTO_CORAL_POINTAGE[i + 1]
                     algae_per_match = [
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_BARGE).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_PROCESSOR).values
                     ]
-                    algae_points = [4, 6]
                     for i in range(len(algae_per_match)):
-                        blue_scouting_auto_score += algae_per_match[i][match_index] * algae_points[i]
+                        blue_scouting_auto_score += algae_per_match[i][match_index] * Criteria.ALGAE_POINTAGE[i + 1]
                     leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
                     blue_scouting_auto_score += (leave_points[match_index] * 2)
 
@@ -218,15 +211,14 @@ class ScoutingAccuracyManager(PageManager):
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L3).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_CORAL_L4).values
                     ]
-                    coral_points = [2, 3, 4, 5]
                     for i in range(len(teleop_coral_per_match)):
-                        blue_scouting_teleop_score += teleop_coral_per_match[i][match_index] * coral_points[i]
+                        blue_scouting_teleop_score += teleop_coral_per_match[i][match_index] * Criteria.TELEOP_CORAL_POINTAGE[i + 1]
                     teleop_algae_per_match = [
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_BARGE).values,
                         self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_PROCESSOR).values
                     ]
                     for i in range(len(teleop_algae_per_match)):
-                        blue_scouting_teleop_score += teleop_algae_per_match[i][match_index] * algae_points[i]
+                        blue_scouting_teleop_score += teleop_algae_per_match[i][match_index] * Criteria.ALGAE_POINTAGE[i + 1]
 
                     # Endgame Accuracy Retrieval
                     park_points = self.calculated_stats.stat_per_match(int(team_key), Queries.PARKED_UNDER_BARGE, Criteria.BOOLEAN_CRITERIA).values
