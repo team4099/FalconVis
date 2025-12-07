@@ -1,8 +1,11 @@
 """Defines utility functions that are later used in FalconVis."""
+import os
 from io import StringIO
 from json import load, loads
 from re import search, sub
 from typing import Any
+from dotenv import load_dotenv
+import requests
 
 import streamlit as st
 from numpy import int64
@@ -21,9 +24,11 @@ __all__ = [
     "retrieve_pit_scouting_data",
     "retrieve_team_list",
     "retrieve_scouting_data",
-    "scouting_data_for_team"
+    "scouting_data_for_team",
+    "retrieve_match_data_raw"
 ]
 
+load_dotenv()
 
 def populate_missing_data(distributions: list[list], sentinel: Any = None) -> tuple[range, list]:
     """Populates missing data points when plotting multiple distributions.
@@ -129,6 +134,13 @@ def retrieve_match_schedule() -> DataFrame:
     else:  # Load match schedule from local files
         with open("./src/data/match_schedule.json") as file:
             return DataFrame.from_dict(load(file))
+
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+def retrieve_match_data_raw():
+    return requests.get(
+        f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
+        headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
+    ).json()
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE // 2)
