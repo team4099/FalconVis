@@ -53,8 +53,8 @@ class GeneralConstants:
 
 class EventSpecificConstants:
     """Constants specific to an event."""
-    EVENT_CODE = "2025vabla"
-    EVENT_NAME = "Duel on the Delaware"
+    EVENT_CODE = "2025mdbob"
+    EVENT_NAME = "Battle o Baltimore"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     NOTE_SCOUTING_URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
     PIT_SCOUTING_URL = (
@@ -146,6 +146,28 @@ class Criteria:
         "true": 1,
         False: 0,
         True: 1
+    }
+
+    # Autogame Criteria
+    AUTO_CORAL_POINTAGE = {
+        1: 2,
+        2: 3,
+        3: 4,
+        4: 5
+    }
+
+    # Teleop Criteria
+    TELEOP_CORAL_POINTAGE = {
+        1: 3,
+        2: 4,
+        3: 6,
+        4: 7
+    }
+
+    # Algae Criteria
+    ALGAE_POINTAGE = {
+        1: 4,
+        2: 6
     }
 
     # Endgame Criteria
