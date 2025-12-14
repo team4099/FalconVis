@@ -4,7 +4,6 @@ import streamlit as st
 from .page_manager import PageManager
 from utils import (
     CalculatedStats,
-    EventSpecificConstants,
     Queries,
     retrieve_scouting_data,
     retrieve_match_schedule,
@@ -12,8 +11,6 @@ from utils import (
     retrieve_match_data_raw,
     Criteria
 )
-import requests
-import os
 from dotenv import load_dotenv
 from pandas import DataFrame
 
@@ -40,7 +37,8 @@ class ScoutingAccuracyManager(PageManager):
             "Enter the name of the member",
             placeholder="Type here..."
         )
-
+    
+    #Method to create table sorted by scouter
     def generate_scouting_accuracy_table(self, member_name) -> DataFrame:
         """Generates the scouting accuracy table for the `Scouting Accuracy` page."""
 
@@ -59,8 +57,6 @@ class ScoutingAccuracyManager(PageManager):
             match_key = row["match_key"]
             red_alliance = row["red_alliance"]
             blue_alliance = row["blue_alliance"]
-
-            scouting_match_filter = self.raw_scouting_data[self.raw_scouting_data[Queries.MATCH_KEY] == match_key]
 
             # Red alliance score from TBA
             team_list = red_alliance.split(",")
@@ -263,6 +259,7 @@ class ScoutingAccuracyManager(PageManager):
         })
 
         return df
+    #Method to create table sorted by match
     def generate_match_accuracy_table(self) -> DataFrame:
         """Generates the match accuracy table for all matches."""
         accuracy_rows = []
@@ -355,7 +352,7 @@ class ScoutingAccuracyManager(PageManager):
                     "Red Accuracy (%)": f"{round(red_accuracy, 2)}%",
                     "# of Blue Scouters": len(scouters_names_b),
                     "Blue Accuracy (%)": f"{round(blue_accuracy, 2)}%"
-})
+                })
 
         accuracy_rows.sort(key = lambda row: int(row["Match"][2:]))
         df = pd.DataFrame(accuracy_rows)
