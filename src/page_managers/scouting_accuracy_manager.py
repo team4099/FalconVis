@@ -39,7 +39,7 @@ class ScoutingAccuracyManager(PageManager):
         )
     
     #Method to create table sorted by scouter
-    def generate_scouting_accuracy_table(self, member_name) -> DataFrame:
+    def generate_scouting_accuracy_table(self, member_name: str) -> DataFrame:
         """Generates the scouting accuracy table for the `Scouting Accuracy` page."""
 
         accuracy_dict = {
@@ -130,10 +130,39 @@ class ScoutingAccuracyManager(PageManager):
                     scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
                     scouters_names_list_r.append(scout_name.title().replace(" ", ""))
 
-            red_alliance_accuracy = (1 - abs((red_scouting_alliance_score-red_calculated_score)/red_calculated_score)) * 100
-            red_auto_accuracy = (1 - abs((red_scouting_auto_score - red_auto_score)/red_auto_score)) * 100
-            red_teleop_accuracy = (1 - abs((red_scouting_teleop_score - red_teleop_score)/red_teleop_score)) * 100
-            red_endgame_accuracy = (1 - abs((red_scouting_endgame_score - red_endgame_score)/red_endgame_score)) * 100
+                    # Red alliance accuracy
+                    if red_calculated_score == 0:
+                        if red_scouting_alliance_score == 0:
+                            red_alliance_accuracy = 100.0
+                        else:
+                            red_alliance_accuracy = 0.0
+                    else:
+                        red_alliance_accuracy = (1 - abs((red_scouting_alliance_score - red_calculated_score) / red_calculated_score)) * 100
+                    # red auto accuracy
+                    if red_auto_score == 0:
+                        if red_scouting_auto_score == 0:
+                            red_auto_accuracy = 100.0
+                        else:
+                            red_auto_accuracy = 0.0
+                    else:
+                        red_auto_accuracy = (1 - abs((red_scouting_auto_score - red_auto_score) / red_auto_score)) * 100
+                    # red teleop accuracy
+                    if red_teleop_score == 0:
+                        if red_scouting_teleop_score == 0:
+                            red_teleop_accuracy = 100.0
+                        else:
+                            red_teleop_accuracy = 0.0
+                    else:
+                        red_teleop_accuracy = (1 - abs((red_scouting_teleop_score - red_teleop_score) / red_teleop_score)) * 100
+                    # red endgame accuracy
+                    if red_endgame_score == 0:
+                        if red_scouting_endgame_score == 0:
+                            red_endgame_accuracy = 100.0
+                        else:
+                            red_endgame_accuracy = 0.0
+                    else:
+                        red_endgame_accuracy = (1 - abs((red_scouting_endgame_score - red_endgame_score) / red_endgame_score)) * 100
+
             scouters_names = ", ".join(scouters_names_list_r)
 
             if member_name.replace(" ", "").lower() in scouters_names.replace(" ", "").lower():
@@ -226,10 +255,38 @@ class ScoutingAccuracyManager(PageManager):
                 self.calculated_stats.points_contributed_by_match(team_key)
                 blue_scouting_alliance_score += self.calculated_stats.points_contributed_by_match(team_key).sum()
 
-            blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score-blue_calculated_score)/blue_calculated_score)) * 100
-            blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score)/blue_auto_score)) * 100
-            blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score)/blue_teleop_score)) * 100
-            blue_endgame_accuracy = (1 - abs((blue_scouting_endgame_score - blue_endgame_score)/blue_endgame_score)) * 100
+                # blue alliance accuracy
+                if blue_calculated_score == 0:
+                    if blue_scouting_alliance_score == 0:
+                        blue_alliance_accuracy = 100.0
+                    else:
+                        blue_alliance_accuracy = 0.0
+                else:
+                    blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score - blue_calculated_score) / blue_calculated_score)) * 100
+                # blue auto accuracy
+                if blue_auto_score == 0:
+                    if blue_scouting_auto_score == 0:
+                        blue_auto_accuracy = 100.0
+                    else:
+                        blue_auto_accuracy = 0.0
+                else:
+                    blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score) / blue_auto_score)) * 100
+                # blue teleop accuracy
+                if blue_teleop_score == 0:
+                    if blue_scouting_teleop_score == 0:
+                        blue_teleop_accuracy = 100.0
+                    else:
+                        blue_teleop_accuracy = 0.0
+                else:
+                    blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score) / blue_teleop_score)) * 100
+                # blue endgame accuracy
+                if blue_endgame_score == 0:
+                    if blue_scouting_endgame_score == 0:
+                        blue_endgame_accuracy = 100.0
+                    else:
+                        blue_endgame_accuracy = 0.0
+                else:
+                    blue_endgame_accuracy = (1 - abs((blue_scouting_endgame_score - blue_endgame_score) / blue_endgame_score)) * 100
 
             scouters_names = ", ".join(scouters_names_list_b)
 
