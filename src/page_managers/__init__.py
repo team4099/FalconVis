@@ -4,5 +4,4 @@ from .match_manager import MatchManager
 from .picklist_manager import PicklistManager
 from .ranking_simulator_manager import RankingSimulatorManager
 from .scouting_accuracy_manager import ScoutingAccuracyManager
-from .match_accuracy_manager import MatchAccuracyManager
 from .team_manager import TeamManager
