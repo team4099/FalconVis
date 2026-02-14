@@ -83,8 +83,7 @@ class Queries:
     STARTING_POSITION = "StartingPosition"
     LEFT_STARTING_ZONE = "AutoLeave"
     SCORING_SIDE = "ScoringSide"
-    PARKED_UNDER_BARGE = "Parked"
-    CLIMBED_CAGE = "ClimbStatus"
+    CLIMBED_TOWER = "ClimbStatus"
     CLIMB_SPEED = "ClimbSpeed"
     DRIVER_RATING = "DriverRating"
     ROBOT_STYLE_TYPE = "RobotStyleType"
@@ -101,6 +100,7 @@ class Queries:
     AUTO_SINUGLAR_COUNT = "AutoSinuglarCount"
     AUTO_BATCH_COUNT = "AutoBatchCount"
     TELEOP_BATCH_COUNT = "TeleopBatchCount"
+    MAGAZINE_SIZE = 0
 
     # Notes
     AUTO_NOTES = "AutoNotes"
@@ -138,9 +138,10 @@ class Criteria:
 
     # Endgame Criteria
     CLIMBING_POINTAGE = {
-        "L1 Climb": 10,
-        "L2 Climb": 20,
-        "L3 Climb": 30
+        "None": 0,
+        "L1": 10,
+        "L2": 20,
+        "L3": 30
     }
 
     CLIMBING_CRITERIA = {

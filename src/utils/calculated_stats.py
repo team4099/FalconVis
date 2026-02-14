@@ -51,34 +51,22 @@ class CalculatedStats(BaseCalculatedStats):
         team_data = scouting_data_for_team(team_number, self.data)
 
         # Autonomous calculations
-        auto_coral_l1_points = team_data[Queries.AUTO_CORAL_L1].apply(lambda cycle: cycle * 3)
-        auto_coral_l2_points = team_data[Queries.AUTO_CORAL_L2].apply(lambda cycle: cycle * 4)
-        auto_coral_l3_points = team_data[Queries.AUTO_CORAL_L3].apply(lambda cycle: cycle * 6)
-        auto_coral_l4_points = team_data[Queries.AUTO_CORAL_L4].apply(lambda cycle: cycle * 7)
-        auto_barge_points = team_data[Queries.AUTO_BARGE].apply(lambda cycle: cycle * 4)
-        auto_processor_points = team_data[Queries.AUTO_PROCESSOR].apply(lambda cycle: cycle * 6)
-        auto_leave_points = team_data[Queries.LEFT_STARTING_ZONE].apply(
-            lambda left_starting_zone: Criteria.BOOLEAN_CRITERIA[left_starting_zone] * 3
-        )
-        total_auto_points = auto_coral_l1_points + auto_coral_l2_points + auto_coral_l3_points + auto_coral_l4_points + auto_barge_points + auto_processor_points + auto_leave_points
+        auto_singular_ball_points = team_data[Queries.AUTO_SINUGLAR_COUNT].apply(lambda cycle: cycle)
+        auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(lambda cycle: cycle)
+        auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda cycle: cycle)
+
+        total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
+
         # Teleop calculations
-        teleop_coral_l1_points = team_data[Queries.TELEOP_CORAL_L1].apply(lambda cycle: cycle * 2)
-        teleop_coral_l2_points = team_data[Queries.TELEOP_CORAL_L2].apply(lambda cycle: cycle * 3)
-        teleop_coral_l3_points = team_data[Queries.TELEOP_CORAL_L3].apply(lambda cycle: cycle * 4)
-        teleop_coral_l4_points = team_data[Queries.TELEOP_CORAL_L4].apply(lambda cycle: cycle * 5)
-        teleop_barge_points = team_data[Queries.TELEOP_BARGE].apply(lambda cycle: cycle * 4)
-        teleop_processor_points = team_data[Queries.TELEOP_PROCESSOR].apply(lambda cycle: cycle * 6)
-        total_teleop_points = teleop_coral_l1_points + teleop_coral_l2_points + teleop_coral_l3_points + teleop_coral_l4_points + teleop_barge_points + teleop_processor_points
+        teleop_singular_ball_points = team_data[Queries.TELEOP_SINUGLAR_COUNT].apply(lambda cycle: cycle)
+        teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda cycle: cycle)
+
+        total_teleop_points = teleop_singular_ball_points + teleop_batch_points
 
         # Endgame (stage) calculations
-        park_points = team_data[Queries.PARKED_UNDER_BARGE].apply(
-            lambda parking_state: Criteria.BOOLEAN_CRITERIA[parking_state]
-        )
-        climb_points = team_data[Queries.CLIMBED_CAGE].apply(
-            lambda climbing_state: Criteria.CLIMBING_POINTAGE[climbing_state]
-        )
+        climb_points = team_data[Queries.TELEOP_CLIMB].apply(lambda cycle: cycle)
        
-        total_endgame_points = park_points + climb_points 
+        total_endgame_points = climb_points
 
         if mode == Queries.AUTO:
             return total_auto_points
@@ -92,123 +80,6 @@ class CalculatedStats(BaseCalculatedStats):
             + total_teleop_points
             + total_endgame_points
         )
-
-    # Cycle calculation methods
-    @_convert_to_float_from_numpy_type
-    def average_cycles(self, team_number: int, mode: str = None) -> float:
-        """Calculates the average cycles for a team in either autonomous or teleop (wrapper around `cycles_by_match`).
-
-        The following custom graphs are supported with this function:
-        - Bar graph
-
-        :param team_number: The team number to calculate the average cycles for.
-        :param mode: The mode to calculate said cycles for (Auto/Teleop)
-        :return: A float representing the average cycles for said team in the mode specified.
-        """
-        if mode is not None:
-            return self.cycles_by_match(team_number, mode).mean()
-        else:
-            return (self.cycles_by_match(team_number, Queries.AUTO) + self.cycles_by_match(team_number, Queries.TELEOP)).mean()
-
-    @_convert_to_float_from_numpy_type
-    def average_cycles_for_structure(self, team_number: int, structure: str) -> float:
-        """Calculates the average cycles for a team for a structure (wrapper around `cycles_by_match`).
-
-        The following custom graphs are supported with this function:
-        - Bar graph
-
-        :param team_number: The team number to calculate the average cycles for.
-        :param structure: The structure to return cycles for (AutoSpeaker/AutoAmp/TeleopSpeaker/TeleopAmp/TeleopTrap)
-        :return: A float representing the average cycles for said team in the structure specified.
-        """
-        return self.cycles_by_structure_per_match(team_number, structure).mean()
-
-    def cycles_by_match(self, team_number: int, mode: str = None) -> Series:
-        """Returns the cycles for a certain mode (autonomous/teleop) in a match
-
-        The following custom graphs are supported with this function:
-        - Line graph
-        - Box plot
-        - Multi line graph
-
-        :param team_number: The team number to calculate the cycles by match for.
-        :param mode: The mode to return cycles by match for (Auto/Teleop)
-        :return: A series containing the cycles per match for the mode specified.
-        """
-        team_data = scouting_data_for_team(team_number, self.data)
-
-        if mode == Queries.AUTO:
-            return team_data[Queries.AUTO_CORAL_L1] + team_data[Queries.AUTO_CORAL_L2]+ team_data[Queries.AUTO_CORAL_L3] + team_data[Queries.AUTO_CORAL_L4] + team_data[Queries.AUTO_BARGE] + team_data[Queries.AUTO_PROCESSOR]
-        elif mode == Queries.AUTO_CORAL:
-            return team_data[Queries.AUTO_CORAL_L1] + team_data[Queries.AUTO_CORAL_L2]+ team_data[Queries.AUTO_CORAL_L3] + team_data[Queries.AUTO_CORAL_L4]
-        elif mode == Queries.TELEOP:
-            return team_data[Queries.TELEOP_CORAL_L1] + team_data[Queries.TELEOP_CORAL_L2] + team_data[Queries.TELEOP_CORAL_L3] + team_data[Queries.TELEOP_CORAL_L4] + team_data[Queries.TELEOP_BARGE] + team_data[Queries.TELEOP_PROCESSOR]
-        elif mode == Queries.CORAL_L1:
-            return team_data[Queries.TELEOP_CORAL_L1] + team_data[Queries.AUTO_CORAL_L1]
-        elif mode == Queries.CORAL_L2:
-            return team_data[Queries.TELEOP_CORAL_L2] + team_data[Queries.AUTO_CORAL_L2]
-        elif mode == Queries.CORAL_L3:
-            return team_data[Queries.TELEOP_CORAL_L3] + team_data[Queries.AUTO_CORAL_L3]
-        elif mode == Queries.CORAL_L4:
-            return team_data[Queries.TELEOP_CORAL_L4] + team_data[Queries.AUTO_CORAL_L4]
-        else:
-            return (
-                team_data[Queries.AUTO_CORAL_L1] + team_data[Queries.AUTO_CORAL_L2]+ team_data[Queries.AUTO_CORAL_L3] + team_data[Queries.AUTO_CORAL_L4] + team_data[Queries.AUTO_BARGE] + team_data[Queries.AUTO_PROCESSOR]
-                + team_data[Queries.TELEOP_CORAL_L1] + team_data[Queries.TELEOP_CORAL_L2] + team_data[Queries.TELEOP_CORAL_L3] + team_data[Queries.TELEOP_CORAL_L4] + team_data[Queries.TELEOP_BARGE] + team_data[Queries.TELEOP_PROCESSOR]
-            )
-
-    def cycles_by_structure_per_match(self, team_number: int, structure: str | tuple) -> Series:
-        """Returns the cycles for a certain structure (auto speaker, auto amp, etc.) in a match
-
-        The following custom graphs are supported with this function:
-        - Line graph
-        - Box plot
-        - Multi line graph
-
-        :param team_number: The team number to calculate the cycles by height per match for.
-        :param structure: The structure to return cycles for (AutoSpeaker/AutoAmp/TeleopSpeaker/TeleopAmp/TeleopTrap)
-        :return: A series containing the cycles per match for the structure specified.
-        """
-        team_data = scouting_data_for_team(team_number, self.data)
-
-        if isinstance(structure, tuple):
-            return reduce(lambda x, y: x + y, [team_data[struct] for struct in structure])
-        else:
-            return team_data[structure]
-
-    # Alliance-wide methods
-    @_convert_to_float_from_numpy_type
-    def average_coop_bonus_rate(self, team_number: int) -> float:
-        """Returns the average rate (%) that the coopertition bonus is reached by an alliance (average method).
-        (ignore)
-
-        The following custom graphs are supported with this function:
-        - Bar graph
-
-        :param team_number: The team to calculate the average coop bonus rate for.
-        :return: A float representing the % rate of the alliance reaching the coopertition bonus.
-        """
-        return self.reaches_coop_bonus_by_match(team_number).astype(int).mean()
-    def reaches_coop_bonus_by_match(self, team_number: int) -> Series:
-        """Returns whether three teams within an alliance are able to reach the coopertition bonus within the first
-        45 seconds of a match by match. (ignore)
-
-        The following custom graphs are supported with this function:
-        - Line graph
-        - Box plot
-        - Multi line graph
-
-        :param team_number: The team to determine the coop bonus rate by match for.
-        :return: Whether or not the alliance would reach the coopertition bonus requirement of one amp cycle in 45 sec.
-        """
-        auto_processor_sufficient = self.cycles_by_structure_per_match(
-            team_number, Queries.AUTO_PROCESSOR
-        )
-        teleop_processor_sufficient = (
-            self.cycles_by_structure_per_match(team_number, Queries.TELEOP_PROCESSOR)
-        )
-
-        return auto_processor_sufficient + teleop_processor_sufficient >= 2
 
     # Rating methods
     @_convert_to_float_from_numpy_type
@@ -255,12 +126,34 @@ class CalculatedStats(BaseCalculatedStats):
         return scouting_data_for_team(team_number, self.data)[Queries.INTAKE_DEFENSE_RATING].apply(
             lambda counter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(counter_defense_skill, float("nan"))
         ).mean()
+
+    @_convert_to_float_from_numpy_type
+        def average_throughput_speed(self, team_number: int) -> float:
+            """Returns the average throughput (fuel shot per second) of a team.
+
+            :param team_number: The team to determine the throughput for.
+            :return: A float representing the average throughput of said team.
+            """
+            return scouting_data_for_team(team_number, self.data)[Queries.THROUGHPUT_SPEED].apply(
+                lambda throughput_speed: Criteria.BASIC_RATING_CRITERIA.get(throughput_speed, float("nan"))
+            ).mean()
+
+    @_convert_to_float_from_numpy_type
+            def average_shooter_defense_skill(self, team_number: int) -> float:
+                """Returns the average shooter defense skill (ability to shoot while being defended against) of a team.
+
+                :param team_number: The team to determine the shooter defense skill for.
+                :return: A float representing the average shooter defense skill of said team.
+                """
+                return scouting_data_for_team(team_number, self.data)[Queries.SHOOTER_DEFENSE_RATING].apply(
+                    lambda shooter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(shooter_defense_skill, float("nan"))
+                ).mean()
     
     def drivetrain_width_by_team(self, team_number: int) -> float:
         """Returns a float representing the teams drivetrain width
 
         :param team_number: The team to find disable data for.
-        :return: A float with the team drivtrain width in inches
+        :return: A float with the team drivetrain width in inches
         """
         pit_scouting_data = retrieve_pit_scouting_data()
         return pit_scouting_data[
@@ -331,73 +224,31 @@ class CalculatedStats(BaseCalculatedStats):
         )
 
     # Methods for ranking simulation
-    def chance_of_coop_bonus(self, alliance: list[int]) -> float:
-        """Determines the chance of the coop bonus using all possible permutations with an alliance.
-
-        :param alliance: The three teams on the alliance.
-        """
-        coop_by_match = [self.reaches_coop_bonus_by_match(team) for team in alliance]
-        possible_coop_combos = self.cartesian_product(*coop_by_match)
-        return len([combo for combo in possible_coop_combos if any(combo)]) / len(possible_coop_combos)
-
     def chance_of_bonuses(self, alliance: list[int]) -> tuple[float, float, float]:
         """Determines the chance of the coopertition bonus, the auto bonus, coral bonus, and the barge bonus using all possible permutations with an alliance.
 
         :param alliance: The three teams on the alliance.
         """
-        chance_of_coop = self.chance_of_coop_bonus(alliance)
-        cycles_for_alliance = [self.cycles_by_match(team) for team in alliance]        
-        # Auto RP calculations
-        Auto_Coral_Cycles_by_Team = [self.cycles_by_match(team, Queries.AUTO_CORAL) for team in alliance]
-        possible_cycle_combos = self.cartesian_product(*Auto_Coral_Cycles_by_Team, reduce_with_sum=True)
-        chance_of_reaching_1_cycles = (
-            len([combo for combo in possible_cycle_combos if combo >= 1]) / len(possible_cycle_combos)
-        )
-        Robot_Left_Starting_Zone =[True in self.stat_per_match(team, Queries.LEFT_STARTING_ZONE) for team in alliance]
-        if Robot_Left_Starting_Zone.count(True) == 3:  # If teams can climb
-            chance_of_auto_rp = chance_of_reaching_1_cycles
-        else:
-            chance_of_auto_rp = 0  # No chance that they can get the RP even if 14 points can be reached.
 
-        # Coral RP calculations
-        Coral_L1_Cycles_by_Team = [self.cycles_by_match(team, Queries.CORAL_L1) for team in alliance]
-        Coral_L2_Cycles_by_Team = [self.cycles_by_match(team, Queries.CORAL_L2) for team in alliance]
-        Coral_L3_Cycles_by_Team = [self.cycles_by_match(team, Queries.CORAL_L3) for team in alliance]
-        Coral_L4_Cycles_by_Team = [self.cycles_by_match(team, Queries.CORAL_L4) for team in alliance]
-        possible_coral_L1_cycles = self.cartesian_product(*Coral_L1_Cycles_by_Team, reduce_with_sum=True)
-        possible_coral_L2_cycles = self.cartesian_product(*Coral_L2_Cycles_by_Team, reduce_with_sum=True)
-        possible_coral_L3_cycles = self.cartesian_product(*Coral_L3_Cycles_by_Team, reduce_with_sum=True)
-        possible_coral_L4_cycles = self.cartesian_product(*Coral_L4_Cycles_by_Team, reduce_with_sum=True)
-        chance_of_reaching_5_cycles_L1 = (
-            len([combo for combo in possible_coral_L1_cycles if combo >= 5]) / len(possible_coral_L1_cycles)
+        Points_by_Team = team_data[Queries.AUTO_SINUGLAR_COUNT].apply(lambda cycle: cycle)+ team_data[Queries.AUTO_BATCH_COUNT].apply(lambda cycle: cycle)+team_data[Queries.TELEOP_SINUGLAR_COUNT].apply(lambda cycle: cycle)+team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda cycle: cycle)
+        possible_points = self.cartesian_product(*Points_by_team, reduce_with_sum=True)
+        chance_of_energized_rp = (
+            len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
         )
-        chance_of_reaching_5_cycles_L2 = (
-            len([combo for combo in possible_coral_L2_cycles if combo >= 5]) / len(possible_coral_L2_cycles)
-        )
-        chance_of_reaching_5_cycles_L3 = (
-            len([combo for combo in possible_coral_L3_cycles if combo >= 5]) / len(possible_coral_L3_cycles)
-        )
-        chance_of_reaching_5_cycles_L4 = (
-            len([combo for combo in possible_coral_L4_cycles if combo >= 5]) / len(possible_coral_L4_cycles)
-        )
-        chance_of_reaching_5_cycles_for_each_level = (
-            chance_of_reaching_5_cycles_L1 * chance_of_reaching_5_cycles_L2 * chance_of_reaching_5_cycles_L3 * chance_of_reaching_5_cycles_L4
-        )
-        chance_of_reaching_5_cycles_for_3_levels = (
-
-            1 - (1 - chance_of_reaching_5_cycles_for_each_level) ** 3
-        )     
-        # Barge RP calculations
-        endgame_points_by_team = [self.points_contributed_by_match(team, Queries.ENDGAME) for team in alliance]
-        possible_endgame_combos = self.cartesian_product(*endgame_points_by_team, reduce_with_sum=True)
-        chance_of_barge_rp = (
-            len([combo for combo in possible_endgame_combos if combo >= 14]) / len(possible_endgame_combos)
+        chance_of_supercharged_rp = (
+                    len([combo for combo in possible_points if combo >= 360]) / len(possible_points)
+                )
+        # Endgame RP calculations
+        traversal_points_by_team =team_data[Queries.AUTO_CLIMB].apply(lambda cycle: cycle)+ team_data[Queries.TELEOP_CLIMB].apply(lambda cycle: cycle)
+        possible_traversal_combos = self.cartesian_product(*traversal_points_by_team, reduce_with_sum=True)
+        chance_of_traversal_rp = (
+            len([combo for combo in possible_endgame_combos if combo >= 50) / len(possible_endgame_combos)
         )
         return (
-            chance_of_coop,
-            chance_of_reaching_5_cycles_for_each_level * (1 - chance_of_coop) + chance_of_reaching_5_cycles_for_3_levels * chance_of_coop,
-            chance_of_barge_rp,
-            chance_of_auto_rp
+            chance_of_energized_rp,
+            chance_of_supercharged_rp,
+            chance_of_traversal_rp
+
         )
         
     def chance_of_winning(self, alliance_one: list[int], alliance_two: list[int]) -> tuple:
