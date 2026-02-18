@@ -52,8 +52,8 @@ class CalculatedStats(BaseCalculatedStats):
 
         # Autonomous calculations
         auto_singular_ball_points = team_data[Queries.AUTO_SINUGLAR_COUNT].apply(lambda cycle: cycle)
-        auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(lambda cycle: cycle)
-        auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda cycle: cycle)
+        auto_batch_points = (team_data[Queries.AUTO_BATCH_COUNT]*team_data[Queries.MAGAZINE_SIZE]).apply(lambda cycle: cycle)
+        auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda cycle: bool(cycle))
 
         total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
 
@@ -239,7 +239,7 @@ class CalculatedStats(BaseCalculatedStats):
                     len([combo for combo in possible_points if combo >= 360]) / len(possible_points)
                 )
         # Endgame RP calculations
-        traversal_points_by_team =team_data[Queries.AUTO_CLIMB].apply(lambda cycle: cycle)+ team_data[Queries.TELEOP_CLIMB].apply(lambda cycle: cycle)
+        traversal_points_by_team =team_data[Queries.AUTO_CLIMB].apply(lambda cycle: bool(cycle))+ team_data[Queries.TELEOP_CLIMB].apply(lambda cycle: bool(cycle))
         possible_traversal_combos = self.cartesian_product(*traversal_points_by_team, reduce_with_sum=True)
         chance_of_traversal_rp = (
             len([combo for combo in possible_endgame_combos if combo >= 50) / len(possible_endgame_combos)
