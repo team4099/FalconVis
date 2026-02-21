@@ -80,38 +80,27 @@ class Queries:
     MATCH_KEY = "MatchKey"
     MATCH_NUMBER = "MatchNumber"
     TEAM_NUMBER = "TeamNumber"
-
     STARTING_POSITION = "StartingPosition"
     LEFT_STARTING_ZONE = "AutoLeave"
     SCORING_SIDE = "ScoringSide"
-    AUTO_CORAL_L1 = "AutoCoralL1"
-    AUTO_CORAL_L2 = "AutoCoralL2"
-    AUTO_CORAL_L3 = "AutoCoralL3"
-    AUTO_CORAL_L4 = "AutoCoralL4"
-    AUTO_CORAL_MISSES = "AutoCoralMisses"
-    AUTO_BARGE = "AutoBarge"
-    AUTO_PROCESSOR = "AutoProcessor"
-
-    TELEOP_CORAL_L1 = "TeleopCoralL1"
-    TELEOP_CORAL_L2 = "TeleopCoralL2"
-    TELEOP_CORAL_L3 = "TeleopCoralL3"
-    TELEOP_CORAL_L4 = "TeleopCoralL4"
-    TELEOP_CORAL_MISSES = "TeleopCoralMisses"
-    TELEOP_BARGE = "TeleopAlgaeBarge"
-    TELEOP_PROCESSOR = "TeleopAlgaeProcessor"
-    TELEOP_ALGAE_REMOVAL = "TeleopAlgaeRemoval"
-
-    PARKED_UNDER_BARGE = "Parked"
-    CLIMBED_CAGE = "ClimbStatus"
+    CLIMBED_TOWER = "ClimbStatus"
     CLIMB_SPEED = "ClimbSpeed"
-
     DRIVER_RATING = "DriverRating"
     ROBOT_STYLE_TYPE = "RobotStyleType"
     INTAKE_SPEED = "IntakeSpeed"
     DEFENSE_RATING = "DefenseRating"
+    SHOOTER_DEFENSE_RATING = "ShooterDefenseRating"
     INTAKE_DEFENSE_RATING = "IntakeDefenseRating"
     DISABLE = "Disabled"
     STABILITY = "StabilityRating"
+    THROUGHPUT_SPEED = "ThroughputSpeed"
+    TELEOP_CLIMB = "TeleopClimb"
+    AUTO_CLIMB = "AutoClimb"
+    TELEOP_SINUGLAR_COUNT = "TeleopSinuglarCount"
+    AUTO_SINUGLAR_COUNT = "AutoSinuglarCount"
+    AUTO_BATCH_COUNT = "AutoBatchCount"
+    TELEOP_BATCH_COUNT = "TeleopBatchCount"
+    MAGAZINE_SIZE = "HopperCapacity"
 
     # Notes
     AUTO_NOTES = "AutoNotes"
@@ -125,7 +114,6 @@ class Queries:
 
     # Modes
     AUTO = "Auto"
-    AUTO_CORAL = "AutoCoral"
     TELEOP = "Teleop"
     ENDGAME = "Endgame"
 
@@ -148,39 +136,19 @@ class Criteria:
         True: 1
     }
 
-    # Autogame Criteria
-    AUTO_CORAL_POINTAGE = {
-        1: 2,
-        2: 3,
-        3: 4,
-        4: 5
-    }
-
-    # Teleop Criteria
-    TELEOP_CORAL_POINTAGE = {
-        1: 3,
-        2: 4,
-        3: 6,
-        4: 7
-    }
-
-    # Algae Criteria
-    ALGAE_POINTAGE = {
-        1: 4,
-        2: 6
-    }
-
     # Endgame Criteria
     CLIMBING_POINTAGE = {
-        "No Climb": 2,
-        "Shallow Climb": 6,
-        "Deep Climb": 12
+        "None": 0,
+        "L1": 10,
+        "L2": 20,
+        "L3": 30
     }
 
     CLIMBING_CRITERIA = {
-        "No Climb": 0,
-        "Shallow Climb": 1,
-        "Deep Climb": 1
+        "None": 0,
+        "L1": 1,
+        "L2": 2,
+        "L3": 3
     }
 
     # Ratings criteria
