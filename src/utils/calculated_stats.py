@@ -51,20 +51,19 @@ class CalculatedStats(BaseCalculatedStats):
         team_data = scouting_data_for_team(team_number, self.data)
 
         # Autonomous calculations
-        auto_singular_ball_points = team_data[Queries.AUTO_SINUGLAR_COUNT].apply(lambda cycle: cycle)
-        auto_batch_points = (team_data[Queries.AUTO_BATCH_COUNT]*team_data[Queries.MAGAZINE_SIZE])
-        auto_climb_points = Criteria.BOOLEAN_CRITERIA[team_data[Queries.AUTO_CLIMB]] *15
+        auto_singular_ball_points = team_data[Queries.AUTO_SINUGLAR_COUNT]
+        auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]))
+        auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
 
         total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
 
         # Teleop calculations
-        teleop_singular_ball_points = team_data[Queries.TELEOP_SINUGLAR_COUNT].apply(lambda cycle: cycle)
-        teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda cycle: cycle)
-
+        teleop_singular_ball_points = team_data[Queries.TELEOP_SINUGLAR_COUNT]
+        teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]))
         total_teleop_points = teleop_singular_ball_points + teleop_batch_points
 
         # Endgame (stage) calculations
-        climb_points = team_data[Queries.TELEOP_CLIMB].apply(lambda cycle: cycle)
+        climb_points = team_data[Queries.TELEOP_CLIMB].apply(lambda climb: Criteria.CLIMBING_CRITERIA[climb] * 10)
        
         total_endgame_points = climb_points
 
@@ -230,7 +229,7 @@ class CalculatedStats(BaseCalculatedStats):
         :param alliance: The three teams on the alliance.
         """
 
-        Points_by_Team = team_data[Queries.AUTO_SINUGLAR_COUNT].apply(lambda cycle: cycle)+ team_data[Queries.AUTO_BATCH_COUNT].apply(lambda cycle: cycle)+team_data[Queries.TELEOP_SINUGLAR_COUNT].apply(lambda cycle: cycle)+team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda cycle: cycle)
+        Points_by_Team = team_data[Queries.AUTO_SINUGLAR_COUNT] + team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])+team_data[Queries.TELEOP_SINUGLAR_COUNT]+team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])
         possible_points = self.cartesian_product(*Points_by_team, reduce_with_sum=True)
         chance_of_energized_rp = (
             len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
@@ -239,7 +238,7 @@ class CalculatedStats(BaseCalculatedStats):
                     len([combo for combo in possible_points if combo >= 360]) / len(possible_points)
                 )
         # Endgame RP calculations
-        traversal_points_by_team =Criteria.BOOLEAN_CRITERIA[team_data[Queries.AUTO_CLIMB]] * 15 + Criteria.BOOLEAN_CRITERIA[team_data[Queries.TELEOP_CLIMB]]
+        traversal_points_by_team = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15) + team_data[Queries.TELEOP_CLIMB].apply(lambda climbed: Criteria.CLIMBING_CRITERIA[climbed] * 10)
         possible_traversal_combos = self.cartesian_product(*traversal_points_by_team, reduce_with_sum=True)
         chance_of_traversal_rp = (
             len([combo for combo in possible_traversal_combos if combo >= 50) / len(possible_traversal_combos)
