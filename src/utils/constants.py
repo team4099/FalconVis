@@ -100,7 +100,7 @@ class Queries:
     AUTO_SINUGLAR_COUNT = "AutoSinuglarCount"
     AUTO_BATCH_COUNT = "AutoBatchCount"
     TELEOP_BATCH_COUNT = "TeleopBatchCount"
-    MAGAZINE_SIZE = 0
+    MAGAZINE_SIZE = "HopperCapacity"
 
     # Notes
     AUTO_NOTES = "AutoNotes"
