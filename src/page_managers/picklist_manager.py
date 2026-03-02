@@ -29,31 +29,14 @@ class PicklistManager(PageManager):
         # Requested stats is used to define the stats wanted in the picklist generation.
         self.requested_stats = {
             "Average Points Contributed": self.calculated_stats.average_points_contributed,
-            "Average Auto Cycles": partial(
-                self.calculated_stats.average_cycles,
-                mode=Queries.AUTO
-            ),
-            "Average Teleop Cycles": partial(
-                self.calculated_stats.average_cycles,
-                mode=Queries.TELEOP
-            ),
-            "Average Coral Cycles": partial(
-                self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_CORAL_L1, Queries.AUTO_CORAL_L2, Queries.AUTO_CORAL_L3, Queries.AUTO_CORAL_L4,
-                           Queries.TELEOP_CORAL_L1, Queries.TELEOP_CORAL_L2, Queries.TELEOP_CORAL_L3, Queries.TELEOP_CORAL_L4)
-            ),
-            "Average Algae Cycles": partial(
-                self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_BARGE, Queries.AUTO_PROCESSOR,
-                           Queries.TELEOP_BARGE, Queries.TELEOP_PROCESSOR)
-            ),
-            "Average Misses": partial(
-                self.calculated_stats.average_cycles_for_structure,
-                structure=(Queries.AUTO_CORAL_MISSES, Queries.TELEOP_CORAL_MISSES)
-            ),
-            "# of Times Climbed": partial(
+            "# of Times Auto Climbed": partial(
                 self.calculated_stats.cumulative_stat,
-                stat=Queries.CLIMBED_CAGE,
+                stat=Queries.AUTO_CLIMB,
+                criteria=Criteria.BOOLEAN_CRITERIA
+            ),
+            "# of Times Teleop Climbed": partial(
+                self.calculated_stats.cumulative_stat,
+                stat=Queries.TELEOP_CLIMB,
                 criteria=Criteria.CLIMBING_CRITERIA
             ),
             "# of Disables": partial(
@@ -64,8 +47,9 @@ class PicklistManager(PageManager):
             "Average Driver Rating": self.calculated_stats.average_driver_rating,
             "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill,
             "Average Defense Skill": self.calculated_stats.average_defense_rating,
+            "Average Shooter Defense Skill": self.calculated_stats.average_shooter_defense_skill,
             "Average Intake Speed": self.calculated_stats.average_intake_speed_rating,
-
+            "Average Throughput Speed": self.calculated_stats.average_average_throughput_speed,
         }
 
     def generate_input_section(self) -> list[list, list]:
