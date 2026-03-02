@@ -9,7 +9,7 @@ import requests
 
 import streamlit as st
 from numpy import int64
-from pandas import DataFrame, read_csv
+from pandas import DataFrame, read_csv, to_numeric
 from requests import get
 from tbapy import TBA
 
@@ -72,6 +72,40 @@ def retrieve_scouting_data() -> DataFrame:
     )
 
     scouting_data[Queries.TEAM_NUMBER] = scouting_data[Queries.TEAM_NUMBER].apply(int)
+
+    # Merge pit scouting fields onto each match row (many match rows -> one pit row per team).
+    pit_scouting_data = retrieve_pit_scouting_data()
+        pit_scouting_data = pit_scouting_data.rename(
+            columns={
+                "Team Number": Queries.TEAM_NUMBER,
+                "Hopper Capacity": Queries.MAGAZINE_SIZE,
+                "Drivetrain Length": "DrivetrainLength",
+                "Drivetrain Width": "DrivetrainWidth",
+                "Weight of Robot": "WeightOfRobot",
+                "Weight Of Robot": "WeightOfRobot",
+            }
+    )
+
+    if Queries.TEAM_NUMBER in pit_scouting_data.columns:
+        pit_scouting_data[Queries.TEAM_NUMBER] = to_numeric(
+            pit_scouting_data[Queries.TEAM_NUMBER]
+        )
+        pit_scouting_data = pit_scouting_data.dropna(subset=[Queries.TEAM_NUMBER])
+        pit_scouting_data = pit_scouting_data.drop_duplicates(
+            subset=[Queries.TEAM_NUMBER], keep="last"
+        )
+        pit_scouting_data[Queries.TEAM_NUMBER] = pit_scouting_data[Queries.TEAM_NUMBER].astype(int)
+
+        merge_columns = [Queries.TEAM_NUMBER] + [
+            column
+            for column in pit_scouting_data.columns
+            if column != Queries.TEAM_NUMBER and column not in scouting_data.columns
+        ]
+        scouting_data = scouting_data.merge(
+            pit_scouting_data[merge_columns],
+            on=Queries.TEAM_NUMBER,
+            how="left",
+        )
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 

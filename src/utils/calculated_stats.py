@@ -6,14 +6,14 @@ from typing import Callable
 
 import numpy as np
 from numpy import percentile
-from pandas import DataFrame, Series, isna
+from pandas import DataFrame, Series, isna, to_numeric
 from scipy.integrate import quad
 from scipy.stats import norm
 
 
 from .base_calculated_stats import BaseCalculatedStats
 from .constants import Criteria, Queries
-from .functions import _convert_to_float_from_numpy_type, scouting_data_for_team, retrieve_team_list, retrieve_pit_scouting_data
+from .functions import _convert_to_float_from_numpy_type, scouting_data_for_team, retrieve_team_list
 
 __all__ = ["CalculatedStats"]
 
@@ -51,15 +51,22 @@ class CalculatedStats(BaseCalculatedStats):
         team_data = scouting_data_for_team(team_number, self.data)
 
         # Autonomous calculations
+        magazine_size = to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
         auto_singular_ball_points = team_data[Queries.AUTO_SINUGLAR_COUNT]
-        auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]))
+        auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(
+            lambda batches: to_numeric(batches)
+        )
+        auto_batch_points = auto_batch_points * magazine_size
         auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
 
         total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
 
         # Teleop calculations
         teleop_singular_ball_points = team_data[Queries.TELEOP_SINUGLAR_COUNT]
-        teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]))
+        teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(
+            lambda batches: to_numeric(batches)
+        )
+        teleop_batch_points = teleop_batch_points * magazine_size
         total_teleop_points = teleop_singular_ball_points + teleop_batch_points
 
         # Endgame (stage) calculations
