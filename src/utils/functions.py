@@ -75,15 +75,15 @@ def retrieve_scouting_data() -> DataFrame:
 
     # Merge pit scouting fields onto each match row (many match rows -> one pit row per team).
     pit_scouting_data = retrieve_pit_scouting_data()
-        pit_scouting_data = pit_scouting_data.rename(
-            columns={
-                "Team Number": Queries.TEAM_NUMBER,
-                "Hopper Capacity": Queries.MAGAZINE_SIZE,
-                "Drivetrain Length": "DrivetrainLength",
-                "Drivetrain Width": "DrivetrainWidth",
-                "Weight of Robot": "WeightOfRobot",
-                "Weight Of Robot": "WeightOfRobot",
-            }
+    pit_scouting_data = pit_scouting_data.rename(
+        columns={
+            "Team Number": Queries.TEAM_NUMBER,
+            "Hopper Capacity": Queries.MAGAZINE_SIZE,
+            "Drivetrain Length": "DrivetrainLength",
+            "Drivetrain Width": "DrivetrainWidth",
+            "Weight of Robot": "WeightOfRobot",
+            "Weight Of Robot": "WeightOfRobot",
+        }
     )
 
     if Queries.TEAM_NUMBER in pit_scouting_data.columns:
@@ -125,19 +125,6 @@ def retrieve_note_scouting_data() -> DataFrame:
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 
-
-@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
-def retrieve_pit_scouting_data() -> DataFrame | None:
-    """Retrieves the latest pit scouting data from team4099/ScoutingAppData on GitHub based on the current event.
-
-    :return: A dataframe containing the scouting data from an event.
-    """
-    response = get(EventSpecificConstants.PIT_SCOUTING_URL)
-
-    if response.status_code == 200:
-        return read_csv(
-            StringIO(response.text)
-        )
 
 
 # Cache for longer because match schedule is relatively constant.
