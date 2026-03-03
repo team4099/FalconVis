@@ -51,14 +51,14 @@ class CalculatedStats(BaseCalculatedStats):
         team_data = scouting_data_for_team(team_number, self.data)
 
         # Autonomous calculations
-        auto_singular_ball_points = team_data[Queries.AUTO_SINUGLAR_COUNT]
+        auto_singular_ball_points = team_data[Queries.AUTO_SINGULAR_COUNT]
         auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]))
         auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
 
         total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
 
         # Teleop calculations
-        teleop_singular_ball_points = team_data[Queries.TELEOP_SINUGLAR_COUNT]
+        teleop_singular_ball_points = team_data[Queries.TELEOP_SINGULAR_COUNT]
         teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]))
         total_teleop_points = teleop_singular_ball_points + teleop_batch_points
 
