@@ -36,12 +36,6 @@ if __name__ == '__main__':
             ["📈 Cycle Contribution Breakdown", "🧮 Point Contribution Breakdown"]
         )
 
-        # Plot cycle contribution graphs
-        with cycle_contribution_breakdown_tab:
-            match_manager.generate_match_prediction_graphs(
-                *teams_selected,
-                type_of_graph=GraphType.CYCLE_CONTRIBUTIONS
-            )
 
         # Plot point contribution graphs
         with point_contribution_breakdown_tab:
@@ -68,13 +62,6 @@ if __name__ == '__main__':
                 ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
-            with red_auto_cycle_tab:
-                match_manager.generate_autonomous_graphs(
-                    teams_selected[0],
-                    type_of_graph=GraphType.CYCLE_CONTRIBUTIONS,
-                    color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
-                )
-
             with red_auto_points_tab:
                 match_manager.generate_autonomous_graphs(
                     teams_selected[0],
@@ -87,12 +74,6 @@ if __name__ == '__main__':
                 ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
-            with red_teleop_cycle_tab:
-                match_manager.generate_teleop_graphs(
-                    teams_selected[0],
-                    type_of_graph=GraphType.CYCLE_CONTRIBUTIONS,
-                    color_gradient=GeneralConstants.RED_ALLIANCE_GRADIENT
-                )
 
             with red_teleop_points_tab:
                 match_manager.generate_teleop_graphs(
@@ -125,12 +106,6 @@ if __name__ == '__main__':
                 ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
-            with blue_auto_cycle_tab:
-                match_manager.generate_autonomous_graphs(
-                    teams_selected[1],
-                    type_of_graph=GraphType.CYCLE_CONTRIBUTIONS,
-                    color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
-                )
 
             with blue_auto_points_tab:
                 match_manager.generate_autonomous_graphs(
@@ -144,12 +119,6 @@ if __name__ == '__main__':
                 ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
-            with blue_teleop_cycle_tab:
-                match_manager.generate_teleop_graphs(
-                    teams_selected[1],
-                    type_of_graph=GraphType.CYCLE_CONTRIBUTIONS,
-                    color_gradient=GeneralConstants.BLUE_ALLIANCE_GRADIENT
-                )
 
             with blue_teleop_points_tab:
                 match_manager.generate_teleop_graphs(
