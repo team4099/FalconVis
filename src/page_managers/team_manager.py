@@ -82,12 +82,12 @@ class TeamManager(PageManager, ContainsMetrics):
         def _row_points(row) -> float:
             magazine_size = _as_float(row.get(Queries.MAGAZINE_SIZE))
             auto_points = (
-                _as_float(row.get(Queries.AUTO_SINUGLAR_COUNT))
+                _as_float(row.get(Queries.AUTO_SINGULAR_COUNT))
                 + (_as_float(row.get(Queries.AUTO_BATCH_COUNT)) * magazine_size)
                 + (Criteria.BOOLEAN_CRITERIA.get(row.get(Queries.AUTO_CLIMB), 0) * 15)
             )
             teleop_points = (
-                _as_float(row.get(Queries.TELEOP_SINUGLAR_COUNT))
+                _as_float(row.get(Queries.TELEOP_SINGULAR_COUNT))
                 + (_as_float(row.get(Queries.TELEOP_BATCH_COUNT)) * magazine_size)
             )
             climb_points = Criteria.CLIMBING_CRITERIA.get(row.get(Queries.TELEOP_CLIMB), 0) * 10

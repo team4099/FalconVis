@@ -126,6 +126,17 @@ def retrieve_note_scouting_data() -> DataFrame:
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 
 
+@st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
+def retrieve_pit_scouting_data() -> DataFrame:
+    """Retrieves the latest pit scouting data from team4099/ScoutingAppData on GitHub based on the current event."""
+    try:
+        return DataFrame.from_dict(
+            check_utf8(loads(get(EventSpecificConstants.PIT_SCOUTING_URL).text))
+        )
+    except Exception:
+        return DataFrame()
+
+
 
 # Cache for longer because match schedule is relatively constant.
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE * 4)

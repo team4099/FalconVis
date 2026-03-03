@@ -237,7 +237,7 @@ class CalculatedStats(BaseCalculatedStats):
         """
 
         Points_by_Team = team_data[Queries.AUTO_SINGULAR_COUNT] + team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])+team_data[Queries.TELEOP_SINGULAR_COUNT]+team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])
-        possible_points = self.cartesian_product(*Points_by_team, reduce_with_sum=True)
+        possible_points = self.cartesian_product(*Points_by_Team, reduce_with_sum=True)
         chance_of_energized_rp = (
             len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
         )
