@@ -60,10 +60,99 @@ class TeamManager(PageManager, ContainsMetrics):
         """
         points_contributed_col, points_scaled_col, accuracy_col = st.columns(3)
         iqr_col, climbs_col, disables_col = st.columns(3)
-        team_data = scouting_data_for_team(team_number)
+        all_scouting_data = retrieve_scouting_data()
         tba_matches = retrieve_match_data_raw()
+        tba_match_lookup = {
+            f"{match['comp_level']}{match['match_number']}": match
+            for match in tba_matches
+            if match.get("score_breakdown") is not None
+        }
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
+        tba_scaled_points_by_team_match = {}
+        team_scouted_points_by_team_match = {}
+        regular_points_by_team_match = {}
+
+        def _as_float(value) -> float:
+            try:
+                return float(value)
+            except (TypeError, ValueError):
+                return 0.0
+
+        def _row_points(row) -> float:
+            magazine_size = _as_float(row.get(Queries.MAGAZINE_SIZE))
+            auto_points = (
+                _as_float(row.get(Queries.AUTO_SINUGLAR_COUNT))
+                + (_as_float(row.get(Queries.AUTO_BATCH_COUNT)) * magazine_size)
+                + (Criteria.BOOLEAN_CRITERIA.get(row.get(Queries.AUTO_CLIMB), 0) * 15)
+            )
+            teleop_points = (
+                _as_float(row.get(Queries.TELEOP_SINUGLAR_COUNT))
+                + (_as_float(row.get(Queries.TELEOP_BATCH_COUNT)) * magazine_size)
+            )
+            climb_points = Criteria.CLIMBING_CRITERIA.get(row.get(Queries.TELEOP_CLIMB), 0) * 10
+            return auto_points + teleop_points + climb_points
+
+        def _team_scouted_and_scaled_points_for_match(
+            queried_team: int,
+            row
+        ) -> tuple[float | None, float | None, float | None]:
+            match_key = row[Queries.MATCH_KEY]
+            alliance = str(row.get("Alliance", "")).lower()
+            cache_key = (queried_team, match_key, alliance)
+            if cache_key in tba_scaled_points_by_team_match:
+                return (
+                    team_scouted_points_by_team_match.get(cache_key),
+                    tba_scaled_points_by_team_match[cache_key],
+                    regular_points_by_team_match.get(cache_key)
+                )
+
+            if alliance not in ("red", "blue"):
+                team_scouted_points_by_team_match[cache_key] = None
+                tba_scaled_points_by_team_match[cache_key] = None
+                regular_points_by_team_match[cache_key] = None
+                return (None, None, None)
+
+            match = tba_match_lookup.get(match_key)
+            if match is None:
+                team_scouted_points_by_team_match[cache_key] = None
+                tba_scaled_points_by_team_match[cache_key] = None
+                regular_points_by_team_match[cache_key] = None
+                return (None, None, None)
+
+            alliance_score_breakdown = match["score_breakdown"][alliance]
+            alliance_non_foul_points = alliance_score_breakdown["totalPoints"] - alliance_score_breakdown["foulPoints"]
+            regular_points = alliance_non_foul_points / 3
+
+            alliance_rows = all_scouting_data[
+                (all_scouting_data[Queries.MATCH_KEY] == match_key)
+                & (all_scouting_data["Alliance"].str.lower() == alliance)
+            ].copy()
+
+            if alliance_rows.empty:
+                team_scouted_points_by_team_match[cache_key] = _row_points(row)
+                tba_scaled_points_by_team_match[cache_key] = None
+                regular_points_by_team_match[cache_key] = regular_points
+                return (team_scouted_points_by_team_match[cache_key], None, regular_points)
+
+            alliance_rows["scouted_points"] = alliance_rows.apply(_row_points, axis=1)
+            team_points = alliance_rows.groupby(Queries.TEAM_NUMBER)["scouted_points"].mean()
+            alliance_total_scouted_points = float(team_points.sum())
+            queried_team_scouted_points = float(team_points.get(queried_team, _row_points(row)))
+            all_three_teams_recorded = len(team_points.index) == 3
+
+            if not all_three_teams_recorded:
+                scaled_points = None
+            elif alliance_total_scouted_points == 0:
+                scaled_points = 0.0
+            else:
+                contribution_ratio = queried_team_scouted_points / alliance_total_scouted_points
+                scaled_points = alliance_non_foul_points * contribution_ratio
+
+            team_scouted_points_by_team_match[cache_key] = queried_team_scouted_points
+            tba_scaled_points_by_team_match[cache_key] = scaled_points
+            regular_points_by_team_match[cache_key] = regular_points
+            return (queried_team_scouted_points, scaled_points, regular_points)
 
         def _average_tba_scaled_points(queried_team: int) -> float:
             if queried_team in tba_scaled_points_by_team:
@@ -72,19 +161,9 @@ class TeamManager(PageManager, ContainsMetrics):
             queried_team_data = scouting_data_for_team(queried_team).reset_index(drop=True)
             scaled_points = []
             for _, row in queried_team_data.iterrows():
-                match_key = row[Queries.MATCH_KEY]
-                alliance = row.get("Alliance", "").lower()
-                for match in tba_matches:
-                    if (
-                        match.get("score_breakdown") is not None
-                        and (match["comp_level"] + str(match["match_number"])) == match_key
-                        and alliance in ("red", "blue")
-                    ):
-                        alliance_score_breakdown = match["score_breakdown"][alliance]
-                        scaled_points.append(
-                            (alliance_score_breakdown["totalPoints"] - alliance_score_breakdown["foulPoints"]) / 3
-                        )
-                        break
+                _, tba_scaled_points, _ = _team_scouted_and_scaled_points_for_match(queried_team, row)
+                if tba_scaled_points is not None:
+                    scaled_points.append(tba_scaled_points)
 
             average_scaled_points = (sum(scaled_points) / len(scaled_points)) if scaled_points else 0
             tba_scaled_points_by_team[queried_team] = average_scaled_points
@@ -95,34 +174,20 @@ class TeamManager(PageManager, ContainsMetrics):
                 return tba_accuracy_by_team[queried_team]
 
             queried_team_data = scouting_data_for_team(queried_team).reset_index(drop=True)
-            queried_team_points = self.calculated_stats.points_contributed_by_match(queried_team).reset_index(drop=True)
             accuracies = []
 
-            for idx, row in queried_team_data.iterrows():
-                match_key = row[Queries.MATCH_KEY]
-                alliance = row.get("Alliance", "").lower()
-                tba_scaled_points = None
-
-                for match in tba_matches:
-                    if (
-                        match.get("score_breakdown") is not None
-                        and (match["comp_level"] + str(match["match_number"])) == match_key
-                        and alliance in ("red", "blue")
-                    ):
-                        alliance_score_breakdown = match["score_breakdown"][alliance]
-                        tba_scaled_points = (
-                            alliance_score_breakdown["totalPoints"] - alliance_score_breakdown["foulPoints"]
-                        ) / 3
-                        break
-
-                if tba_scaled_points is None:
+            for _, row in queried_team_data.iterrows():
+                scouted_points, tba_scaled_points, regular_points = _team_scouted_and_scaled_points_for_match(queried_team, row)
+                if scouted_points is None:
                     continue
 
-                scouted_points = queried_team_points.iloc[idx] if idx < len(queried_team_points) else 0
-                if tba_scaled_points == 0:
-                    accuracies.append(100.0 if scouted_points == 0 else 0.0)
+                points_for_accuracy = tba_scaled_points if tba_scaled_points is not None else regular_points
+                if points_for_accuracy is None:
+                    continue
+                if points_for_accuracy == 0:
+                    accuracies.append(0.0 if scouted_points == 0 else 1.0)
                 else:
-                    accuracies.append((1 - abs((scouted_points - tba_scaled_points) / tba_scaled_points)) * 100)
+                    accuracies.append(abs((scouted_points - points_for_accuracy) / points_for_accuracy))
 
             average_accuracy = (sum(accuracies) / len(accuracies)) if accuracies else 0
             tba_accuracy_by_team[queried_team] = average_accuracy
