@@ -134,26 +134,26 @@ class CalculatedStats(BaseCalculatedStats):
         ).mean()
 
     @_convert_to_float_from_numpy_type
-        def average_throughput_speed(self, team_number: int) -> float:
-            """Returns the average throughput (fuel shot per second) of a team.
+    def average_throughput_speed(self, team_number: int) -> float:
+        """Returns the average throughput (fuel shot per second) of a team.
 
-            :param team_number: The team to determine the throughput for.
-            :return: A float representing the average throughput of said team.
-            """
-            return scouting_data_for_team(team_number, self.data)[Queries.THROUGHPUT_SPEED].apply(
-                lambda throughput_speed: Criteria.BASIC_RATING_CRITERIA.get(throughput_speed, float("nan"))
-            ).mean()
+        :param team_number: The team to determine the throughput for.
+        :return: A float representing the average throughput of said team.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.THROUGHPUT_SPEED].apply(
+            lambda throughput_speed: Criteria.BASIC_RATING_CRITERIA.get(throughput_speed, float("nan"))
+        ).mean()
 
     @_convert_to_float_from_numpy_type
-            def average_shooter_defense_skill(self, team_number: int) -> float:
-                """Returns the average shooter defense skill (ability to shoot while being defended against) of a team.
+    def average_shooter_defense_skill(self, team_number: int) -> float:
+        """Returns the average shooter defense skill (ability to shoot while being defended against) of a team.
 
-                :param team_number: The team to determine the shooter defense skill for.
-                :return: A float representing the average shooter defense skill of said team.
-                """
-                return scouting_data_for_team(team_number, self.data)[Queries.SHOOTER_DEFENSE_RATING].apply(
-                    lambda shooter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(shooter_defense_skill, float("nan"))
-                ).mean()
+        :param team_number: The team to determine the shooter defense skill for.
+        :return: A float representing the average shooter defense skill of said team.
+        """
+        return scouting_data_for_team(team_number, self.data)[Queries.SHOOTER_DEFENSE_RATING].apply(
+            lambda shooter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(shooter_defense_skill, float("nan"))
+        ).mean()
     
     def drivetrain_width_by_team(self, team_number: int) -> float:
         """Returns a float representing the teams drivetrain width
@@ -248,7 +248,7 @@ class CalculatedStats(BaseCalculatedStats):
         traversal_points_by_team = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15) + team_data[Queries.TELEOP_CLIMB].apply(lambda climbed: Criteria.CLIMBING_CRITERIA[climbed] * 10)
         possible_traversal_combos = self.cartesian_product(*traversal_points_by_team, reduce_with_sum=True)
         chance_of_traversal_rp = (
-            len([combo for combo in possible_traversal_combos if combo >= 50) / len(possible_traversal_combos)
+            len([combo for combo in possible_traversal_combos if combo >= 50]) / len(possible_traversal_combos)
         )
         return (
             chance_of_energized_rp,
