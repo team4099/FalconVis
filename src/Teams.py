@@ -33,18 +33,18 @@ if __name__ == '__main__':
     with auto_graphs_tab:
         st.write("#### 🤖 Autonomous Graphs")
 
-        # Create cycle contribution and point contribution graph tabs.
-        auto_cycle_contrib_tab, auto_point_contrib_tab = st.tabs(
-            ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+        # Create fuel-scored and point-contribution graph tabs.
+        auto_fuel_tab, auto_point_tab = st.tabs(
+            ["⛽ Fuel vs Match Index", "🧮 Points vs Match Index"]
         )
         
-        with auto_cycle_contrib_tab:
+        with auto_fuel_tab:
             team_manager.generate_autonomous_graphs(
                 team_number,
-                type_of_graph=GraphType.CYCLE_CONTRIBUTIONS
+                type_of_graph=GraphType.FUEL_CONTRIBUTIONS
             )
         
-        with auto_point_contrib_tab:
+        with auto_point_tab:
             team_manager.generate_autonomous_graphs(
                 team_number,
                 type_of_graph=GraphType.POINT_CONTRIBUTIONS
@@ -53,18 +53,18 @@ if __name__ == '__main__':
     with teleop_graphs_tab:
         st.write("#### 🎮 Teleop + Endgame Graphs")
 
-        # Create cycle contribution and point contribution graph tabs.
-        teleop_cycle_contrib_tab, teleop_point_contrib_tab = st.tabs(
-            ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+        # Create climb-points graph tabs.
+        teleop_climb_tab, teleop_climb_alt_tab = st.tabs(
+            ["🧗 Climb Pts vs Match Index", "🧗 Climb Pts vs Match Index"]
         )
 
-        with teleop_cycle_contrib_tab:
+        with teleop_climb_tab:
             team_manager.generate_teleop_graphs(
                 team_number,
-                type_of_graph=GraphType.CYCLE_CONTRIBUTIONS
+                type_of_graph=GraphType.FUEL_CONTRIBUTIONS
             )
 
-        with teleop_point_contrib_tab:
+        with teleop_climb_alt_tab:
             team_manager.generate_teleop_graphs(
                 team_number,
                 type_of_graph=GraphType.POINT_CONTRIBUTIONS

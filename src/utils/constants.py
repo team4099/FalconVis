@@ -66,9 +66,10 @@ class EventSpecificConstants:
 
 
 class GraphType(Enum):
-    """Enum class representing the different graph types (cycle contribution graphs / point contribution graphs)."""
+    """Enum class representing the different graph types (fuel contribution graphs / point contribution graphs)."""
 
-    CYCLE_CONTRIBUTIONS = 0
+    FUEL_CONTRIBUTIONS = 0
+    CYCLE_CONTRIBUTIONS = FUEL_CONTRIBUTIONS
     POINT_CONTRIBUTIONS = 1
 
 

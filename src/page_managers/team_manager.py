@@ -218,7 +218,7 @@ class TeamManager(PageManager, ContainsMetrics):
         """Generates the autonomous graphs for the `Team` page.
 
         :param team_number: The team to generate the graphs for.
-        :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
+        :param type_of_graph: The type of graph to use for the graphs on said page (fuel scored / point contributions).
         :return:
         """
         points_by_match = self.calculated_stats.points_contributed_by_match(team_number)
@@ -245,7 +245,7 @@ class TeamManager(PageManager, ContainsMetrics):
         """Generates the teleop graphs for the `Team` page.
 
         :param team_number: The team to generate the graphs for.
-        :param type_of_graph: The type of graph to use for the graphs on said page (cycle contribution / point contributions).
+        :param type_of_graph: The type of graph to use for the graphs on said page (fuel scored / point contributions).
         :return:
         """
         climb_points_by_match = self.calculated_stats.stat_per_match(
