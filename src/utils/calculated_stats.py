@@ -52,7 +52,7 @@ class CalculatedStats(BaseCalculatedStats):
 
         # Autonomous calculations
         magazine_size = to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
-        auto_singular_ball_points = team_data[Queries.AUTO_SINUGLAR_COUNT]
+        auto_singular_ball_points = team_data[Queries.AUTO_SINGULAR_COUNT]
         auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(
             lambda batches: to_numeric(batches)
         )
@@ -62,7 +62,7 @@ class CalculatedStats(BaseCalculatedStats):
         total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
 
         # Teleop calculations
-        teleop_singular_ball_points = team_data[Queries.TELEOP_SINUGLAR_COUNT]
+        teleop_singular_ball_points = team_data[Queries.TELEOP_SINGULAR_COUNT]
         teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(
             lambda batches: to_numeric(batches)
         )
@@ -236,7 +236,7 @@ class CalculatedStats(BaseCalculatedStats):
         :param alliance: The three teams on the alliance.
         """
 
-        Points_by_Team = team_data[Queries.AUTO_SINUGLAR_COUNT] + team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])+team_data[Queries.TELEOP_SINUGLAR_COUNT]+team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])
+        Points_by_Team = team_data[Queries.AUTO_SINGULAR_COUNT] + team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])+team_data[Queries.TELEOP_SINGULAR_COUNT]+team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])
         possible_points = self.cartesian_product(*Points_by_team, reduce_with_sum=True)
         chance_of_energized_rp = (
             len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
