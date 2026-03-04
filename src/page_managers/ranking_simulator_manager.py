@@ -60,24 +60,21 @@ class RankingSimulatorManager(PageManager):
             average_rps = (
                 red_match_data_for_team["red_alliance_rp"].sum() + blue_match_data_for_team["blue_alliance_rp"].sum()
             ) / matches_played
-            average_coop = (
-                red_match_data_for_team["reached_coop"].sum() + blue_match_data_for_team["reached_coop"].sum()
-            ) / matches_played
             average_match_score = (
                 red_match_data_for_team["red_score"].sum() + blue_match_data_for_team["blue_score"].sum()
             ) / matches_played
-            rankings.append((team, average_rps, average_coop, average_match_score, matches_played))  # Sort orders
+            rankings.append((team, average_rps, average_match_score, matches_played))  # Sort orders
 
         return DataFrame(
             sorted(rankings, key=lambda ranking: ranking[1:-1], reverse=True),
-            columns=("team", "rp", "coop", "match_score", "matches_played")
+            columns=("team", "rp", "match_score", "matches_played")
         )
 
     def generate_simulated_rankings(self, to_match: int) -> None:
         """Generates the simulated rankings up to the match number requested."""
         rankings = self._generate_rankings(to_match)
         match_schedule = retrieve_match_schedule()
-        simulated_rankings = defaultdict(lambda: [[], [], [], 0])
+        simulated_rankings = defaultdict(lambda: [[], [], 0])
 
         teams = retrieve_team_list()
         progress_bar = st.progress(0, text="Crunching the simulations...")
@@ -101,14 +98,13 @@ class RankingSimulatorManager(PageManager):
                 alliance = row["red_alliance"] if team in row["red_alliance"] else row["blue_alliance"]
                 opposing_alliance = row["blue_alliance"] if team in row["red_alliance"] else row["red_alliance"]
 
-                chance_of_coop, chance_of_auto, chance_of_coral, chance_of_barge = self.calculated_stats.chance_of_bonuses(alliance)
+                chance_of_energized_rp, chance_of_supercharged_rp, chance_of_traversal_rp = self.calculated_stats.chance_of_bonuses(alliance)
                 chance_of_winning, _, score, __ = self.calculated_stats.chance_of_winning(alliance, opposing_alliance)
 
-                total_rps = chance_of_auto + chance_of_coral + chance_of_barge + chance_of_winning * 3
+                total_rps = chance_of_energized_rp + chance_of_supercharged_rp + chance_of_traversal_rp + chance_of_winning * 3
                 simulated_rankings[team][0].append(total_rps)
-                simulated_rankings[team][1].append(chance_of_coop)
-                simulated_rankings[team][2].append(score)
-                simulated_rankings[team][3] += 1
+                simulated_rankings[team][1].append(score)
+                simulated_rankings[team][2] += 1
 
             progress_bar.progress(idx / len(teams), "Crunching the simulations...")
 
@@ -118,16 +114,15 @@ class RankingSimulatorManager(PageManager):
 
         # Calculate new rankings with simulated rankings.
         for team in teams:
-            _, rps, avg_coop, avg_match_score, matches_played = rankings[rankings["team"] == team].iloc[0]
-            total_matches_played = matches_played + simulated_rankings[team][3]
+            _, rps, avg_match_score, matches_played = rankings[rankings["team"] == team].iloc[0]
+            total_matches_played = matches_played + simulated_rankings[team][2]
             print(team, total_matches_played)
             total_avg_rp = (rps * matches_played + sum(simulated_rankings[team][0])) / total_matches_played
-            total_avg_coop = (avg_coop * matches_played + sum(simulated_rankings[team][1])) / total_matches_played
-            total_avg_score = (avg_match_score * matches_played + sum(simulated_rankings[team][2])) / total_matches_played
-            new_rankings.append((team, total_avg_rp, total_avg_coop, total_avg_score))
+            total_avg_score = (avg_match_score * matches_played + sum(simulated_rankings[team][1])) / total_matches_played
+            new_rankings.append((team, total_avg_rp, total_avg_score))
 
         ranking_df = DataFrame(
             sorted(new_rankings, key=lambda ranking: ranking[1:], reverse=True),
-            columns=("Team", "Average Ranking Points", "Average Coopertition", "Average Match Score")
+            columns=("Team", "Average Ranking Points", "Average Match Score")
         )
         st.table(ranking_df.applymap(lambda value: f"{value:.2f}" if isinstance(value, float) else value))
