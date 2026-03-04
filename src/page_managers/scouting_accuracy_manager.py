@@ -82,15 +82,16 @@ class ScoutingAccuracyManager(PageManager):
                     match_index = match_index_list[0]
 
                     # Auto Accuracy Retrieval
-                    auto_fuel_per_match = {
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_FUEL).values
+                    red_scouting_auto_score = {
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_SINUGLAR_COUNT + Queries.AUTO_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
                     }
+                    auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(
+                        lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
+                    red_scouting_auto_score += (auto_climb_points[match_index])
                     # Teleop Accuracy Retrieval
-                    teleop_fuel_per_match = [
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_FUEL).values
+                    red_scouting_teleop_score = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_SINUGLAR_COUNT + Queries.TELEOP_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
                     ]
-                    for i in range(len(teleop_fuel_per_match)):
-                        red_scouting_teleop_score += teleop_fuel_per_match[i][match_index] * Criteria.TELEOP_FUEL_POINTAGE[i + 1]
                     # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     red_scouting_alliance_score += points_per_match[match_index]
@@ -163,21 +164,13 @@ class ScoutingAccuracyManager(PageManager):
                     match_index = match_index_list[0]
 
                     # Auto Accuracy Retrieval
-                    auto_fuel_per_match = [
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_FUEL).values
+                    blue_scouting_auto_score = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_SINUGLAR_COUNT + Queries.AUTO_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
                     ]
-                    for i in range(len(auto_fuel_per_match)):
-                        blue_scouting_auto_score += auto_fuel_per_match[i][match_index] * Criteria.AUTO_FUEL_POINTAGE[i + 1]
-                    leave_points = self.calculated_stats.stat_per_match(int(team_key), Queries.LEFT_STARTING_ZONE, Criteria.BOOLEAN_CRITERIA).values
-                    blue_scouting_auto_score += (leave_points[match_index] * 2)
-
                     # Teleop Accuracy Retrieval
-                    teleop_fuel_per_match_per_match = [
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_FUEL).values
+                    blue_scouting_teleop_score = [
+                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_SINUGLAR_COUNT + Queries.TELEOP_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
                     ]
-                    for i in range(len(teleop_fuel_per_match)):
-                        blue_scouting_teleop_score += teleop_fuel_per_match[i][match_index] * Criteria.TELEOP_FUEL_POINTAGE[i + 1]
-
                     # Cumulative Accuracy Retrieval
                     points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
                     blue_scouting_alliance_score += points_per_match[match_index]
