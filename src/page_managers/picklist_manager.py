@@ -49,7 +49,7 @@ class PicklistManager(PageManager):
             "Average Defense Skill": self.calculated_stats.average_defense_rating,
             "Average Shooter Defense Skill": self.calculated_stats.average_shooter_defense_skill,
             "Average Intake Speed": self.calculated_stats.average_intake_speed_rating,
-            "Average Throughput Speed": self.calculated_stats.average_average_throughput_speed,
+            "Average Throughput Speed": self.calculated_stats.average_throughput_speed,
         }
 
     def generate_input_section(self) -> list[list, list]:
