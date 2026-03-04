@@ -155,16 +155,6 @@ class CalculatedStats(BaseCalculatedStats):
             lambda shooter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(shooter_defense_skill, float("nan"))
         ).mean()
     
-    def drivetrain_width_by_team(self, team_number: int) -> float:
-        """Returns a float representing the teams drivetrain width
-
-        :param team_number: The team to find disable data for.
-        :return: A float with the team drivetrain width in inches
-        """
-        pit_scouting_data = retrieve_pit_scouting_data()
-        return pit_scouting_data[
-                            pit_scouting_data["Team Number"] == team_number
-                        ].iloc[0]["Drivetrain Width"]
 
     # Percentile methods
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:
@@ -235,9 +225,20 @@ class CalculatedStats(BaseCalculatedStats):
 
         :param alliance: The three teams on the alliance.
         """
-
-        Points_by_Team = team_data[Queries.AUTO_SINGULAR_COUNT] + team_data[Queries.AUTO_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])+team_data[Queries.TELEOP_SINGULAR_COUNT]+team_data[Queries.TELEOP_BATCH_COUNT].apply(lambda batches: batches * team_data[Queries.MAGAZINE_SIZE])
-        possible_points = self.cartesian_product(*Points_by_Team, reduce_with_sum=True)
+        points_by_team = [
+            (
+                team_data[Queries.AUTO_SINGULAR_COUNT]
+                + team_data[Queries.AUTO_BATCH_COUNT].apply(
+                    lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]
+                )
+                + team_data[Queries.TELEOP_SINGULAR_COUNT]
+                + team_data[Queries.TELEOP_BATCH_COUNT].apply(
+                    lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]
+                )
+            ).tolist()
+            for team_data in [scouting_data_for_team(team, self.data) for team in alliance]
+        ]
+        possible_points = self.cartesian_product(*points_by_team, reduce_with_sum=True)
         chance_of_energized_rp = (
             len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
         )
@@ -245,7 +246,16 @@ class CalculatedStats(BaseCalculatedStats):
                     len([combo for combo in possible_points if combo >= 360]) / len(possible_points)
                 )
         # Endgame RP calculations
-        traversal_points_by_team = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15) + team_data[Queries.TELEOP_CLIMB].apply(lambda climbed: Criteria.CLIMBING_CRITERIA[climbed] * 10)
+        traversal_points_by_team = [
+            (
+                team_data[Queries.AUTO_CLIMB].apply(
+                    lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15
+                ) + team_data[Queries.TELEOP_CLIMB].apply(
+                    lambda climbed: Criteria.CLIMBING_CRITERIA[climbed] * 10
+                )
+            ).tolist()
+            for team_data in [scouting_data_for_team(team, self.data) for team in alliance]
+        ]
         possible_traversal_combos = self.cartesian_product(*traversal_points_by_team, reduce_with_sum=True)
         chance_of_traversal_rp = (
             len([combo for combo in possible_traversal_combos if combo >= 50]) / len(possible_traversal_combos)
