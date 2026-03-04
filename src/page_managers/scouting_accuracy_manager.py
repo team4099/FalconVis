@@ -80,21 +80,23 @@ class ScoutingAccuracyManager(PageManager):
                 match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
                 if len(match_index_list) != 0:
                     match_index = match_index_list[0]
+                    scouting_row = scouting_team_filter.iloc[match_index]
 
-                    # Auto Accuracy Retrieval
-                    red_scouting_auto_score = {
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_SINUGLAR_COUNT + Queries.AUTO_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
-                    }
-                    auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(
-                        lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
-                    red_scouting_auto_score += (auto_climb_points[match_index])
-                    # Teleop Accuracy Retrieval
-                    red_scouting_teleop_score = [
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_SINUGLAR_COUNT + Queries.TELEOP_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
-                    ]
-                    # Cumulative Accuracy Retrieval
-                    points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
-                    red_scouting_alliance_score += points_per_match[match_index]
+                    auto_singular_count = int(float(scouting_row.get(Queries.AUTO_SINGULAR_COUNT, 0)))
+                    auto_batch_count = int(float(scouting_row.get(Queries.AUTO_BATCH_COUNT, 0)))
+                    teleop_singular_count = int(float(scouting_row.get(Queries.TELEOP_SINGULAR_COUNT, 0)))
+                    teleop_batch_count = int(float(scouting_row.get(Queries.TELEOP_BATCH_COUNT, 0)))
+                    magazine_size = int(float(scouting_row.get(Queries.MAGAZINE_SIZE, 0)))
+                    auto_climb_points = Criteria.BOOLEAN_CRITERIA.get(scouting_row.get(Queries.AUTO_CLIMB), 0) * 15
+                    teleop_climb_points = Criteria.CLIMBING_CRITERIA.get(scouting_row.get(Queries.TELEOP_CLIMB), 0) * 10
+
+                    team_auto_score = auto_singular_count + (auto_batch_count * magazine_size) + auto_climb_points
+                    team_teleop_score = teleop_singular_count + (teleop_batch_count * magazine_size)
+                    team_total_score = team_auto_score + team_teleop_score + teleop_climb_points
+
+                    red_scouting_auto_score += team_auto_score
+                    red_scouting_teleop_score += team_teleop_score
+                    red_scouting_alliance_score += team_total_score
 
                     scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
                     scouters_names_list_r.append(scout_name.title().replace(" ", ""))
@@ -162,49 +164,52 @@ class ScoutingAccuracyManager(PageManager):
                 match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
                 if len(match_index_list) != 0:
                     match_index = match_index_list[0]
+                    scouting_row = scouting_team_filter.iloc[match_index]
 
-                    # Auto Accuracy Retrieval
-                    blue_scouting_auto_score = [
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.AUTO_SINUGLAR_COUNT + Queries.AUTO_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
-                    ]
-                    # Teleop Accuracy Retrieval
-                    blue_scouting_teleop_score = [
-                        self.calculated_stats.cycles_by_structure_per_match(int(team_key), Queries.TELEOP_SINUGLAR_COUNT + Queries.TELEOP_BATCH_COUNT * Queries.MAGAZINE_SIZE).values
-                    ]
-                    # Cumulative Accuracy Retrieval
-                    points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
-                    blue_scouting_alliance_score += points_per_match[match_index]
+                    auto_singular_count = int(float(scouting_row.get(Queries.AUTO_SINGULAR_COUNT, 0)))
+                    auto_batch_count = int(float(scouting_row.get(Queries.AUTO_BATCH_COUNT, 0)))
+                    teleop_singular_count = int(float(scouting_row.get(Queries.TELEOP_SINGULAR_COUNT, 0)))
+                    teleop_batch_count = int(float(scouting_row.get(Queries.TELEOP_BATCH_COUNT, 0)))
+                    magazine_size = int(float(scouting_row.get(Queries.MAGAZINE_SIZE, 0)))
+                    auto_climb_points = Criteria.BOOLEAN_CRITERIA.get(scouting_row.get(Queries.AUTO_CLIMB), 0) * 15
+                    teleop_climb_points = Criteria.CLIMBING_CRITERIA.get(scouting_row.get(Queries.TELEOP_CLIMB), 0) * 10
+
+                    team_auto_score = auto_singular_count + (auto_batch_count * magazine_size) + auto_climb_points
+                    team_teleop_score = teleop_singular_count + (teleop_batch_count * magazine_size)
+                    team_total_score = team_auto_score + team_teleop_score + teleop_climb_points
+
+                    blue_scouting_auto_score += team_auto_score
+                    blue_scouting_teleop_score += team_teleop_score
+                    blue_scouting_alliance_score += team_total_score
 
                     scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
                     scouters_names_list_b.append(scout_name.title().replace(" ", ""))
 
-                self.calculated_stats.points_contributed_by_match(team_key)
-                blue_scouting_alliance_score += self.calculated_stats.points_contributed_by_match(team_key).sum()
+                    # blue alliance accuracy
+                    if blue_calculated_score == 0:
+                        if blue_scouting_alliance_score == 0:
+                            blue_alliance_accuracy = 100.0
+                        else:
+                            blue_alliance_accuracy = 0.0
+                    else:
+                        blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score - blue_calculated_score) / blue_calculated_score)) * 100
+                    # blue auto accuracy
+                    if blue_auto_score == 0:
+                        if blue_scouting_auto_score == 0:
+                            blue_auto_accuracy = 100.0
+                        else:
+                            blue_auto_accuracy = 0.0
+                    else:
+                        blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score) / blue_auto_score)) * 100
+                    # blue teleop accuracy
+                    if blue_teleop_score == 0:
+                        if blue_scouting_teleop_score == 0:
+                            blue_teleop_accuracy = 100.0
+                        else:
+                            blue_teleop_accuracy = 0.0
+                    else:
+                        blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score) / blue_teleop_score)) * 100
 
-                # blue alliance accuracy
-                if blue_calculated_score == 0:
-                    if blue_scouting_alliance_score == 0:
-                        blue_alliance_accuracy = 100.0
-                    else:
-                        blue_alliance_accuracy = 0.0
-                else:
-                    blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score - blue_calculated_score) / blue_calculated_score)) * 100
-                # blue auto accuracy
-                if blue_auto_score == 0:
-                    if blue_scouting_auto_score == 0:
-                        blue_auto_accuracy = 100.0
-                    else:
-                        blue_auto_accuracy = 0.0
-                else:
-                    blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score) / blue_auto_score)) * 100
-                # blue teleop accuracy
-                if blue_teleop_score == 0:
-                    if blue_scouting_teleop_score == 0:
-                        blue_teleop_accuracy = 100.0
-                    else:
-                        blue_teleop_accuracy = 0.0
-                else:
-                    blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score) / blue_teleop_score)) * 100
             scouters_names = ", ".join(scouters_names_list_b)
 
             if member_name.replace(" ", "").lower() in scouters_names.lower():
