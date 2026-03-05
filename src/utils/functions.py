@@ -82,7 +82,6 @@ def retrieve_scouting_data() -> DataFrame:
             "Drivetrain Length": "DrivetrainLength",
             "Drivetrain Width": "DrivetrainWidth",
             "Weight of Robot": "WeightOfRobot",
-            "Weight Of Robot": "WeightOfRobot",
         }
     )
 

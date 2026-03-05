@@ -351,7 +351,7 @@ class MatchManager(PageManager):
                     "Total Fuel Scored",
                     title="Structure Breakdown",
                     color_map={
-                        "# of Total Fuel": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
+                        "# of Total Fuel": GeneralConstants.GOLD_GRADIENT[0],
                     },
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )

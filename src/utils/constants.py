@@ -54,7 +54,7 @@ class GeneralConstants:
 class EventSpecificConstants:
     """Constants specific to an event."""
     EVENT_CODE = "2026vaale"
-    EVENT_NAME = "Alexandria District Event"
+    EVENT_NAME = "Week 1 Alexandria"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     NOTE_SCOUTING_URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
     PIT_SCOUTING_URL = (
@@ -146,6 +146,7 @@ class Criteria:
     }
 
     CLIMBING_CRITERIA = {
+        None: 0,
         "None": 0,
         "L1": 1,
         "L2": 2,
