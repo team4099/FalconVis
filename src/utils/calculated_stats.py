@@ -70,7 +70,9 @@ class CalculatedStats(BaseCalculatedStats):
         total_teleop_points = teleop_singular_ball_points + teleop_batch_points
 
         # Endgame (stage) calculations
-        climb_points = team_data[Queries.TELEOP_CLIMB].apply(lambda climb: Criteria.CLIMBING_CRITERIA[climb] * 10)
+        climb_points = team_data[Queries.TELEOP_CLIMB].apply(
+            lambda climb: Criteria.CLIMBING_CRITERIA.get(climb, 0) * 10
+        )
        
         total_endgame_points = climb_points
 
@@ -221,19 +223,21 @@ class CalculatedStats(BaseCalculatedStats):
 
     # Methods for ranking simulation
     def chance_of_bonuses(self, alliance: list[int]) -> tuple[float, float, float]:
-        """Determines the chance of the coopertition bonus, the auto bonus, coral bonus, and the barge bonus using all possible permutations with an alliance.
+        """Determines bonus RP chances using all possible alliance scoring permutations.
 
         :param alliance: The three teams on the alliance.
         """
         points_by_team = [
             (
-                team_data[Queries.AUTO_SINGULAR_COUNT]
-                + team_data[Queries.AUTO_BATCH_COUNT].apply(
-                    lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]
+                to_numeric(team_data[Queries.AUTO_SINGULAR_COUNT]).fillna(0)
+                + (
+                    to_numeric(team_data[Queries.AUTO_BATCH_COUNT]).fillna(0)
+                    * to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
                 )
-                + team_data[Queries.TELEOP_SINGULAR_COUNT]
-                + team_data[Queries.TELEOP_BATCH_COUNT].apply(
-                    lambda batches: batches * team_data[Queries.MAGAZINE_SIZE]
+                + to_numeric(team_data[Queries.TELEOP_SINGULAR_COUNT]).fillna(0)
+                + (
+                    to_numeric(team_data[Queries.TELEOP_BATCH_COUNT]).fillna(0)
+                    * to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
                 )
             ).tolist()
             for team_data in [scouting_data_for_team(team, self.data) for team in alliance]
