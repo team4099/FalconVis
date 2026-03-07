@@ -67,14 +67,14 @@ class CalculatedStats(BaseCalculatedStats):
             lambda batches: to_numeric(batches)
         )
         teleop_batch_points = teleop_batch_points * magazine_size
-        total_teleop_points = teleop_singular_ball_points + teleop_batch_points
+        total_teleop_points = int(teleop_singular_ball_points) + int(teleop_batch_points)
 
         # Endgame (stage) calculations
         climb_points = team_data[Queries.TELEOP_CLIMB].apply(
             lambda climb: Criteria.CLIMBING_CRITERIA.get(climb, 0) * 10
         )
        
-        total_endgame_points = climb_points
+        total_endgame_points = int(climb_points)
 
         if mode == Queries.AUTO:
             return total_auto_points
