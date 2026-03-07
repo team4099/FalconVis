@@ -168,10 +168,10 @@ def retrieve_match_schedule() -> DataFrame:
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_match_data_raw():
-    return requests.get(
+    return loads(requests.get(
         f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
         headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
-    ).json()
+    ))
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE // 2)
