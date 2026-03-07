@@ -67,8 +67,7 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_match_lookup = {}
 
         for match in tba_matches:
-            if type(match['score_breakdown']) is not dict:
-                tba_match_lookup[f"{match['comp_level']}{match['match_number']}"] = match
+            tba_match_lookup[f"{match['comp_level']}{match['match_number']}"] = match
 
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
