@@ -63,8 +63,8 @@ class ScoutingAccuracyManager(PageManager):
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     red_total_score = match["score_breakdown"]["red"]["totalPoints"]
                     red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
-                    red_auto_score = match["score_breakdown"]["red"]["autoPoints"]
-                    red_teleop_score = match["score_breakdown"]["red"]["teleopPoints"]
+                    red_auto_score = match["score_breakdown"]["red"]["totalAutoPoints"]
+                    red_teleop_score = match["score_breakdown"]["red"]["totalTeleopPoints"]
                     red_calculated_score = red_total_score - red_foul_score
                     break
 
@@ -147,8 +147,8 @@ class ScoutingAccuracyManager(PageManager):
                 if (match["comp_level"] + str(match["match_number"])) == match_key:
                     blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
                     blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]
-                    blue_auto_score = match["score_breakdown"]["blue"]["autoPoints"]
-                    blue_teleop_score = match["score_breakdown"]["blue"]["teleopPoints"]
+                    blue_auto_score = match["score_breakdown"]["blue"]["totalAutoPoints"]
+                    blue_teleop_score = match["score_breakdown"]["blue"]["totalTeleopPoints"]
                     blue_calculated_score = blue_total_score - blue_foul_score
                     break
 

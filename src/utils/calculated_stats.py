@@ -248,7 +248,7 @@ class CalculatedStats(BaseCalculatedStats):
                 len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
             )
 
-        if len(possible_points == 0):
+        if len(possible_points) == 0:
             chance_of_supercharged_rp = 0
         else:
             chance_of_supercharged_rp = (
@@ -267,9 +267,12 @@ class CalculatedStats(BaseCalculatedStats):
             for team_data in [scouting_data_for_team(team, self.data) for team in alliance]
         ]
         possible_traversal_combos = self.cartesian_product(*traversal_points_by_team, reduce_with_sum=True)
-        chance_of_traversal_rp = (
-            len([combo for combo in possible_traversal_combos if combo >= 50]) / len(possible_traversal_combos)
-        )
+        if len(possible_traversal_combos) == 0:
+            chance_of_traversal_rp = 0
+        else:
+            chance_of_traversal_rp = (
+                len([combo for combo in possible_traversal_combos if combo >= 50]) / len(possible_traversal_combos)
+            )
         return (
             chance_of_energized_rp,
             chance_of_supercharged_rp,
