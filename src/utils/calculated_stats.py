@@ -241,12 +241,20 @@ class CalculatedStats(BaseCalculatedStats):
             for team_data in [scouting_data_for_team(team, self.data) for team in alliance]
         ]
         possible_points = self.cartesian_product(*points_by_team, reduce_with_sum=True)
-        chance_of_energized_rp = (
-            len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
-        )
-        chance_of_supercharged_rp = (
+        if len(possible_points) == 0:
+            chance_of_energized_rp = 0
+        else:
+            chance_of_energized_rp = (
+                len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
+            )
+
+        if len(possible_points == 0):
+            chance_of_supercharged_rp = 0
+        else:
+            chance_of_supercharged_rp = (
                     len([combo for combo in possible_points if combo >= 360]) / len(possible_points)
-                )
+            )
+
         # Endgame RP calculations
         traversal_points_by_team = [
             (
