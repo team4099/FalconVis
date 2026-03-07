@@ -62,15 +62,15 @@ class CalculatedStats(BaseCalculatedStats):
 
         # Teleop calculations
         teleop_singular_ball_points = to_numeric(team_data[Queries.TELEOP_SINGULAR_COUNT]).fillna(0)
-        teleop_batch_points = to_numeric(team_data[Queries.TELEOP_BATCH_COUNT].apply(
+        teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(
             lambda batches: to_numeric(batches) * magazine_size
-        )).fillna(0)
+        )
         total_teleop_points = teleop_singular_ball_points + teleop_batch_points
 
         # Endgame (stage) calculations
-        climb_points = to_numeric(team_data[Queries.TELEOP_CLIMB].apply(
-            lambda climb: Criteria.CLIMBING_CRITERIA.get(climb, 0) * 10
-        )).fillna(0)
+        climb_points = team_data[Queries.TELEOP_CLIMB].apply(
+            lambda climb: to_numeric(Criteria.CLIMBING_CRITERIA.get(climb, 0) * 10).fillna(0)
+        )
        
         total_endgame_points = climb_points
 
