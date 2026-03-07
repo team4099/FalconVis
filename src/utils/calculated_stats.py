@@ -69,7 +69,7 @@ class CalculatedStats(BaseCalculatedStats):
 
         # Endgame (stage) calculations
         climb_points = team_data[Queries.TELEOP_CLIMB].apply(
-            lambda climb: to_numeric(Criteria.CLIMBING_CRITERIA.get(climb, 0) * 10).fillna(0)
+            lambda climb: to_numeric(Criteria.CLIMBING_CRITERIA.get(climb, 0)).fillan()) * 10)
         )
        
         total_endgame_points = climb_points
