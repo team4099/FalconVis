@@ -1,7 +1,7 @@
 """Defines utility functions that are later used in FalconVis."""
 import os
 from io import StringIO
-from json import load, loads
+from json import load, loads, dumps
 from re import search, sub
 from typing import Any
 from dotenv import load_dotenv
@@ -168,7 +168,7 @@ def retrieve_match_schedule() -> DataFrame:
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_match_data_raw():
-    return loads(requests.get(
+    return dumps(requests.get(
         f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
         headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
     ).json())
