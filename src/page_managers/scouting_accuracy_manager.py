@@ -131,6 +131,7 @@ class ScoutingAccuracyManager(PageManager):
             if member_name.replace(" ", "").lower() in scouters_names.replace(" ", "").lower():
                 if scouters_names not in accuracy_dict['ScoutersNames']:
                     accuracy_dict['ScoutersNames'].append(scouters_names)
+                    print(red_alliance_accuracy)
                     accuracy_dict['CumulativeAccuracy'].append(red_alliance_accuracy)
                     accuracy_dict['AutoAccuracy'].append(red_auto_accuracy)
                     accuracy_dict['TeleopAccuracy'].append(red_teleop_accuracy)
