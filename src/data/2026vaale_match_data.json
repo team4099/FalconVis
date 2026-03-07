@@ -21,7 +21,7 @@
     "IntakeDefenseRating": "",
     "RatingNotes": "",
     "ThroughputSpeed": "Good",
-    "TeleopClimb": null,
+    "TeleopClimb": "None",
     "AutoClimb": "False",
     "TeleopSingularCount": "0",
     "AutoSingularCount": "0",
