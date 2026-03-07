@@ -147,7 +147,7 @@ class Criteria:
 
     CLIMBING_CRITERIA = {
         None: 0,
-        "None": 0,
+        "No Climb": 0,
         "L1": 1,
         "L2": 2,
         "L3": 3
