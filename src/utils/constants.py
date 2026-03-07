@@ -62,7 +62,7 @@ class EventSpecificConstants:
     )
     PICKLIST_URL = "https://www.notion.so/team4099/d19066533a8844d3aa2cd9e68e70f214?v=56e109b2298d46ebb00057f05d38bba8"
     # if no connection
-    LOCAL_JSON_PATH = f"./src/utils/{EVENT_CODE}_match_data.json"
+    LOCAL_JSON_PATH = f"./src/data/{EVENT_CODE}_match_data.json"
 
 
 class GraphType(Enum):
