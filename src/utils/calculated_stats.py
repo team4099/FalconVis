@@ -59,7 +59,7 @@ class CalculatedStats(BaseCalculatedStats):
         auto_batch_points = auto_batch_points * int(magazine_size)
         auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
 
-        total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
+        total_auto_points = int(auto_singular_ball_points) + int(auto_batch_points) + int(auto_climb_points)
 
         # Teleop calculations
         teleop_singular_ball_points = team_data[Queries.TELEOP_SINGULAR_COUNT]
