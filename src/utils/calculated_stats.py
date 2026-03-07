@@ -54,19 +54,18 @@ class CalculatedStats(BaseCalculatedStats):
         magazine_size = to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
         auto_singular_ball_points = team_data[Queries.AUTO_SINGULAR_COUNT]
         auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(
-            lambda batches: to_numeric(batches)
+            lambda batches: to_numeric(batches) * magazine_size
         )
-        auto_batch_points = auto_batch_points * int(magazine_size)
         auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
 
-        total_auto_points = int(auto_singular_ball_points) + int(auto_batch_points) + int(auto_climb_points)
+        total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
 
         # Teleop calculations
         teleop_singular_ball_points = team_data[Queries.TELEOP_SINGULAR_COUNT]
         teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(
-            lambda batches: to_numeric(batches)
+            lambda batches: to_numeric(batches) * magazine_size
         )
-        teleop_batch_points = teleop_batch_points * magazine_size
+        teleop_batch_points = teleop_batch_points
         total_teleop_points = int(teleop_singular_ball_points) + int(teleop_batch_points)
 
         # Endgame (stage) calculations
@@ -74,7 +73,7 @@ class CalculatedStats(BaseCalculatedStats):
             lambda climb: Criteria.CLIMBING_CRITERIA.get(climb, 0) * 10
         )
        
-        total_endgame_points = int(climb_points)
+        total_endgame_points = climb_points
 
         if mode == Queries.AUTO:
             return total_auto_points
