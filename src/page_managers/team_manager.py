@@ -65,7 +65,7 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_matches = retrieve_match_data_raw()
         tba_match_lookup = {
             f"{match['comp_level']}{match['match_number']}": match
-            for match in tba_matches
+            for match in tba_matches if match is not None
         }
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}

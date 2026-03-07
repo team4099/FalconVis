@@ -52,11 +52,11 @@ class CalculatedStats(BaseCalculatedStats):
 
         # Autonomous calculations
         magazine_size = to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
-        auto_singular_ball_points = team_data[Queries.AUTO_SINGULAR_COUNT]
+        auto_singular_ball_points = to_numeric(team_data[Queries.AUTO_SINGULAR_COUNT]).fillna(0)
         auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(
             lambda batches: to_numeric(batches) * magazine_size
         )
-        auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
+        auto_climb_points = to_numeric(team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)).fillna(0)
 
         total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
 
