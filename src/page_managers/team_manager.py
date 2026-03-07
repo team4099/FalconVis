@@ -22,6 +22,7 @@ from utils import (
     Queries,
     retrieve_team_list,
     retrieve_pit_scouting_data,
+    retrieve_match_data,
     retrieve_match_data_raw,
     retrieve_scouting_data,
     scouting_data_for_team,
@@ -62,10 +63,10 @@ class TeamManager(PageManager, ContainsMetrics):
         points_contributed_col, points_scaled_col, accuracy_col = st.columns(3)
         iqr_col, climbs_col, disables_col = st.columns(3)
         all_scouting_data = retrieve_scouting_data()
-        tba_matches = retrieve_match_data_raw()
+        tba_matches = retrieve_match_data()
         tba_match_lookup = {
             f"{match['comp_level']}{match['match_number']}": match
-            for match in tba_matches if match is not None
+            for match in tba_matches if match['score_breakdown'] is not None
         }
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
