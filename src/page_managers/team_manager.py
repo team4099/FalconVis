@@ -65,7 +65,7 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_match_lookup = {
             f"{match['comp_level']}{match['match_number']}": match
             for match in tba_matches
-            if match.get("score_breakdown") is not None
+            if match['score_breakdown'] is not None
         }
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
