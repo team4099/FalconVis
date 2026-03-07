@@ -65,7 +65,7 @@ class CalculatedStats(BaseCalculatedStats):
         teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(
             lambda batches: to_numeric(batches) * magazine_size
         )
-        teleop_batch_points = teleop_batch_points
+        print(teleop_batch_points)
         total_teleop_points = int(teleop_singular_ball_points) + int(teleop_batch_points)
 
         # Endgame (stage) calculations
