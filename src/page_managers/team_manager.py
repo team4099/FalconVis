@@ -66,7 +66,7 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_matches = retrieve_match_data_raw()
         tba_match_lookup = {
             f"{json.loads(match)['comp_level']}{json.loads(match)['match_number']}": match
-            for json.loads(match) in tba_matches if json.loads(match) is not None and json.loads(match)['score_breakdown'] is not None
+            for match in tba_matches if json.loads(match) is not None and json.loads(match)['score_breakdown'] is not None
         }
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
