@@ -56,7 +56,7 @@ class CalculatedStats(BaseCalculatedStats):
         auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(
             lambda batches: to_numeric(batches)
         )
-        auto_batch_points = auto_batch_points * magazine_size
+        auto_batch_points = auto_batch_points * int(magazine_size)
         auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
 
         total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points

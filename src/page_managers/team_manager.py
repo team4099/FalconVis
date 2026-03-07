@@ -4,6 +4,7 @@ import re
 import streamlit as st
 from annotated_text import annotated_text
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import json
 
 from .contains_metrics import ContainsMetrics
 from .page_manager import PageManager
@@ -65,7 +66,7 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_match_lookup = {
             f"{match['comp_level']}{match['match_number']}": match
             for match in tba_matches
-            if match['score_breakdown'] is not None
+            if json.loads(match)['score_breakdown'] is not None
         }
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
