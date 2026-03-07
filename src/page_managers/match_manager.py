@@ -659,7 +659,7 @@ class MatchManager(PageManager):
             climb_levels = [
                 level
                 for level in Criteria.CLIMBING_CRITERIA
-                if level != "None"
+                if level is not None and level != "None"
             ]
             climbs_by_level = [
                 [
