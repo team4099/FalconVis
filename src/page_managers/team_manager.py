@@ -63,7 +63,7 @@ class TeamManager(PageManager, ContainsMetrics):
         points_contributed_col, points_scaled_col, accuracy_col = st.columns(3)
         iqr_col, climbs_col, disables_col = st.columns(3)
         all_scouting_data = retrieve_scouting_data()
-        tba_matches = retrieve_match_data_raw()
+        tba_matches = json.loads(retrieve_match_data_raw())
         for match in tba_matches:
             print(match)
         tba_match_lookup = {
