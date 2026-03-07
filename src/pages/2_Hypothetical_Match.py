@@ -32,12 +32,12 @@ if __name__ == '__main__':
         match_manager.generate_match_prediction_dashboard(*teams_selected)
 
         # Create fuel contribution and point contribution tabs for the different types of graphs
-        cycle_contribution_breakdown_tab, point_contribution_breakdown_tab = st.tabs(
+        fuel_contribution_breakdown_tab, point_contribution_breakdown_tab = st.tabs(
             ["⛽ Fuel Contribution Breakdown", "🧮 Point Contribution Breakdown"]
         )
 
         # Plot fuel contribution graphs
-        with cycle_contribution_breakdown_tab:
+        with fuel_contribution_breakdown_tab:
             match_manager.generate_match_prediction_graphs(
                 *teams_selected,
                 type_of_graph=GraphType.CYCLE_CONTRIBUTIONS
