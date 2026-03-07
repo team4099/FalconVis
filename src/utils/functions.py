@@ -181,6 +181,8 @@ def retrieve_match_data() -> DataFrame:
         auth_key="6lcmneN5bBDYpC47FolBxp2RZa4AbQCVpmKMSKw9x9btKt7da5yMzVamJYk0XDBm"  # For testing purposes
     )
 
+    print(tba_instance)
+
     event_matches = [
         match
         for match in tba_instance.event_matches(EventSpecificConstants.EVENT_CODE)
@@ -199,9 +201,6 @@ def retrieve_match_data() -> DataFrame:
                     "blue_alliance_rp": match["score_breakdown"]["blue"]["rp"],
                     "red_score": match["alliances"]["red"]["score"],
                     "blue_score": match["alliances"]["blue"]["score"],
-                    "reached_coop": (
-                        match["score_breakdown"]["red"]["coopertitionCriteriaMet"]
-                    )
                 }
                 for match in event_matches if match["score_breakdown"] is not None
             ]
