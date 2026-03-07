@@ -2,6 +2,7 @@
 
 import numpy as np
 import streamlit as st
+from pandas import to_numeric
 from scipy.integrate import quad
 from scipy.stats import norm
 
@@ -35,6 +36,30 @@ class MatchManager(PageManager):
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
         # self.pit_scouting_data = retrieve_pit_scouting_data()
+    
+    def _fuel_by_match(self, team_number: int, mode: str = ""):
+        team_data = scouting_data_for_team(team_number, self.calculated_stats.data)
+        magazine_size = to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
+        auto_fuel = (
+            to_numeric(team_data[Queries.AUTO_SINGULAR_COUNT]).fillna(0)
+            + to_numeric(team_data[Queries.AUTO_BATCH_COUNT]).fillna(0) * magazine_size
+        )
+        teleop_fuel = (
+            to_numeric(team_data[Queries.TELEOP_SINGULAR_COUNT]).fillna(0)
+            + to_numeric(team_data[Queries.TELEOP_BATCH_COUNT]).fillna(0) * magazine_size
+        )
+        if mode == Queries.AUTO:
+            return auto_fuel
+        if mode == Queries.TELEOP:
+            return teleop_fuel
+        return auto_fuel + teleop_fuel
+
+    def _average_fuel(self, team_number: int, mode: str = ""):
+        return self._fuel_by_match(team_number, mode).mean()
+
+    def _fuel_index(self, team_number: int) -> float:
+        counter_defense_skill = self.calculated_stats.average_counter_defense_skill(team_number)
+        return 0 if np.isnan(counter_defense_skill) else counter_defense_skill
 
     def generate_input_section(self) -> list[list, list]:
         """Creates the input section for the `Match` page.
@@ -299,32 +324,22 @@ class MatchManager(PageManager):
 
         :param red_alliance: A list of three integers, each integer representing a team on the Red Alliance
         :param blue_alliance: A list of three integers, each integer representing a team on the Blue Alliance.
-        :param type_of_graph: The type of graphs to display (cycle contributions / point contributions).
+        :param type_of_graph: The type of graphs to display (fuel contributions / point contributions).
         """
         combined_teams = red_alliance + blue_alliance
-        display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+        display_fuel_contributions = type_of_graph == GraphType.FUEL_CONTRIBUTIONS
         color_sequence = ["#781212", "#163ba1"]  # Bright red  # Bright blue
 
-        structure_breakdown_col, auto_cycles_col = st.columns(2)
-        teleop_cycles_col, cumulative_cycles_col = st.columns(2)
+        structure_breakdown_col, auto_fuel_col = st.columns(2)
+        teleop_fuel_col, cumulative_fuel_col = st.columns(2)
 
         # Breaks down where the different teams scored among the six teams
         with structure_breakdown_col:
             structure_breakdown = [
                 [
-                    self.calculated_stats.cycles_by_structure_per_match(
-                        team, structures
-                    ).sum()
+                    self._fuel_by_match(team).sum()
                     for team in combined_teams
                 ]
-                for structures in (
-                    (Queries.AUTO_BARGE, Queries.TELEOP_BARGE),
-                    (Queries.AUTO_PROCESSOR, Queries.TELEOP_PROCESSOR),
-                    (Queries.AUTO_CORAL_L1, Queries.TELEOP_CORAL_L1),
-                    (Queries.AUTO_CORAL_L2, Queries.TELEOP_CORAL_L2),
-                    (Queries.AUTO_CORAL_L3, Queries.TELEOP_CORAL_L3),
-                    (Queries.AUTO_CORAL_L4, Queries.TELEOP_CORAL_L4)
-                )
             ]
 
             plotly_chart(
@@ -332,29 +347,24 @@ class MatchManager(PageManager):
                     combined_teams,
                     structure_breakdown,
                     "Teams",
-                    ["# of Barge Cycles", "# of Processor Cycles", "# of L1 Coral Cycles", "# of L2 Coral Cycles", "# of L3 Coral Cycles", "# of L4 Coral Cycles"],
-                    "Total Cycles Scored into Structures",
+                    ["# of Total Fuel"],
+                    "Total Fuel Scored",
                     title="Structure Breakdown",
                     color_map={
-                        "# of L1 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
-                        "# of L2 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
-                        "# of L3 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
-                        "# of L4 Coral Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[0],
-                        "# of Barge Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[1],
-                        "# of Processor Cycles": GeneralConstants.GREEN_TO_PURPLE_GRADIENT[1]
+                        "# of Total Fuel": GeneralConstants.GOLD_GRADIENT[0],
                     },
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
 
-        # Breaks down cycles/point contributions among both alliances in Autonomous.
-        with auto_cycles_col:
+        # Breaks down fuel/point contributions among both alliances in Autonomous.
+        with auto_fuel_col:
             auto_alliance_distributions = []
 
             for alliance in (red_alliance, blue_alliance):
-                cycles_in_alliance = [
+                fuel_in_alliance = [
                     (
-                        self.calculated_stats.cycles_by_match(team, Queries.AUTO)
-                        if display_cycle_contributions
+                        self._fuel_by_match(team, Queries.AUTO)
+                        if display_fuel_contributions
                         else self.calculated_stats.points_contributed_by_match(
                             team, Queries.AUTO
                         )
@@ -363,7 +373,7 @@ class MatchManager(PageManager):
                 ]
                 auto_alliance_distributions.append(
                     self.calculated_stats.cartesian_product(
-                        *cycles_in_alliance, reduce_with_sum=True
+                        *fuel_in_alliance, reduce_with_sum=True
                     )
                 )
 
@@ -372,28 +382,28 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     auto_alliance_distributions,
                     y_axis_label=(
-                        "Coral + Algae Scored"
-                        if display_cycle_contributions
+                        "Fuel Scored"
+                        if display_fuel_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Coral + Algae During Autonomous (N={len(auto_alliance_distributions[0])})"
-                        if display_cycle_contributions
+                        f"Fuel During Autonomous (N={len(auto_alliance_distributions[0])})"
+                        if display_fuel_contributions
                         else f"Points Contributed During Autonomous (N={len(auto_alliance_distributions[0])})"
                     ),
                     color_sequence=color_sequence,
                 )
             )
 
-        # Breaks down cycles/point contributions among both alliances in Teleop.
-        with teleop_cycles_col:
+        # Breaks down fuel/point contributions among both alliances in Teleop.
+        with teleop_fuel_col:
             teleop_alliance_distributions = []
 
             for alliance in (red_alliance, blue_alliance):
-                cycles_in_alliance = [
+                fuel_in_alliance = [
                     (
-                        self.calculated_stats.cycles_by_match(team, Queries.TELEOP)
-                        if display_cycle_contributions
+                        self._fuel_by_match(team, Queries.TELEOP)
+                        if display_fuel_contributions
                         else self.calculated_stats.points_contributed_by_match(
                             team, Queries.TELEOP
                         )
@@ -402,7 +412,7 @@ class MatchManager(PageManager):
                 ]
                 teleop_alliance_distributions.append(
                     self.calculated_stats.cartesian_product(
-                        *cycles_in_alliance, reduce_with_sum=True
+                        *fuel_in_alliance, reduce_with_sum=True
                     )
                 )
 
@@ -411,21 +421,21 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     teleop_alliance_distributions,
                     y_axis_label=(
-                        "Coral + Algae Scored"
-                        if display_cycle_contributions
+                        "Fuel Scored"
+                        if display_fuel_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Coral + Algae During Teleop (N={len(teleop_alliance_distributions[0])})"
-                        if display_cycle_contributions
+                        f"Fuel During Teleop (N={len(teleop_alliance_distributions[0])})"
+                        if display_fuel_contributions
                         else f"Points Contributed During Teleop (N={len(teleop_alliance_distributions[0])})"
                     ),
                     color_sequence=color_sequence,
                 )
             )
 
-        # Show cumulative cycles/point contributions (auto and teleop)
-        with cumulative_cycles_col:
+        # Show cumulative fuel/point contributions (auto and teleop)
+        with cumulative_fuel_col:
             cumulative_alliance_distributions = [
                 auto_distribution + teleop_distribution
                 for auto_distribution, teleop_distribution in zip(
@@ -438,13 +448,13 @@ class MatchManager(PageManager):
                     ["Red Alliance", "Blue Alliance"],
                     cumulative_alliance_distributions,
                     y_axis_label=(
-                        "Coral + Algae Scored"
-                        if display_cycle_contributions
+                        "Fuel Scored"
+                        if display_fuel_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        f"Coral + Algae During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
-                        if display_cycle_contributions
+                        f"Fuel During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
+                        if display_fuel_contributions
                         else f"Points Contributed During Auto + Teleop (N={len(cumulative_alliance_distributions[0])})"
                     ),
                     color_sequence=color_sequence,
@@ -458,52 +468,42 @@ class MatchManager(PageManager):
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        fastest_cycler_col, second_fastest_cycler_col, slowest_cycler_col, reaches_coop_col = st.columns(4)
+        highest_fuel_index_col, second_highest_fuel_index_col, lowest_fuel_index_col = st.columns(3)
 
-        fastest_cyclers = sorted(
+        fuel_index_rankings = sorted(
             {
-                team: self.calculated_stats.driving_index(team) for team in team_numbers
+                team: self._fuel_index(team) for team in team_numbers
             }.items(),
             key=lambda pair: pair[1],
             reverse=True
         )
 
-        # Colored metric displaying the fastest cycler in the alliance
-        with fastest_cycler_col:
+        # Colored metric displaying the highest fuel index in the alliance.
+        with highest_fuel_index_col:
             colored_metric(
-                "Fastest Cycler",
-                fastest_cyclers[0][0],
+                "Highest Fuel Index",
+                fuel_index_rankings[0][0],
                 background_color=color_gradient[0],
                 opacity=0.4,
                 border_opacity=0.9
             )
 
-        # Colored metric displaying the second fastest cycler in the alliance
-        with second_fastest_cycler_col:
+        # Colored metric displaying the second highest fuel index in the alliance.
+        with second_highest_fuel_index_col:
             colored_metric(
-                "Second Fastest Cycler",
-                fastest_cyclers[1][0],
+                "Second Highest Fuel Index",
+                fuel_index_rankings[1][0],
                 background_color=color_gradient[1],
                 opacity=0.4,
                 border_opacity=0.9
             )
 
-        # Colored metric displaying the slowest cycler in the alliance
-        with slowest_cycler_col:
+        # Colored metric displaying the lowest fuel index in the alliance.
+        with lowest_fuel_index_col:
             colored_metric(
-                "Slowest Cycler",
-                fastest_cyclers[2][0],
+                "Lowest Fuel Index",
+                fuel_index_rankings[2][0],
                 background_color=color_gradient[2],
-                opacity=0.4,
-                border_opacity=0.9
-            )
-
-        # Colored metric displaying the chance of reaching the co-op bonus (2 Processor Cycles)
-        with reaches_coop_col:
-            colored_metric(
-                "Chance of Co-Op Bonus",
-                f"{self.calculated_stats.chance_of_coop_bonus(team_numbers):.0%}",
-                background_color=color_gradient[3],
                 opacity=0.4,
                 border_opacity=0.9
             )
@@ -517,21 +517,21 @@ class MatchManager(PageManager):
         """Generates the autonomous graphs for the `Match` page.
 
         :param team_numbers: The teams to generate the graphs for.
-        :param type_of_graph: The type of graph to make (cycle contributions/point contributions).
+        :param type_of_graph: The type of graph to make (fuel contributions/point contributions).
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
-        display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+        display_fuel_contributions = type_of_graph == GraphType.FUEL_CONTRIBUTIONS
 
-        best_auto_config_col, auto_cycles_breakdown_col = st.columns(2)
+        best_auto_config_col, auto_fuel_breakdown_col = st.columns(2)
 
 
         # Best auto configuration graph
         with best_auto_config_col:
-            if display_cycle_contributions:
+            if display_fuel_contributions:
                 best_autos_by_team = sorted(
                     [
-                        (team_number, self.calculated_stats.cycles_by_match(team_number, Queries.AUTO).max())
+                        (team_number, self._fuel_by_match(team_number, Queries.AUTO).max())
                         for team_number in team_numbers
                     ],
                     key=lambda pair: pair[1],
@@ -555,8 +555,8 @@ class MatchManager(PageManager):
                     [pair[1] for pair in best_autos_by_team],
                     x_axis_label="Teams",
                     y_axis_label=(
-                        "# of Cycles in Auto"
-                        if display_cycle_contributions
+                        "# of Fuel in Auto"
+                        if display_fuel_contributions
                         else "# of Points in Auto"
                     ),
                     title="Best Auto Configuration",
@@ -564,87 +564,32 @@ class MatchManager(PageManager):
                 )
             )
 
-        # Auto cycle breakdown graph
-        with auto_cycles_breakdown_col:
-            if display_cycle_contributions:
-                average_l1_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L1)
-                    for team in team_numbers
-                ]
-                average_l2_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L2)
-                    for team in team_numbers
-                ]
-                average_l3_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L3)
-                    for team in team_numbers
-                ]
-                average_l4_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L4)
-                    for team in team_numbers
-                ]
-                average_barge_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_BARGE)
-                    for team in team_numbers
-                ]
-                average_processor_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_PROCESSOR)
+        # Auto fuel breakdown graph
+        with auto_fuel_breakdown_col:
+            if display_fuel_contributions:
+                average_auto_fuel_by_team = [
+                    self._average_fuel(team, Queries.AUTO)
                     for team in team_numbers
                 ]
             else:
-                average_l1_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L1) * 3
-                    for team in team_numbers
-                ]
-                average_l2_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L2) * 4
-                    for team in team_numbers
-                ]
-                average_l3_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L3) * 6
-                    for team in team_numbers
-                ]
-                average_l4_coral_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_CORAL_L4) * 7
-                    for team in team_numbers
-                ]
-                average_barge_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_BARGE) * 4
-                    for team in team_numbers
-                ]
-                average_processor_cycles_by_team = [
-                    self.calculated_stats.average_cycles_for_structure(team, Queries.AUTO_PROCESSOR) * 6
+                average_auto_fuel_by_team = [
+                    self._average_fuel(team, Queries.AUTO)
                     for team in team_numbers
                 ]
 
             plotly_chart(
                 stacked_bar_graph(
                     team_numbers,
-                    [average_l1_coral_cycles_by_team, average_l2_coral_cycles_by_team, average_l3_coral_cycles_by_team, average_l4_coral_cycles_by_team, average_barge_cycles_by_team, average_processor_cycles_by_team],
+                    [average_auto_fuel_by_team],
                     "Teams",
                     [
-                        ("Avg. L1 Coral Cycles" if display_cycle_contributions else "Avg. L1 Coral Points"),
-                        ("Avg. L2 Coral Cycles" if display_cycle_contributions else "Avg. L2 Coral Points"),
-                        ("Avg. L3 Coral Cycles" if display_cycle_contributions else "Avg. L3 Coral Points"),
-                        ("Avg. L4 Coral Cycles" if display_cycle_contributions else "Avg. L4 Coral Points"),
-                        ("Avg. Barge Cycles" if display_cycle_contributions else "Avg. Barge Points"),
-                        ("Avg. Processor Cycles" if display_cycle_contributions else "Avg. Processor Points")
+                        ("Avg. Auto Fuel" if display_fuel_contributions else "Avg. Auto Points"),
                     ],
-                    ("Total Auto Cycles" if display_cycle_contributions else "Total Auto Points"),
+                    ("Total Auto Fuel" if display_fuel_contributions else "Total Auto Points"),
                     title="Auto Scoring Breakdown",
                     color_map={
-                        ("Avg. L1 Coral Cycles" if display_cycle_contributions else "Avg. L1 Coral Points"):
+                        ("Avg. Auto Fuel" if display_fuel_contributions else "Avg. Auto Points"):
                             color_gradient[0],
-                        ("Avg. L2 Coral Cycles" if display_cycle_contributions else "Avg. L2 Coral Points"): 
-                        color_gradient[1],
-                        ("Avg. L3 Coral Cycles" if display_cycle_contributions else "Avg. L3 Coral Points"):
-                            color_gradient[2],
-                        ("Avg. L4 Coral Cycles" if display_cycle_contributions else "Avg. L4 Coral Points"):
-                            color_gradient[3],
-                        ("Avg. Barge Cycles" if display_cycle_contributions else "Avg. Barge Points"):
-                            color_gradient[2],
-                        ("Avg. Processor Cycles" if display_cycle_contributions else "Avg. Processor Points"):
-                            color_gradient[1]
                     }
                 ).update_layout(xaxis={"categoryorder": "total descending"})
             )
@@ -659,16 +604,15 @@ class MatchManager(PageManager):
         """Generates the teleop graphs for the `Match` page.
 
         :param team_numbers: The teams to generate the graphs for.
-        :param type_of_graph: The type of graph to make (cycle contributions/point contributions).
+        :param type_of_graph: The type of graph to make (fuel contributions/point contributions).
         :param color_gradient: The color gradient to use for graphs, depending on the alliance.
         :return:
         """
         teams_data = [scouting_data_for_team(team) for team in team_numbers]
-        display_cycle_contributions = type_of_graph == GraphType.CYCLE_CONTRIBUTIONS
+        display_fuel_contributions = type_of_graph == GraphType.FUEL_CONTRIBUTIONS
 
-        st.write("## ⭕ Cycles")
-        l1_coral_cycles_over_time_col, l2_coral_cycles_over_time_col, l3_coral_cycles_over_time_col, l4_coral_cycles_over_time_col = st.columns(4, gap="small")
-        barge_cycles_over_time_col, processor_cycles_over_time_col = st.columns(2, gap="small")
+        st.write("## ⭕ Fuel")
+        (fuel_over_time_col,) = st.columns(1, gap="small")
 
         st.divider()
         st.write("## ⛓️ Endgame")
@@ -680,16 +624,13 @@ class MatchManager(PageManager):
             GeneralConstants.LIGHT_GREEN
         ]
 
-        # Display the teleop L1 Coral cycles of each team over time
-        with l1_coral_cycles_over_time_col:
-            cycles_by_team = [
-                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L1) *
-                (
-                    1 if display_cycle_contributions else 2
-                )
+        # Display the teleop fuel of each team over time.
+        with fuel_over_time_col:
+            fuel_by_team = [
+                self._fuel_by_match(team, Queries.TELEOP)
                 for team in team_numbers
             ]
-            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
+            best_teams = sorted(zip(team_numbers, fuel_by_team), key=lambda pair: pair[1].mean())
             color_map = {
                 pair[0]: color
                 for pair, color in zip(best_teams, short_gradient)
@@ -697,212 +638,53 @@ class MatchManager(PageManager):
 
             plotly_chart(
                 multi_line_graph(
-                    *populate_missing_data(cycles_by_team),
+                    *populate_missing_data(fuel_by_team),
                     x_axis_label="Match Index",
                     y_axis_label=team_numbers,
                     y_axis_title=(
-                        "# of Cycles"
-                        if display_cycle_contributions
+                        "# of Fuel Scored"
+                        if display_fuel_contributions
                         else "Points Contributed"
                     ),
                     title=(
-                        "Teleop L1 Coral Cycles Over Time"
-                        if display_cycle_contributions
-                        else "Points Contributed through L1 Coral Over Time"
-                    ),
-                    color_map=color_map
-                )
-            )
-       
-        # Display the teleop L2 Coral cycles of each team over time
-        with l2_coral_cycles_over_time_col:
-            cycles_by_team = [
-                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L2) *
-                (
-                    1 if display_cycle_contributions else 3
-                )
-                for team in team_numbers
-            ]
-            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
-            color_map = {
-                pair[0]: color
-                for pair, color in zip(best_teams, short_gradient)
-            }
-
-            plotly_chart(
-                multi_line_graph(
-                    *populate_missing_data(cycles_by_team),
-                    x_axis_label="Match Index",
-                    y_axis_label=team_numbers,
-                    y_axis_title=(
-                        "# of Cycles"
-                        if display_cycle_contributions
-                        else "Points Contributed"
-                    ),
-                    title=(
-                        "Teleop L2 Coral Cycles Over Time"
-                        if display_cycle_contributions
-                        else "Points Contributed through L2 Coral Over Time"
-                    ),
-                    color_map=color_map
-                )
-            )
-
-        # Display the teleop L3 Coral cycles of each team over time            
-        with l3_coral_cycles_over_time_col:
-            cycles_by_team = [
-                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L3) *
-                (
-                    1 if display_cycle_contributions else 4
-                )
-                for team in team_numbers
-            ]
-            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
-            color_map = {
-                pair[0]: color
-                for pair, color in zip(best_teams, short_gradient)
-            }
-
-            plotly_chart(
-                multi_line_graph(
-                    *populate_missing_data(cycles_by_team),
-                    x_axis_label="Match Index",
-                    y_axis_label=team_numbers,
-                    y_axis_title=(
-                        "# of Cycles"
-                        if display_cycle_contributions
-                        else "Points Contributed"
-                    ),
-                    title=(
-                        "Teleop L3 Coral Cycles Over Time"
-                        if display_cycle_contributions
-                        else "Points Contributed through L3 Coral Over Time"
-                    ),
-                    color_map=color_map
-                )
-            )
-
-        # Display the teleop L4 Coral cycles of each team over time
-        with l4_coral_cycles_over_time_col:
-            cycles_by_team = [
-                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_CORAL_L4) *
-                (
-                    1 if display_cycle_contributions else 5
-                )
-                for team in team_numbers
-            ]
-            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
-            color_map = {
-                pair[0]: color
-                for pair, color in zip(best_teams, short_gradient)
-            }
-
-            plotly_chart(
-                multi_line_graph(
-                    *populate_missing_data(cycles_by_team),
-                    x_axis_label="Match Index",
-                    y_axis_label=team_numbers,
-                    y_axis_title=(
-                        "# of Cycles"
-                        if display_cycle_contributions
-                        else "Points Contributed"
-                    ),
-                    title=(
-                        "Teleop L4 Coral Cycles Over Time"
-                        if display_cycle_contributions
-                        else "Points Contributed through L4 Coral Over Time"
-                    ),
-                    color_map=color_map
-                )
-            )
-
-        # Display the teleop barge cycles of each team over time            
-        with barge_cycles_over_time_col:
-            cycles_by_team = [
-                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_BARGE) *
-                (
-                    1 if display_cycle_contributions else 2
-                )
-                for team in team_numbers
-            ]
-            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
-            color_map = {
-                pair[0]: color
-                for pair, color in zip(best_teams, short_gradient)
-            }
-
-            plotly_chart(
-                multi_line_graph(
-                    *populate_missing_data(cycles_by_team),
-                    x_axis_label="Match Index",
-                    y_axis_label=team_numbers,
-                    y_axis_title=(
-                        "# of Cycles"
-                        if display_cycle_contributions
-                        else "Points Contributed"
-                    ),
-                    title=(
-                        "Teleop Barge Cycles Over Time"
-                        if display_cycle_contributions
-                        else "Points Contributed in the Barge Over Time"
-                    ),
-                    color_map=color_map
-                )
-            )
-
-        # Display the teleop processor cycles of each team over time
-        with processor_cycles_over_time_col:
-            cycles_by_team = [
-                self.calculated_stats.cycles_by_structure_per_match(team, Queries.TELEOP_PROCESSOR) *
-                (
-                    1 if display_cycle_contributions else 2
-                )
-                for team in team_numbers
-            ]
-            best_teams = sorted(zip(team_numbers, cycles_by_team), key=lambda pair: pair[1].mean())
-            color_map = {
-                pair[0]: color
-                for pair, color in zip(best_teams, short_gradient)
-            }
-
-            plotly_chart(
-                multi_line_graph(
-                    *populate_missing_data(cycles_by_team),
-                    x_axis_label="Match Index",
-                    y_axis_label=team_numbers,
-                    y_axis_title=(
-                        "# of Cycles"
-                        if display_cycle_contributions
-                        else "Points Contributed"
-                    ),
-                    title=(
-                        "Teleop Processor Cycles Over Time"
-                        if display_cycle_contributions
-                        else "Points Contributed in the Processor Over Time"
+                        "Teleop Fuel Over Time"
+                        if display_fuel_contributions
+                        else "Points Contributed through Teleop Fuel Over Time"
                     ),
                     color_map=color_map
                 )
             )
 
         with climb_breakdown_by_team_col:
-            deep_climbs_by_team = [
-                (team_data[Queries.CLIMBED_CAGE] == "Deep Climb").sum()
-                for team_data in teams_data
+            climb_levels = [
+                level
+                for level in Criteria.CLIMBING_CRITERIA
+                if level != "None"
             ]
-            shallow_climbs_by_team = [
-                (team_data[Queries.CLIMBED_CAGE] == "Shallow Climb").sum()
-                for team_data in teams_data
+            climbs_by_level = [
+                [
+                    (team_data[Queries.TELEOP_CLIMB] == level).sum()
+                    for team_data in teams_data
+                ]
+                for level in climb_levels
+            ]
+            climb_level_labels = [
+                f"Level {Criteria.CLIMBING_CRITERIA[level]} Climbs"
+                for level in climb_levels
             ]
 
             plotly_chart(
                 stacked_bar_graph(
                     team_numbers,
-                    [shallow_climbs_by_team, deep_climbs_by_team],
+                    climbs_by_level,
                     x_axis_label="Teams",
-                    y_axis_label=["Shallow Climbs", "Deep Climbs"],
-                    y_axis_title="# of Climb Types",
+                    y_axis_label=climb_level_labels,
+                    y_axis_title="# of Climbs by Level",
                     title="Climbs by Team",
-                    color_map={"Shallow Climbs": color_gradient[0], "Deep Climbs": color_gradient[1]}
+                    color_map={
+                        label: color
+                        for label, color in zip(climb_level_labels, GeneralConstants.LEVEL_GRADIENT)
+                    }
                 )
             )
 

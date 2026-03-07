@@ -31,12 +31,12 @@ if __name__ == '__main__':
         # Generate the match prediction dashboard that give a rough overview of the two alliances.
         match_manager.generate_match_prediction_dashboard(*teams_selected)
 
-        # Create cycle contribution and point contribution tabs for the different types of graphs
+        # Create fuel contribution and point contribution tabs for the different types of graphs
         cycle_contribution_breakdown_tab, point_contribution_breakdown_tab = st.tabs(
-            ["📈 Cycle Contribution Breakdown", "🧮 Point Contribution Breakdown"]
+            ["⛽ Fuel Contribution Breakdown", "🧮 Point Contribution Breakdown"]
         )
 
-        # Plot cycle contribution graphs
+        # Plot fuel contribution graphs
         with cycle_contribution_breakdown_tab:
             match_manager.generate_match_prediction_graphs(
                 *teams_selected,
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
         with red_auto_tab:
             red_auto_cycle_tab, red_auto_points_tab = st.tabs(
-                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+                ["⛽ Fuel Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
             with red_auto_cycle_tab:
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
         with red_teleop_tab:
             red_teleop_cycle_tab, red_teleop_points_tab = st.tabs(
-                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+                ["⛽ Fuel Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
             with red_teleop_cycle_tab:
@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
         with blue_auto_tab:
             blue_auto_cycle_tab, blue_auto_points_tab = st.tabs(
-                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+                ["⛽ Fuel Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
             with blue_auto_cycle_tab:
@@ -141,7 +141,7 @@ if __name__ == '__main__':
 
         with blue_teleop_tab:
             blue_teleop_cycle_tab, blue_teleop_points_tab = st.tabs(
-                ["📈 Cycle Contribution Graphs", "🧮 Point Contribution Graphs"]
+                ["⛽ Fuel Contribution Graphs", "🧮 Point Contribution Graphs"]
             )
 
             with blue_teleop_cycle_tab:

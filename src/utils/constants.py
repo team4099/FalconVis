@@ -53,12 +53,12 @@ class GeneralConstants:
 
 class EventSpecificConstants:
     """Constants specific to an event."""
-    EVENT_CODE = "2025mdbob"
-    EVENT_NAME = "Battle o Baltimore"
+    EVENT_CODE = "2026vaale"
+    EVENT_NAME = "Week 1 Alexandria"
     URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_match_data.json"
     NOTE_SCOUTING_URL = f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_qualitative_data.json"
     PIT_SCOUTING_URL = (
-        f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.csv"
+        f"https://raw.githubusercontent.com/team4099/ScoutingAppData/main/{EVENT_CODE}_pit_scouting_data.json"
     )
     PICKLIST_URL = "https://www.notion.so/team4099/d19066533a8844d3aa2cd9e68e70f214?v=56e109b2298d46ebb00057f05d38bba8"
     # if no connection
@@ -66,9 +66,10 @@ class EventSpecificConstants:
 
 
 class GraphType(Enum):
-    """Enum class representing the different graph types (cycle contribution graphs / point contribution graphs)."""
+    """Enum class representing the different graph types (fuel contribution graphs / point contribution graphs)."""
 
-    CYCLE_CONTRIBUTIONS = 0
+    FUEL_CONTRIBUTIONS = 0
+    CYCLE_CONTRIBUTIONS = FUEL_CONTRIBUTIONS
     POINT_CONTRIBUTIONS = 1
 
 
@@ -96,8 +97,8 @@ class Queries:
     THROUGHPUT_SPEED = "ThroughputSpeed"
     TELEOP_CLIMB = "TeleopClimb"
     AUTO_CLIMB = "AutoClimb"
-    TELEOP_SINUGLAR_COUNT = "TeleopSinuglarCount"
-    AUTO_SINUGLAR_COUNT = "AutoSinuglarCount"
+    TELEOP_SINGULAR_COUNT = "TeleopSingularCount"
+    AUTO_SINGULAR_COUNT = "AutoSingularCount"
     AUTO_BATCH_COUNT = "AutoBatchCount"
     TELEOP_BATCH_COUNT = "TeleopBatchCount"
     MAGAZINE_SIZE = "HopperCapacity"
@@ -145,6 +146,7 @@ class Criteria:
     }
 
     CLIMBING_CRITERIA = {
+        None: 0,
         "None": 0,
         "L1": 1,
         "L2": 2,
