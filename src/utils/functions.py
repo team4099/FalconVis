@@ -78,7 +78,7 @@ def retrieve_scouting_data() -> DataFrame:
     pit_scouting_data = pit_scouting_data.rename(
         columns={
             "TeamNumber": Queries.TEAM_NUMBER,
-            "HopperCapacity": Queries.MAGAZINE_SIZE,
+            "HopperCapacity": "HopperCapacity",
             "DrivetrainLength": "DrivetrainLength",
             "DrivetrainWidth": "DrivetrainWidth",
             "WeightofRobot": "WeightOfRobot",
