@@ -67,8 +67,9 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_match_lookup = {}
 
         for match in tba_matches:
-            match_key = match['comp_level'] + str(match['match_number'])
-            tba_match_lookup[f"{match['comp_level']}{match['match_number']}"] = match
+            if match['score_breakdown'] is not None:
+                match_key = match['comp_level'] + str(match['match_number'])
+                tba_match_lookup[match_key] = match
 
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
@@ -132,7 +133,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 & (all_scouting_data["Alliance"].str.lower() == alliance)
             ].copy()
 
-            if alliance_rows.empty:tf
+            if alliance_rows.empty:
                 team_scouted_points_by_team_match[cache_key] = _row_points(row)
                 tba_scaled_points_by_team_match[cache_key] = None
                 regular_points_by_team_match[cache_key] = regular_points
