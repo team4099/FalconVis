@@ -66,8 +66,6 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_matches = retrieve_match_data_raw()
         tba_match_lookup = {}
 
-        print(type(tba_matches))
-
         for match in tba_matches:
             # print(match)
             if match["score_breakdown"] is not None:

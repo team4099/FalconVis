@@ -58,12 +58,12 @@ def retrieve_scouting_data() -> DataFrame:
 
     scouting_data: DataFrame
 
-    # try:
+    r = get(EventSpecificConstants.URL)
+
     scouting_data = DataFrame.from_dict(
-        check_utf8(
-            get(EventSpecificConstants.URL).json()
-        )
+        loads(r.text.replace(": None", ': "None"'))
     )
+
     # except:
     #     with open(EventSpecificConstants.LOCAL_JSON_PATH, encoding='utf-8') as f:
     #         data = load(f)
