@@ -168,10 +168,10 @@ def retrieve_match_schedule() -> DataFrame:
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_match_data_raw():
-    return dumps(requests.get(
+    return requests.get(
         f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
         headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
-    ).json())
+    ).json()
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE // 2)
@@ -266,7 +266,7 @@ def _convert_to_float_from_numpy_type(function):
     """
     def wrapper(*args, **kwargs) -> float | int:
         result = function(*args, **kwargs)
-        return int(result) if isinstance(result, int64) else float(result) # Converts numpy dtype to native python type
+        return int(result) if isinstance(result, int64) else float(result.iloc[0]) # Converts numpy dtype to native python type
 
     return wrapper
 

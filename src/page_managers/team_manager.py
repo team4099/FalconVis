@@ -66,7 +66,10 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_matches = retrieve_match_data_raw()
         tba_match_lookup = {}
 
+        print(type(tba_matches))
+
         for match in tba_matches:
+            # print(match)
             if match["score_breakdown"] is not None:
                 match_key = match["comp_level"] + str(match["match_number"])
                 tba_match_lookup[match_key] = match
@@ -86,7 +89,7 @@ class TeamManager(PageManager, ContainsMetrics):
         def _row_points(row) -> float:
             magazine_size = _as_float(row.get(Queries.MAGAZINE_SIZE))
             auto_points = (
-                x_as_float(row.get(Queries.AUTO_SINGULAR_COUNT))
+                _as_float(row.get(Queries.AUTO_SINGULAR_COUNT))
                 + (_as_float(row.get(Queries.AUTO_BATCH_COUNT)) * magazine_size)
                 + (Criteria.BOOLEAN_CRITERIA.get(row.get(Queries.AUTO_CLIMB), 0) * 15)
             )
