@@ -67,7 +67,9 @@ class TeamManager(PageManager, ContainsMetrics):
         tba_match_lookup = {}
 
         for match in tba_matches:
-            tba_match_lookup[f"{match['comp_level']}{match['match_number']}"] = match
+            print(match)
+            match_key = match['comp_level'] + str(match['match_number'])
+            tba_match_lookup[match_key] = match
 
         tba_scaled_points_by_team = {}
         tba_accuracy_by_team = {}
@@ -84,7 +86,7 @@ class TeamManager(PageManager, ContainsMetrics):
         def _row_points(row) -> float:
             magazine_size = _as_float(row.get(Queries.MAGAZINE_SIZE))
             auto_points = (
-                _as_float(row.get(Queries.AUTO_SINGULAR_COUNT))
+                x_as_float(row.get(Queries.AUTO_SINGULAR_COUNT))
                 + (_as_float(row.get(Queries.AUTO_BATCH_COUNT)) * magazine_size)
                 + (Criteria.BOOLEAN_CRITERIA.get(row.get(Queries.AUTO_CLIMB), 0) * 15)
             )
@@ -131,7 +133,7 @@ class TeamManager(PageManager, ContainsMetrics):
                 & (all_scouting_data["Alliance"].str.lower() == alliance)
             ].copy()
 
-            if alliance_rows.empty:
+            if alliance_rows.empty:tf
                 team_scouted_points_by_team_match[cache_key] = _row_points(row)
                 tba_scaled_points_by_team_match[cache_key] = None
                 regular_points_by_team_match[cache_key] = regular_points
