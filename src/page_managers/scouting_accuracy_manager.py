@@ -1,4 +1,4 @@
-"""Creates the `ScoutingAccuracyManager` class used to set up the Scouting Accuracy page and generate its table."""
+"""Creates the `ScoutingAccuracyManager` class used to set up the Scouting Coverage page."""
 import pandas as pd
 import streamlit as st
 from .page_manager import PageManager
@@ -6,10 +6,6 @@ from utils import (
     CalculatedStats,
     Queries,
     retrieve_scouting_data,
-    retrieve_match_schedule,
-    retrieve_match_data,
-    retrieve_match_data_raw,
-    Criteria
 )
 from dotenv import load_dotenv
 from pandas import DataFrame
@@ -18,318 +14,82 @@ load_dotenv()
 
 
 class ScoutingAccuracyManager(PageManager):
-    """The scouting accuracy page manager for the `Scouting Accuracy` page."""
+    """Page manager for the `Scouting Coverage` page.
+
+    Since the current dataset is qualitative-only, this page shows scouting
+    coverage statistics (matches scouted per person, teams covered) rather than
+    numerical accuracy against TBA scores.
+    """
+
     def __init__(self):
         self.calculated_stats = CalculatedStats(retrieve_scouting_data())
         self.raw_scouting_data = retrieve_scouting_data()
-        self.match_schedule = retrieve_match_schedule()
-        self.match_data = retrieve_match_data()
 
     def generate_input_section(self) -> str:
-        """Generates the input section of the `Scouting Accuracy` page.
+        """Provides a text input for filtering by scouter name.
 
-        Provides a text box for the user to input a custom string value.
-
-        :return: Returns the string entered by the user.
+        :return: The scout name entered by the user (empty string shows all).
         """
-
         return st.text_input(
-            "Enter the name of the member",
-            placeholder="Type here..."
+            "Filter by scouter name (leave blank to see all)",
+            placeholder="e.g. Nikhil"
         )
-    
-    #Method to create table sorted by scouter
+
     def generate_scouting_accuracy_table(self, member_name: str) -> DataFrame:
-        """Generates the scouting accuracy table for the `Scouting Accuracy` page."""
+        """Generates a per-scouter coverage breakdown.
 
-        accuracy_dict = {
-            'ScoutersNames': [],
-            'CumulativeAccuracy': [],
-            'AutoAccuracy': [],
-            'TeleopAccuracy': [],
-            'NumberOfScoutedMatches': []
-        }
+        Shows how many matches each scouter covered, which teams they scouted,
+        and how many unique teams they observed.
 
-        matches = retrieve_match_data_raw()
+        :param member_name: Optional filter — only rows whose ScoutId contains this string are shown.
+        :return: A DataFrame summarising each scouter's coverage.
+        """
+        data = self.raw_scouting_data.copy()
 
-        for index, row in self.match_data.iterrows():
-            match_key = row["match_key"]
-            red_alliance = row["red_alliance"]
-            blue_alliance = row["blue_alliance"]
+        if member_name.strip():
+            data = data[
+                data[Queries.SCOUT_ID].str.lower().str.contains(member_name.strip().lower(), na=False)
+            ]
 
-            # Red alliance score from TBA
-            team_list = red_alliance.split(",")
-            for match in matches:
-                if (match["comp_level"] + str(match["match_number"])) == match_key:
-                    red_total_score = match["score_breakdown"]["red"]["totalPoints"]
-                    red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
-                    red_auto_score = match["score_breakdown"]["red"]["autoPoints"]
-                    red_teleop_score = match["score_breakdown"]["red"]["teleopPoints"]
-                    red_calculated_score = red_total_score - red_foul_score
-                    break
+        if data.empty:
+            return DataFrame(columns=["Scouter", "Matches Scouted", "Unique Teams", "Teams Scouted"])
 
-            red_scouting_alliance_score = 0
-            red_scouting_auto_score = 0
-            red_scouting_teleop_score = 0
+        rows = []
+        for scout_id, group in data.groupby(Queries.SCOUT_ID):
+            teams = sorted(group[Queries.TEAM_NUMBER].unique().tolist())
+            rows.append({
+                "Scouter": scout_id,
+                "Matches Scouted": len(group),
+                "Unique Teams": len(teams),
+                "Teams Scouted": ", ".join(str(t) for t in teams),
+            })
 
-            scouters_names_list_r = []
+        return DataFrame(rows).sort_values("Matches Scouted", ascending=False).reset_index(drop=True)
 
-            for team_key in team_list:
-                scouting_team_filter = self.raw_scouting_data[self.raw_scouting_data[Queries.TEAM_NUMBER] == int(team_key)]
-                scouting_team_filter = scouting_team_filter.reset_index(drop=True)
-                match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
-                if len(match_index_list) != 0:
-                    match_index = match_index_list[0]
-                    scouting_row = scouting_team_filter.iloc[match_index]
-
-                    auto_singular_count = int(float(scouting_row.get(Queries.AUTO_SINGULAR_COUNT, 0)))
-                    auto_batch_count = int(float(scouting_row.get(Queries.AUTO_BATCH_COUNT, 0)))
-                    teleop_singular_count = int(float(scouting_row.get(Queries.TELEOP_SINGULAR_COUNT, 0)))
-                    teleop_batch_count = int(float(scouting_row.get(Queries.TELEOP_BATCH_COUNT, 0)))
-                    magazine_size = int(float(scouting_row.get(Queries.MAGAZINE_SIZE, 0)))
-                    auto_climb_points = Criteria.BOOLEAN_CRITERIA.get(scouting_row.get(Queries.AUTO_CLIMB), 0) * 15
-                    teleop_climb_points = Criteria.CLIMBING_CRITERIA.get(scouting_row.get(Queries.TELEOP_CLIMB), 0) * 10
-
-                    team_auto_score = auto_singular_count + (auto_batch_count * magazine_size) + auto_climb_points
-                    team_teleop_score = teleop_singular_count + (teleop_batch_count * magazine_size)
-                    team_total_score = team_auto_score + team_teleop_score + teleop_climb_points
-
-                    red_scouting_auto_score += team_auto_score
-                    red_scouting_teleop_score += team_teleop_score
-                    red_scouting_alliance_score += team_total_score
-
-                    scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
-                    scouters_names_list_r.append(scout_name.title().replace(" ", ""))
-
-                    # Red alliance accuracy
-                    if red_calculated_score == 0:
-                        if red_scouting_alliance_score == 0:
-                            red_alliance_accuracy = 100.0
-                        else:
-                            red_alliance_accuracy = 0.0
-                    else:
-                        red_alliance_accuracy = (1 - abs((red_scouting_alliance_score - red_calculated_score) / red_calculated_score)) * 100
-                    # red auto accuracy
-                    if red_auto_score == 0:
-                        if red_scouting_auto_score == 0:
-                            red_auto_accuracy = 100.0
-                        else:
-                            red_auto_accuracy = 0.0
-                    else:
-                        red_auto_accuracy = (1 - abs((red_scouting_auto_score - red_auto_score) / red_auto_score)) * 100
-                    # red teleop accuracy
-                    if red_teleop_score == 0:
-                        if red_scouting_teleop_score == 0:
-                            red_teleop_accuracy = 100.0
-                        else:
-                            red_teleop_accuracy = 0.0
-                    else:
-                        red_teleop_accuracy = (1 - abs((red_scouting_teleop_score - red_teleop_score) / red_teleop_score)) * 100
-
-            scouters_names = ", ".join(scouters_names_list_r)
-
-            if member_name.replace(" ", "").lower() in scouters_names.replace(" ", "").lower():
-                if scouters_names not in accuracy_dict['ScoutersNames']:
-                    accuracy_dict['ScoutersNames'].append(scouters_names)
-                    accuracy_dict['CumulativeAccuracy'].append(red_alliance_accuracy)
-                    accuracy_dict['AutoAccuracy'].append(red_auto_accuracy)
-                    accuracy_dict['TeleopAccuracy'].append(red_teleop_accuracy)
-                    accuracy_dict['NumberOfScoutedMatches'].append(1)
-                else:
-                    accuracy_scouts_index = accuracy_dict['ScoutersNames'].index(scouters_names)
-                    accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index] += red_alliance_accuracy
-                    accuracy_dict['AutoAccuracy'][accuracy_scouts_index] += red_auto_accuracy
-                    accuracy_dict['TeleopAccuracy'][accuracy_scouts_index] += red_teleop_accuracy
-                    accuracy_dict['NumberOfScoutedMatches'][accuracy_scouts_index] += 1
-
-            # Blue Alliance score from TBA
-            for match in matches:
-                if (match["comp_level"] + str(match["match_number"])) == match_key:
-                    blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
-                    blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]
-                    blue_auto_score = match["score_breakdown"]["blue"]["autoPoints"]
-                    blue_teleop_score = match["score_breakdown"]["blue"]["teleopPoints"]
-                    blue_calculated_score = blue_total_score - blue_foul_score
-                    break
-
-            blue_scouting_alliance_score = 0
-            blue_scouting_auto_score = 0
-            blue_scouting_teleop_score = 0
-
-            scouters_names_list_b = []
-
-            for team_key in blue_alliance.split(","):
-                scouting_team_filter = self.raw_scouting_data[self.raw_scouting_data[Queries.TEAM_NUMBER] == int(team_key)]
-                scouting_team_filter = scouting_team_filter.reset_index(drop=True)
-                match_index_list = scouting_team_filter.index[scouting_team_filter[Queries.MATCH_KEY] == match_key].tolist()
-                if len(match_index_list) != 0:
-                    match_index = match_index_list[0]
-                    scouting_row = scouting_team_filter.iloc[match_index]
-
-                    auto_singular_count = int(float(scouting_row.get(Queries.AUTO_SINGULAR_COUNT, 0)))
-                    auto_batch_count = int(float(scouting_row.get(Queries.AUTO_BATCH_COUNT, 0)))
-                    teleop_singular_count = int(float(scouting_row.get(Queries.TELEOP_SINGULAR_COUNT, 0)))
-                    teleop_batch_count = int(float(scouting_row.get(Queries.TELEOP_BATCH_COUNT, 0)))
-                    magazine_size = int(float(scouting_row.get(Queries.MAGAZINE_SIZE, 0)))
-                    auto_climb_points = Criteria.BOOLEAN_CRITERIA.get(scouting_row.get(Queries.AUTO_CLIMB), 0) * 15
-                    teleop_climb_points = Criteria.CLIMBING_CRITERIA.get(scouting_row.get(Queries.TELEOP_CLIMB), 0) * 10
-
-                    team_auto_score = auto_singular_count + (auto_batch_count * magazine_size) + auto_climb_points
-                    team_teleop_score = teleop_singular_count + (teleop_batch_count * magazine_size)
-                    team_total_score = team_auto_score + team_teleop_score + teleop_climb_points
-
-                    blue_scouting_auto_score += team_auto_score
-                    blue_scouting_teleop_score += team_teleop_score
-                    blue_scouting_alliance_score += team_total_score
-
-                    scout_name = scouting_team_filter.iloc[match_index][Queries.SCOUT_ID]
-                    scouters_names_list_b.append(scout_name.title().replace(" ", ""))
-
-                    # blue alliance accuracy
-                    if blue_calculated_score == 0:
-                        if blue_scouting_alliance_score == 0:
-                            blue_alliance_accuracy = 100.0
-                        else:
-                            blue_alliance_accuracy = 0.0
-                    else:
-                        blue_alliance_accuracy = (1 - abs((blue_scouting_alliance_score - blue_calculated_score) / blue_calculated_score)) * 100
-                    # blue auto accuracy
-                    if blue_auto_score == 0:
-                        if blue_scouting_auto_score == 0:
-                            blue_auto_accuracy = 100.0
-                        else:
-                            blue_auto_accuracy = 0.0
-                    else:
-                        blue_auto_accuracy = (1 - abs((blue_scouting_auto_score - blue_auto_score) / blue_auto_score)) * 100
-                    # blue teleop accuracy
-                    if blue_teleop_score == 0:
-                        if blue_scouting_teleop_score == 0:
-                            blue_teleop_accuracy = 100.0
-                        else:
-                            blue_teleop_accuracy = 0.0
-                    else:
-                        blue_teleop_accuracy = (1 - abs((blue_scouting_teleop_score - blue_teleop_score) / blue_teleop_score)) * 100
-
-            scouters_names = ", ".join(scouters_names_list_b)
-
-            if member_name.replace(" ", "").lower() in scouters_names.lower():
-                if scouters_names not in accuracy_dict['ScoutersNames']:
-                    accuracy_dict['ScoutersNames'].append(scouters_names)
-                    accuracy_dict['CumulativeAccuracy'].append(blue_alliance_accuracy)
-                    accuracy_dict['AutoAccuracy'].append(blue_auto_accuracy)
-                    accuracy_dict['TeleopAccuracy'].append(blue_teleop_accuracy)
-                    accuracy_dict['NumberOfScoutedMatches'].append(1)
-                else:
-                    accuracy_scouts_index = accuracy_dict['ScoutersNames'].index(scouters_names)
-                    accuracy_dict['CumulativeAccuracy'][accuracy_scouts_index] += blue_alliance_accuracy
-                    accuracy_dict['AutoAccuracy'][accuracy_scouts_index] += blue_auto_accuracy
-                    accuracy_dict['TeleopAccuracy'][accuracy_scouts_index] += blue_teleop_accuracy
-                    accuracy_dict['NumberOfScoutedMatches'][accuracy_scouts_index] += 1
-
-        df = pd.DataFrame(data={
-            'Scouters': accuracy_dict['ScoutersNames'],
-            'Average Accuracy %': [round(accuracy_dict['CumulativeAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
-            'Average Auto Accuracy %': [round(accuracy_dict['AutoAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
-            'Average Teleop Accuracy %': [round(accuracy_dict['TeleopAccuracy'][scouter_set]/accuracy_dict['NumberOfScoutedMatches'][scouter_set], 2) for scouter_set in range(len(accuracy_dict['NumberOfScoutedMatches']))],
-            'NumberOfScoutedMatches': accuracy_dict['NumberOfScoutedMatches']
-        })
-
-        return df
-    #Method to create table sorted by match
     def generate_match_accuracy_table(self) -> DataFrame:
-        """Generates the match accuracy table for all matches."""
-        accuracy_rows = []
-        matches = retrieve_match_data_raw()
+        """Generates a per-match coverage breakdown showing which teams were scouted in each match.
 
-        with st.spinner("Calculating match accuracy..."):
-            for index, row in self.match_data.iterrows():
-                match_key = row["match_key"]
-                red_alliance = row["red_alliance"]
-                blue_alliance = row["blue_alliance"]
+        :return: A DataFrame with one row per match and scouting coverage info.
+        """
+        data = self.raw_scouting_data.copy()
 
-                # --- Red Alliance ---
-                red_team_list = red_alliance.split(",")
+        rows = []
+        for match_key, group in data.groupby(Queries.MATCH_KEY):
+            num = group[Queries.MATCH_NUMBER].iloc[0] if Queries.MATCH_NUMBER in group.columns else None
+            teams = sorted(group[Queries.TEAM_NUMBER].unique().tolist())
+            scouts = sorted(group[Queries.SCOUT_ID].unique().tolist())
+            rows.append({
+                "Match": match_key,
+                "Match #": num,
+                "Teams Scouted": len(teams),
+                "Team Numbers": ", ".join(str(t) for t in teams),
+                "Scouters": ", ".join(scouts),
+            })
 
-                red_calculated_score = None
-                for match in matches:
-                    if (match["comp_level"] + str(match["match_number"])) == match_key:
-                        red_total_score = match["score_breakdown"]["red"]["totalPoints"]
-                        red_foul_score = match["score_breakdown"]["red"]["foulPoints"]
-                        red_calculated_score = red_total_score - red_foul_score
-                        break
+        if not rows:
+            return DataFrame()
 
-                if red_calculated_score is None:
-                    continue  # skip if match not found
-
-                red_scouting_alliance_score = 0
-                scouters_names_r = []
-
-                for team_key in red_team_list:
-                    scouting_team_filter = self.raw_scouting_data[
-                        self.raw_scouting_data[Queries.TEAM_NUMBER] == int(team_key)
-                    ].reset_index(drop=True)
-
-                    match_indices = scouting_team_filter.index[
-                        scouting_team_filter[Queries.MATCH_KEY] == match_key
-                    ].tolist()
-
-                    if len(match_indices) > 0:
-                        idx = match_indices[0]
-                        points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
-                        red_scouting_alliance_score += points_per_match[idx]
-                        scout_name = scouting_team_filter.iloc[idx][Queries.SCOUT_ID]
-                        scouters_names_r.append(scout_name.title().replace(" ", ""))
-
-                red_accuracy = (1 - abs((red_scouting_alliance_score - red_calculated_score) / red_calculated_score)) * 100
-
-                # --- Blue Alliance ---
-                blue_team_list = blue_alliance.split(",")
-
-                blue_calculated_score = None
-                for match in matches:
-                    if (match["comp_level"] + str(match["match_number"])) == match_key:
-                        blue_total_score = match["score_breakdown"]["blue"]["totalPoints"]
-                        blue_foul_score = match["score_breakdown"]["blue"]["foulPoints"]
-                        blue_calculated_score = blue_total_score - blue_foul_score
-                        break
-
-                if blue_calculated_score is None:
-                    continue  # skip if match not found
-
-                blue_scouting_alliance_score = 0
-                scouters_names_b = []
-
-                for team_key in blue_team_list:
-                    scouting_team_filter = self.raw_scouting_data[
-                        self.raw_scouting_data[Queries.TEAM_NUMBER] == int(team_key)
-                    ].reset_index(drop=True)
-
-                    match_indices = scouting_team_filter.index[
-                        scouting_team_filter[Queries.MATCH_KEY] == match_key
-                    ].tolist()
-
-                    if len(match_indices) > 0:
-                        idx = match_indices[0]
-                        points_per_match = self.calculated_stats.points_contributed_by_match(int(team_key)).values
-                        blue_scouting_alliance_score += points_per_match[idx]
-                        scout_name = scouting_team_filter.iloc[idx][Queries.SCOUT_ID]
-                        scouters_names_b.append(scout_name.title().replace(" ", ""))
-
-                blue_accuracy = (1 - abs((blue_scouting_alliance_score - blue_calculated_score) / blue_calculated_score)) * 100
-
-                total_scouts = len(set(scouters_names_r + scouters_names_b))
-                average_accuracy = round((red_accuracy + blue_accuracy) / 2, 2)
-
-                accuracy_rows.append({
-                    "Match": match_key,
-                    "# of Scouters": total_scouts,
-                    "Accuracy (%)": f"{average_accuracy}%",
-                    "# of Red Scouters": len(scouters_names_r),
-                    "Red Accuracy (%)": f"{round(red_accuracy, 2)}%",
-                    "# of Blue Scouters": len(scouters_names_b),
-                    "Blue Accuracy (%)": f"{round(blue_accuracy, 2)}%"
-                })
-
-        accuracy_rows.sort(key = lambda row: int(row["Match"][2:]))
-        df = pd.DataFrame(accuracy_rows)
-        return df
+        df = DataFrame(rows)
+        if "Match #" in df.columns and df["Match #"].notna().any():
+            df = df.sort_values("Match #").reset_index(drop=True)
+        return df.drop(columns=["Match #"], errors="ignore")

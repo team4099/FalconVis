@@ -1,0 +1,4714 @@
+[
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm60",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Incredible scoring pace, back-to-back cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Consistent elite performance"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm60",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload only",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Beached on bump",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm60",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload, missed many",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Missed many shots",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm60",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fast passing robot, elite throughput"
+  },
+  {
+    "ScoutId": "Aadhavan",
+    "MatchKey": "qm60",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Unload preloaded balls, good accuracy",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH",
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Push pass cycles",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Insane accuracy on passing, slow movement"
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm60",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm61",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Good passing cycles in auto",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Strong plow strategy working",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Passer"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm61",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 449,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Heavy defense, targeted top scorers",
+    "Disabled": "true",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shover",
+      "Defense"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aadhavan",
+    "MatchKey": "qm61",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "No auto movement",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "false",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm61",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1908,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": ">20 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Poor",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm61",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 4099,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Outstanding auto, cleared full hopper",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L3",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Dominant throughput all match",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Consistent elite performance"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm61",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Poor",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm62",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm62",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Stopped moving briefly",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm62",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Defense",
+      "Shover"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm62",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm62",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 1908,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH",
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Poor",
+    "IntakeDefenseRating": "Okay",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm62",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm63",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Outstanding auto, cleared full hopper",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Incredible scoring pace, back-to-back cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm63",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Insane accuracy on passing, slow movement"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm63",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "No auto movement",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm63",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": ">20 seconds",
+    "TeleopNotes": "High-speed continuous cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fast passing robot, elite throughput"
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm63",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 9072,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Strong plow strategy working",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Passer"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm63",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH",
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Stalled in neutral zone",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shover",
+      "Defense"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aadhavan",
+    "MatchKey": "qm64",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 1908,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Reliable mid-tier scorer"
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm64",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 2363,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload, missed many",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Choppy driving, poor accuracy",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm64",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Aadhavan",
+    "MatchKey": "qm64",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Incredible scoring pace, back-to-back cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm64",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload only",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Beached on bump",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm64",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Didn't move",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Heavy defense, targeted top scorers",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shover",
+      "Defense"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fluid defense, low scoring contribution"
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm65",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Good passing cycles in auto",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Passer"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm65",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Push pass cycles",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm65",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Choppy driving, poor accuracy",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm65",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": ">20 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm65",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 1908,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Okay",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm65",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "No auto movement",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Could not intake",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm66",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L3",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Incredible scoring pace, back-to-back cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Best robot at the event"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm66",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 449,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Didn't move",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Heavy defense, targeted top scorers",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Defense"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fluid defense, low scoring contribution"
+  },
+  {
+    "ScoutId": "Luke",
+    "MatchKey": "qm66",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Missed every shot",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Broke almost immediately",
+    "Disabled": "false",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm66",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Good passing cycles in auto",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm66",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload only",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH",
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Stopped moving briefly",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm66",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload, missed many",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Missed many shots",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm67",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fast passing robot, elite throughput"
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm67",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Unload preloaded balls, good accuracy",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Beached at trench",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Insane accuracy on passing, slow movement"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm67",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "false",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm67",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Outstanding auto, cleared full hopper",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Incredible scoring pace, back-to-back cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Consistent elite performance"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm67",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 1908,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Consistent cycles, good accuracy",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Poor",
+    "IntakeDefenseRating": "Okay",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Reliable mid-tier scorer"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm67",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Stalled in neutral zone",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Push passing bot",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Defense"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm68",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": ">20 seconds",
+    "TeleopNotes": "Dominant throughput all match",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Best robot at the event"
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm68",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 9072,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm68",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Could not intake",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm68",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "High-speed continuous cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm68",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Beached on bump",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm68",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Aadhavan",
+    "MatchKey": "qm69",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 1908,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Poor",
+    "IntakeDefenseRating": "Okay",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm69",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 449,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Didn't move",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Defense",
+      "Shover"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm69",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "No auto movement",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "false",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Luke",
+    "MatchKey": "qm69",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Outstanding auto, cleared full hopper",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L3",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Dominant throughput all match",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Best robot at the event"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm69",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH",
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm69",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Missed many shots",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm70",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "Strong plow strategy working",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm70",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 1731,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": ">20 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm70",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Didn't move",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Heavy defense, targeted top scorers",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shover"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm70",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Precision auto routing",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L3",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Dominant throughput all match",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Best robot at the event"
+  },
+  {
+    "ScoutId": "Luke",
+    "MatchKey": "qm70",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload only",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Beached on bump",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm70",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm71",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 1908,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm71",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Beached at trench",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm71",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm71",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Good passing cycles in auto",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Strong plow strategy working",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm71",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 449,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Stalled in neutral zone",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Push passing bot",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shover",
+      "Defense"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Luke",
+    "MatchKey": "qm71",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "No auto movement",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Broke almost immediately",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm72",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L3",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aadhavan",
+    "MatchKey": "qm72",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Missed every shot",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "true",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm72",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Choppy driving, poor accuracy",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Very Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm72",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "High-speed continuous cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Very fast passing robot, elite throughput"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm72",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 1908,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Consistent cycles, good accuracy",
+    "Disabled": "true",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Poor",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm72",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5549,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload only",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Beached on bump",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "All ratings based on auto"
+  },
+  {
+    "ScoutId": "Aadhavan",
+    "MatchKey": "qm73",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Good passing cycles in auto",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm73",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Beached at trench",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm73",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Missed every shot",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Could not intake",
+    "Disabled": "true",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm73",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Precision auto routing",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L3",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Dominant throughput all match",
+    "Disabled": "true",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Best robot at the event"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm73",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 449,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Stalled in neutral zone",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Defense"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fluid defense, low scoring contribution"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm73",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm74",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm74",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Stopped moving briefly",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm74",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Missed every shot",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm74",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1908,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Poor",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm74",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 9072,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Strong plow strategy working",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm74",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Stalled in neutral zone",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Push passing bot",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shover"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fluid defense, low scoring contribution"
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm75",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Precision auto routing",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L3",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Consistent elite performance"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm75",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 2363,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Choppy driving, poor accuracy",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Luke",
+    "MatchKey": "qm75",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH",
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Stalled in neutral zone",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Push passing bot",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Defense"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm75",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Very fast passing robot, elite throughput"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm75",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station",
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm75",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Missed every shot",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "true",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm76",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": ">20 seconds",
+    "TeleopNotes": "Strong plow strategy working",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm76",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload only",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Stopped moving briefly",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm76",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm76",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Outstanding auto, cleared full hopper",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "Incredible scoring pace, back-to-back cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Best robot at the event"
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm76",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 1908,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Reliable mid-tier scorer"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm76",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload, missed many",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm77",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB",
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "High-speed continuous cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fast passing robot, elite throughput"
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm77",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 449,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Heavy defense, targeted top scorers",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Defense"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm77",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 2363,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Shot preload, missed many",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm77",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Good passing cycles in auto",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Strong plow strategy working",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Very Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Luke",
+    "MatchKey": "qm77",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 4472,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Unload preloaded balls, good accuracy",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm77",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "Missed every shot",
+    "TeleopScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Very Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm78",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Depot Side, under TRENCH",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "10-20 seconds",
+    "TeleopNotes": "Dominant throughput all match",
+    "Disabled": "true",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Consistent elite performance"
+  },
+  {
+    "ScoutId": "Ryan",
+    "MatchKey": "qm78",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 1908,
+    "StartingPosition": "Center",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Plow strat working",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Consistent cycles, good accuracy",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Okay",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Megan",
+    "MatchKey": "qm78",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "Missed every shot",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Got stuck on bump repeatedly",
+    "Disabled": "true",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Could not shoot, could not intake, got stuck on ramp"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm78",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 1731,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Very fast passing, consistent outpost shots",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "<5 seconds",
+    "TeleopNotes": "High-speed continuous cycles",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Very Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Very Good",
+    "RatingNotes": "Very fast passing robot, elite throughput"
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm78",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 5549,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Stopped moving briefly",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "All ratings based on auto"
+  },
+  {
+    "ScoutId": "Jai",
+    "MatchKey": "qm78",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 449,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Defense"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Very Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Very fluid defense, low scoring contribution"
+  },
+  {
+    "ScoutId": "Aaruj",
+    "MatchKey": "qm79",
+    "Alliance": "red",
+    "DriverStation": 1,
+    "TeamNumber": 9072,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "Good passing cycles in auto",
+    "TeleopScoringSide": [
+      "Centered, flush with HUB",
+      "Centered, near Driver Station",
+      "Depot Side, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Over the BUMP",
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "L1",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer",
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Average",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Very Good",
+    "ShooterDefenseRating": "Okay",
+    "RatingNotes": "Solid passer/shooter, reliable cycles"
+  },
+  {
+    "ScoutId": "Luke",
+    "MatchKey": "qm79",
+    "Alliance": "red",
+    "DriverStation": 2,
+    "TeamNumber": 2363,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Inaccurate, choppy driving"
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm79",
+    "Alliance": "red",
+    "DriverStation": 3,
+    "TeamNumber": 4472,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "Beached at trench",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Passer"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Slow",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nathan",
+    "MatchKey": "qm79",
+    "Alliance": "blue",
+    "DriverStation": 1,
+    "TeamNumber": 4099,
+    "StartingPosition": "Human-Player Side, on BUMP",
+    "AutoScoringSide": [
+      "Centered, flush with HUB",
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Over the BUMP"
+    ],
+    "AutoClimb": "true",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Depot Side, near Driver Station",
+      "Centered, near Driver Station",
+      "Centered, flush with HUB"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH",
+      "Over the BUMP"
+    ],
+    "TeleopClimb": "L2",
+    "ClimbSpeed": "5-10 seconds",
+    "TeleopNotes": "Dominant throughput all match",
+    "Disabled": "false",
+    "StabilityRating": "Moderately tippy",
+    "RobotStyleType": [
+      "Shooter, dumper",
+      "Shooter, sprinter"
+    ],
+    "DriverRating": "Fluid",
+    "IntakeSpeed": "Very Fast",
+    "ThroughputSpeed": "Good",
+    "DefenseRating": "Good",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": "Best robot at the event"
+  },
+  {
+    "ScoutId": "Arnav",
+    "MatchKey": "qm79",
+    "Alliance": "blue",
+    "DriverStation": 2,
+    "TeamNumber": 1908,
+    "StartingPosition": "Depot Side, on BUMP",
+    "AutoScoringSide": [
+      "Depot Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "AutoClimb": "false",
+    "AutoNotes": "",
+    "TeleopScoringSide": [
+      "Centered, near Driver Station"
+    ],
+    "ShootOnTheMove": "true",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Stable",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Average",
+    "IntakeSpeed": "Fast",
+    "ThroughputSpeed": "Okay",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Okay",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  },
+  {
+    "ScoutId": "Nikhil",
+    "MatchKey": "qm79",
+    "Alliance": "blue",
+    "DriverStation": 3,
+    "TeamNumber": 5338,
+    "StartingPosition": "Human-Player Side on TRENCH",
+    "AutoScoringSide": [
+      "Human Player Side, near Driver Station"
+    ],
+    "AutoTrenchBump": [],
+    "AutoClimb": "false",
+    "AutoNotes": "No auto movement",
+    "TeleopScoringSide": [
+      "Human Player Side, near TRENCH"
+    ],
+    "ShootOnTheMove": "false",
+    "TeleopTrenchBump": [
+      "Through the TRENCH"
+    ],
+    "TeleopClimb": "No climb",
+    "ClimbSpeed": "",
+    "TeleopNotes": "",
+    "Disabled": "false",
+    "StabilityRating": "Very tippy",
+    "RobotStyleType": [
+      "Shooter, dumper"
+    ],
+    "DriverRating": "Poor",
+    "IntakeSpeed": "Very Slow",
+    "ThroughputSpeed": "Poor",
+    "DefenseRating": "Okay",
+    "IntakeDefenseRating": "Good",
+    "ShooterDefenseRating": "Good",
+    "RatingNotes": ""
+  }
+]
