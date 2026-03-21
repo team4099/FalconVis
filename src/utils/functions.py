@@ -59,52 +59,22 @@ def retrieve_scouting_data() -> DataFrame:
     scouting_data: DataFrame
 
     try:
-        scouting_data = DataFrame.from_dict(check_utf8(
-            loads(get(EventSpecificConstants.URL).text.replace("\n", "").replace("\t", "").encode('unicode_escape'))
-        ))
-    except:
-        with open(EventSpecificConstants.LOCAL_JSON_PATH, encoding='utf-8') as f:
-            data = load(f)
+        raw = get(EventSpecificConstants.URL).text
+        data = loads(raw)
         scouting_data = DataFrame.from_dict(check_utf8(data))
+    except Exception:
+        try:
+            with open(EventSpecificConstants.LOCAL_JSON_PATH, encoding='utf-8') as f:
+                data = load(f)
+            scouting_data = DataFrame.from_dict(check_utf8(data))
+        except Exception:
+            return DataFrame()
 
     scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
         lambda match_key: int(search(r"\d+", match_key).group(0))
     )
 
     scouting_data[Queries.TEAM_NUMBER] = scouting_data[Queries.TEAM_NUMBER].apply(int)
-
-    # Merge pit scouting fields onto each match row (many match rows -> one pit row per team).
-    pit_scouting_data = retrieve_pit_scouting_data()
-    pit_scouting_data = pit_scouting_data.rename(
-        columns={
-            "Team Number": Queries.TEAM_NUMBER,
-            "Hopper Capacity": Queries.MAGAZINE_SIZE,
-            "Drivetrain Length": "DrivetrainLength",
-            "Drivetrain Width": "DrivetrainWidth",
-            "Weight of Robot": "WeightOfRobot",
-        }
-    )
-
-    if Queries.TEAM_NUMBER in pit_scouting_data.columns:
-        pit_scouting_data[Queries.TEAM_NUMBER] = to_numeric(
-            pit_scouting_data[Queries.TEAM_NUMBER]
-        )
-        pit_scouting_data = pit_scouting_data.dropna(subset=[Queries.TEAM_NUMBER])
-        pit_scouting_data = pit_scouting_data.drop_duplicates(
-            subset=[Queries.TEAM_NUMBER], keep="last"
-        )
-        pit_scouting_data[Queries.TEAM_NUMBER] = pit_scouting_data[Queries.TEAM_NUMBER].astype(int)
-
-        merge_columns = [Queries.TEAM_NUMBER] + [
-            column
-            for column in pit_scouting_data.columns
-            if column != Queries.TEAM_NUMBER and column not in scouting_data.columns
-        ]
-        scouting_data = scouting_data.merge(
-            pit_scouting_data[merge_columns],
-            on=Queries.TEAM_NUMBER,
-            how="left",
-        )
 
     return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
 
@@ -115,14 +85,16 @@ def retrieve_note_scouting_data() -> DataFrame:
 
     :return: A dataframe containing the scouting data from an event.
     """
-    scouting_data = DataFrame.from_dict(
-        loads(get(EventSpecificConstants.URL).text)
-    )
-    scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
-        lambda match_key: int(search(r"\d+", match_key).group(0))
-    )
-
-    return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
+    try:
+        scouting_data = DataFrame.from_dict(
+            loads(get(EventSpecificConstants.URL).text)
+        )
+        scouting_data[Queries.MATCH_NUMBER] = scouting_data[Queries.MATCH_KEY].apply(
+            lambda match_key: int(search(r"\d+", match_key).group(0))
+        )
+        return scouting_data.sort_values(by=Queries.MATCH_NUMBER).reset_index(drop=True)
+    except Exception:
+        return DataFrame()
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
@@ -136,7 +108,6 @@ def retrieve_pit_scouting_data() -> DataFrame:
         return DataFrame()
 
 
-
 # Cache for longer because match schedule is relatively constant.
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE * 4)
 def retrieve_match_schedule() -> DataFrame:
@@ -146,10 +117,13 @@ def retrieve_match_schedule() -> DataFrame:
     )
     match_levels_to_order = {"qm": 0, "sf": 1, "f": 2}
 
-    event_matches = sorted(
-        tba_instance.event_matches(EventSpecificConstants.EVENT_CODE),
-        key=lambda match_info: (match_levels_to_order[match_info["comp_level"]], match_info["match_number"])
-    )
+    try:
+        event_matches = sorted(
+            tba_instance.event_matches(EventSpecificConstants.EVENT_CODE),
+            key=lambda match_info: (match_levels_to_order[match_info["comp_level"]], match_info["match_number"])
+        )
+    except Exception:
+        event_matches = []
 
     if event_matches:
         return DataFrame.from_dict(
@@ -163,15 +137,21 @@ def retrieve_match_schedule() -> DataFrame:
             ]
         )
     else:  # Load match schedule from local files
-        with open("./src/data/match_schedule.json") as file:
-            return DataFrame.from_dict(load(file))
+        try:
+            with open("./src/data/match_schedule.json") as file:
+                return DataFrame.from_dict(load(file))
+        except Exception:
+            return DataFrame(columns=["match_key", "red_alliance", "blue_alliance"])
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE)
 def retrieve_match_data_raw():
-    return requests.get(
-        f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
-        headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
-    ).json()
+    try:
+        return requests.get(
+            f"https://www.thebluealliance.com/api/v3/event/{EventSpecificConstants.EVENT_CODE}/matches",
+            headers={"X-TBA-Auth-Key": os.getenv("HEADERS")}
+        ).json()
+    except Exception:
+        return []
 
 
 @st.cache_data(ttl=GeneralConstants.SECONDS_TO_CACHE // 2)
@@ -181,11 +161,14 @@ def retrieve_match_data() -> DataFrame:
         auth_key="6lcmneN5bBDYpC47FolBxp2RZa4AbQCVpmKMSKw9x9btKt7da5yMzVamJYk0XDBm"  # For testing purposes
     )
 
-    event_matches = [
-        match
-        for match in tba_instance.event_matches(EventSpecificConstants.EVENT_CODE)
-        if match["comp_level"] == "qm"
-    ]
+    try:
+        event_matches = [
+            match
+            for match in tba_instance.event_matches(EventSpecificConstants.EVENT_CODE)
+            if match["comp_level"] == "qm"
+        ]
+    except Exception:
+        return DataFrame()
 
     if event_matches:
         return DataFrame(
@@ -199,9 +182,6 @@ def retrieve_match_data() -> DataFrame:
                     "blue_alliance_rp": match["score_breakdown"]["blue"]["rp"],
                     "red_score": match["alliances"]["red"]["score"],
                     "blue_score": match["alliances"]["blue"]["score"],
-                    "reached_coop": (
-                        match["score_breakdown"]["red"]["coopertitionCriteriaMet"]
-                    )
                 }
                 for match in event_matches if match["score_breakdown"] is not None
             ]
@@ -215,7 +195,7 @@ def scouting_data_for_team(team_number: int, scouting_data: DataFrame | None = N
 
     :param team_number: The number of the team to retrieve the submissions for.
     :param scouting_data: An optional argument allowing the user to pass in the scouting data if already retrieved.
-    :return: A dataframe containing th submissions within the scouting data for the team passed in.
+    :return: A dataframe containing the submissions within the scouting data for the team passed in.
     """
     if scouting_data is None:
         scouting_data = retrieve_scouting_data()
@@ -230,7 +210,7 @@ def note_scouting_data_for_team(team_number: int, scouting_data: DataFrame | Non
 
     :param team_number: The number of the team to retrieve the submissions for.
     :param scouting_data: An optional argument allowing the user to pass in the scouting data if already retrieved.
-    :return: A dataframe containing th submissions within the scouting data for the team passed in.
+    :return: A dataframe containing the submissions within the scouting data for the team passed in.
     """
     if scouting_data is None:
         scouting_data = retrieve_note_scouting_data()
@@ -274,7 +254,7 @@ def _convert_to_float_from_numpy_type(function):
 
 def check_utf8(list_of_dicts: list[dict]) -> list[dict]:
     """
-    Removes all non-UTF-8 characters from values of dictionaries contained in lists, used to clean scouting data.
+    Removes all non-UTF-8 characters from string values of dictionaries contained in lists.
 
     :param list_of_dicts: The list of dictionaries with values to be cleaned
     :return: The cleaned list of dictionaries
@@ -283,6 +263,6 @@ def check_utf8(list_of_dicts: list[dict]) -> list[dict]:
     for d in list_of_dicts:
         for key, value in d.items():
             if isinstance(value, str):
-                d[key] = sub(r'[\x00-\x1F\x7F-\x9F]', '', value)  # Replace illegal chars with ''
+                d[key] = sub(r'[\x00-\x1F\x7F-\x9F]', '', value)
 
     return list_of_dicts

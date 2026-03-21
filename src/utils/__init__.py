@@ -4,3 +4,4 @@ from .components import *
 from .constants import *
 from .functions import *
 from .graphing import *
+from .statbotics import *

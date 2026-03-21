@@ -1,0 +1,215 @@
+{
+  "last_updated": "2026-03-18T13:45:13.954477",
+  "teams": {
+    "122": {
+      "total_epa": 25.41,
+      "total_epa_sd": 9.66,
+      "auto_fuel": 5.57,
+      "teleop_endgame_fuel": 19.54,
+      "tower_points": 0.61
+    },
+    "404": {
+      "total_epa": 33.66,
+      "total_epa_sd": 8.19,
+      "auto_fuel": 4.79,
+      "teleop_endgame_fuel": 28.55,
+      "tower_points": 0.31
+    },
+    "422": {
+      "total_epa": 101.24,
+      "total_epa_sd": 5.59,
+      "auto_fuel": 21.3,
+      "teleop_endgame_fuel": 77.75,
+      "tower_points": 1.4
+    },
+    "526": {
+      "total_epa": 32.94,
+      "total_epa_sd": 13.59,
+      "auto_fuel": 7.72,
+      "teleop_endgame_fuel": 26.19,
+      "tower_points": -0.58
+    },
+    "539": {
+      "total_epa": 33.9,
+      "total_epa_sd": 9.85,
+      "auto_fuel": 8.07,
+      "teleop_endgame_fuel": 18.92,
+      "tower_points": 5.75
+    },
+    "611": {
+      "total_epa": 33.46,
+      "total_epa_sd": 14.73,
+      "auto_fuel": 7.64,
+      "teleop_endgame_fuel": 24.39,
+      "tower_points": 0.93
+    },
+    "612": {
+      "total_epa": 30.57,
+      "total_epa_sd": 6.36,
+      "auto_fuel": 7.06,
+      "teleop_endgame_fuel": 23.23,
+      "tower_points": 0.92
+    },
+    "620": {
+      "total_epa": 34.76,
+      "total_epa_sd": 11.64,
+      "auto_fuel": 6.45,
+      "teleop_endgame_fuel": 26.84,
+      "tower_points": 0.9
+    },
+    "1086": {
+      "total_epa": 59.01,
+      "total_epa_sd": 21.56,
+      "auto_fuel": 10.01,
+      "teleop_endgame_fuel": 49.06,
+      "tower_points": -0.09
+    },
+    "1599": {
+      "total_epa": 42.43,
+      "total_epa_sd": 10.5,
+      "auto_fuel": 5.15,
+      "teleop_endgame_fuel": 37.57,
+      "tower_points": -0.33
+    },
+    "1793": {
+      "total_epa": 9.37,
+      "total_epa_sd": 13.47,
+      "auto_fuel": 1.4,
+      "teleop_endgame_fuel": 8.33,
+      "tower_points": -0.02
+    },
+    "1895": {
+      "total_epa": 35.39,
+      "total_epa_sd": 7.97,
+      "auto_fuel": 9.58,
+      "teleop_endgame_fuel": 25.62,
+      "tower_points": 0.41
+    },
+    "1908": {
+      "total_epa": 89.86,
+      "total_epa_sd": 15.52,
+      "auto_fuel": 16.49,
+      "teleop_endgame_fuel": 73.43,
+      "tower_points": 0.12
+    },
+    "2028": {
+      "total_epa": 29.7,
+      "total_epa_sd": 12.72,
+      "auto_fuel": 3.72,
+      "teleop_endgame_fuel": 26.32,
+      "tower_points": -0.45
+    },
+    "2068": {
+      "total_epa": 27.14,
+      "total_epa_sd": 12.59,
+      "auto_fuel": 9.11,
+      "teleop_endgame_fuel": 17.56,
+      "tower_points": 0.01
+    },
+    "2363": {
+      "total_epa": 42.89,
+      "total_epa_sd": 10.53,
+      "auto_fuel": 7.06,
+      "teleop_endgame_fuel": 34.59,
+      "tower_points": 0.11
+    },
+    "2890": {
+      "total_epa": 30.97,
+      "total_epa_sd": 12.54,
+      "auto_fuel": 0.54,
+      "teleop_endgame_fuel": 16.75,
+      "tower_points": 6.27
+    },
+    "2998": {
+      "total_epa": 12.3,
+      "total_epa_sd": 10.42,
+      "auto_fuel": 5.86,
+      "teleop_endgame_fuel": 6.4,
+      "tower_points": 0.1
+    },
+    "3359": {
+      "total_epa": 15.25,
+      "total_epa_sd": 16.02,
+      "auto_fuel": 2.7,
+      "teleop_endgame_fuel": 11.56,
+      "tower_points": 0.47
+    },
+    "4099": {
+      "total_epa": 82.48,
+      "total_epa_sd": 11.98,
+      "auto_fuel": 25.93,
+      "teleop_endgame_fuel": 53.91,
+      "tower_points": 2.91
+    },
+    "4286": {
+      "total_epa": 8.66,
+      "total_epa_sd": 8.06,
+      "auto_fuel": 2.31,
+      "teleop_endgame_fuel": 6.13,
+      "tower_points": 0.24
+    },
+    "6326": {
+      "total_epa": 24.84,
+      "total_epa_sd": 11.68,
+      "auto_fuel": 6.1,
+      "teleop_endgame_fuel": 18.73,
+      "tower_points": 0.0
+    },
+    "8230": {
+      "total_epa": 30.74,
+      "total_epa_sd": 10.92,
+      "auto_fuel": 4.49,
+      "teleop_endgame_fuel": 25.27,
+      "tower_points": 0.64
+    },
+    "9003": {
+      "total_epa": 40.29,
+      "total_epa_sd": 5.59,
+      "auto_fuel": 8.48,
+      "teleop_endgame_fuel": 30.94,
+      "tower_points": 0.56
+    },
+    "9214": {
+      "total_epa": 13.01,
+      "total_epa_sd": 9.15,
+      "auto_fuel": 4.81,
+      "teleop_endgame_fuel": 7.95,
+      "tower_points": 0.26
+    },
+    "9403": {
+      "total_epa": 21.34,
+      "total_epa_sd": 7.09,
+      "auto_fuel": 6.03,
+      "teleop_endgame_fuel": 14.56,
+      "tower_points": 0.36
+    },
+    "10224": {
+      "total_epa": 32.07,
+      "total_epa_sd": 7.54,
+      "auto_fuel": 8.12,
+      "teleop_endgame_fuel": 24.14,
+      "tower_points": -0.17
+    },
+    "11252": {
+      "total_epa": 23.74,
+      "total_epa_sd": 5.59,
+      "auto_fuel": 5.0,
+      "teleop_endgame_fuel": 18.24,
+      "tower_points": 0.33
+    },
+    "11415": {
+      "total_epa": 23.74,
+      "total_epa_sd": 5.59,
+      "auto_fuel": 5.0,
+      "teleop_endgame_fuel": 18.24,
+      "tower_points": 0.33
+    },
+    "11425": {
+      "total_epa": 27.97,
+      "total_epa_sd": 22.05,
+      "auto_fuel": 9.58,
+      "teleop_endgame_fuel": 18.2,
+      "tower_points": 0.2
+    }
+  }
+}
