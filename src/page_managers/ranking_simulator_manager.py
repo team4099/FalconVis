@@ -125,4 +125,4 @@ class RankingSimulatorManager(PageManager):
             sorted(new_rankings, key=lambda ranking: ranking[1:], reverse=True),
             columns=("Team", "Average Ranking Points", "Average Match Score")
         )
-        st.table(ranking_df.applymap(lambda value: f"{value:.2f}" if isinstance(value, float) else value))
+        st.table(ranking_df.map(lambda value: f"{value:.2f}" if isinstance(value, float) else value))

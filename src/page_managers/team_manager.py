@@ -20,13 +20,13 @@ from utils import (
     plotly_chart,
     Queries,
     retrieve_team_list,
-    retrieve_pit_scouting_data,
-    retrieve_match_data_raw,
     retrieve_scouting_data,
     scouting_data_for_team,
     stacked_bar_graph,
     colored_metric_with_two_values,
-    populate_missing_data
+    populate_missing_data,
+    get_team_statbotics,
+    statbotics_quantile,
 )
 
 
@@ -37,7 +37,6 @@ class TeamManager(PageManager, ContainsMetrics):
         self.calculated_stats = CalculatedStats(
             retrieve_scouting_data()
         )
-        # self.pit_scouting_data = retrieve_pit_scouting_data()
 
     def generate_input_section(self) -> int:
         """Creates the input section for the `Teams` page.
@@ -46,7 +45,7 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :return: The team number selected to create graphs for.
         """
-        queried_team = int(st.experimental_get_query_params().get("team_number", [0])[0]) or 4099
+        queried_team = int(st.query_params.get("team_number", 0)) or 4099
         return st.selectbox(
             "Team Number",
             (team_list := retrieve_team_list()),
@@ -58,284 +57,346 @@ class TeamManager(PageManager, ContainsMetrics):
 
         :param team_number: The team number to calculate the metrics for.
         """
-        points_contributed_col, points_scaled_col, accuracy_col = st.columns(3)
-        iqr_col, climbs_col, disables_col = st.columns(3)
-        all_scouting_data = retrieve_scouting_data()
-        tba_matches = retrieve_match_data_raw()
-        tba_match_lookup = {
-            f"{match['comp_level']}{match['match_number']}": match
-            for match in tba_matches
-            if match.get("score_breakdown") is not None
-        }
-        tba_scaled_points_by_team = {}
-        tba_accuracy_by_team = {}
-        tba_scaled_points_by_team_match = {}
-        team_scouted_points_by_team_match = {}
-        regular_points_by_team_match = {}
+        driver_rating_col, throughput_col, climb_rate_col = st.columns(3)
+        auto_climb_col, disabled_col, shoot_move_col = st.columns(3)
 
-        def _as_float(value) -> float:
-            try:
-                return float(value)
-            except (TypeError, ValueError):
-                return 0.0
-
-        def _row_points(row) -> float:
-            magazine_size = _as_float(row.get(Queries.MAGAZINE_SIZE))
-            auto_points = (
-                _as_float(row.get(Queries.AUTO_SINGULAR_COUNT))
-                + (_as_float(row.get(Queries.AUTO_BATCH_COUNT)) * magazine_size)
-                + (Criteria.BOOLEAN_CRITERIA.get(row.get(Queries.AUTO_CLIMB), 0) * 15)
-            )
-            teleop_points = (
-                _as_float(row.get(Queries.TELEOP_SINGULAR_COUNT))
-                + (_as_float(row.get(Queries.TELEOP_BATCH_COUNT)) * magazine_size)
-            )
-            climb_points = Criteria.CLIMBING_CRITERIA.get(row.get(Queries.TELEOP_CLIMB), 0) * 10
-            return auto_points + teleop_points + climb_points
-
-        def _team_scouted_and_scaled_points_for_match(
-            queried_team: int,
-            row
-        ) -> tuple[float | None, float | None, float | None]:
-            match_key = row[Queries.MATCH_KEY]
-            alliance = str(row.get("Alliance", "")).lower()
-            cache_key = (queried_team, match_key, alliance)
-            if cache_key in tba_scaled_points_by_team_match:
-                return (
-                    team_scouted_points_by_team_match.get(cache_key),
-                    tba_scaled_points_by_team_match[cache_key],
-                    regular_points_by_team_match.get(cache_key)
-                )
-
-            if alliance not in ("red", "blue"):
-                team_scouted_points_by_team_match[cache_key] = None
-                tba_scaled_points_by_team_match[cache_key] = None
-                regular_points_by_team_match[cache_key] = None
-                return (None, None, None)
-
-            match = tba_match_lookup.get(match_key)
-            if match is None:
-                team_scouted_points_by_team_match[cache_key] = None
-                tba_scaled_points_by_team_match[cache_key] = None
-                regular_points_by_team_match[cache_key] = None
-                return (None, None, None)
-
-            alliance_score_breakdown = match["score_breakdown"][alliance]
-            alliance_non_foul_points = alliance_score_breakdown["totalPoints"] - alliance_score_breakdown["foulPoints"]
-            regular_points = alliance_non_foul_points / 3
-
-            alliance_rows = all_scouting_data[
-                (all_scouting_data[Queries.MATCH_KEY] == match_key)
-                & (all_scouting_data["Alliance"].str.lower() == alliance)
-            ].copy()
-
-            if alliance_rows.empty:
-                team_scouted_points_by_team_match[cache_key] = _row_points(row)
-                tba_scaled_points_by_team_match[cache_key] = None
-                regular_points_by_team_match[cache_key] = regular_points
-                return (team_scouted_points_by_team_match[cache_key], None, regular_points)
-
-            alliance_rows["scouted_points"] = alliance_rows.apply(_row_points, axis=1)
-            team_points = alliance_rows.groupby(Queries.TEAM_NUMBER)["scouted_points"].mean()
-            alliance_total_scouted_points = float(team_points.sum())
-            queried_team_scouted_points = float(team_points.get(queried_team, _row_points(row)))
-            all_three_teams_recorded = len(team_points.index) == 3
-
-            if not all_three_teams_recorded:
-                scaled_points = None
-            elif alliance_total_scouted_points == 0:
-                scaled_points = 0.0
-            else:
-                contribution_ratio = queried_team_scouted_points / alliance_total_scouted_points
-                scaled_points = alliance_non_foul_points * contribution_ratio
-
-            team_scouted_points_by_team_match[cache_key] = queried_team_scouted_points
-            tba_scaled_points_by_team_match[cache_key] = scaled_points
-            regular_points_by_team_match[cache_key] = regular_points
-            return (queried_team_scouted_points, scaled_points, regular_points)
-
-        def _average_tba_scaled_points(queried_team: int) -> float:
-            if queried_team in tba_scaled_points_by_team:
-                return tba_scaled_points_by_team[queried_team]
-
-            queried_team_data = scouting_data_for_team(queried_team).reset_index(drop=True)
-            scaled_points = []
-            for _, row in queried_team_data.iterrows():
-                _, tba_scaled_points, _ = _team_scouted_and_scaled_points_for_match(queried_team, row)
-                if tba_scaled_points is not None:
-                    scaled_points.append(tba_scaled_points)
-
-            average_scaled_points = (sum(scaled_points) / len(scaled_points)) if scaled_points else 0
-            tba_scaled_points_by_team[queried_team] = average_scaled_points
-            return average_scaled_points
-
-        def _average_tba_accuracy(queried_team: int) -> float:
-            if queried_team in tba_accuracy_by_team:
-                return tba_accuracy_by_team[queried_team]
-
-            queried_team_data = scouting_data_for_team(queried_team).reset_index(drop=True)
-            accuracies = []
-
-            for _, row in queried_team_data.iterrows():
-                scouted_points, tba_scaled_points, regular_points = _team_scouted_and_scaled_points_for_match(queried_team, row)
-                if scouted_points is None:
-                    continue
-
-                points_for_accuracy = tba_scaled_points if tba_scaled_points is not None else regular_points
-                if points_for_accuracy is None:
-                    continue
-                if points_for_accuracy == 0:
-                    accuracies.append(0.0 if scouted_points == 0 else 1.0)
-                else:
-                    accuracies.append(abs((scouted_points - points_for_accuracy) / points_for_accuracy))
-
-            average_accuracy = (sum(accuracies) / len(accuracies)) if accuracies else 0
-            tba_accuracy_by_team[queried_team] = average_accuracy
-            return average_accuracy
-
-        # Metric for avg. points contributed (fuel scored).
-        with points_contributed_col:
-            average_points_contributed = self.calculated_stats.average_points_contributed(team_number)
-            points_contributed_for_percentile = self.calculated_stats.quantile_stat(
-                0.5, lambda self, team: self.average_points_contributed(team)
+        with driver_rating_col:
+            avg_driver = self.calculated_stats.average_driver_rating(team_number)
+            driver_percentile = self.calculated_stats.quantile_stat(
+                0.5, lambda self, team: self.average_driver_rating(team)
             )
             colored_metric(
-                "Average Points Contributed (Fuel Scored)",
-                round(average_points_contributed, 2),
-                threshold=points_contributed_for_percentile
+                "Avg. Driver Rating (1–5)",
+                round(avg_driver, 2),
+                threshold=driver_percentile
             )
 
-        # Metric for scaled points contributed compared to TBA.
-        with points_scaled_col:
-            scaled_points = _average_tba_scaled_points(team_number)
-            scaled_points_for_percentile = self.calculated_stats.quantile_stat(
-                0.5, lambda self, team: _average_tba_scaled_points(team)
+        with throughput_col:
+            avg_throughput = self.calculated_stats.average_throughput_speed(team_number)
+            throughput_percentile = self.calculated_stats.quantile_stat(
+                0.5, lambda self, team: self.average_throughput_speed(team)
             )
             colored_metric(
-                "Average Points Contributed, Scaled",
-                round(scaled_points, 2),
-                threshold=scaled_points_for_percentile
+                "Avg. Throughput Speed (1–5)",
+                round(avg_throughput, 2),
+                threshold=throughput_percentile
             )
 
-        # Metric for average scoring accuracy compared to TBA.
-        with accuracy_col:
-            average_accuracy = _average_tba_accuracy(team_number)
-            accuracy_for_percentile = self.calculated_stats.quantile_stat(
-                0.5, lambda self, team: _average_tba_accuracy(team)
+        pct_formatter = lambda v: f"{round(v * 100, 1)}%"
+
+        with climb_rate_col:
+            climb_rate = self.calculated_stats.teleop_climb_rate(team_number)
+            climb_rate_percentile = self.calculated_stats.quantile_stat(
+                0.5, lambda self, team: self.teleop_climb_rate(team)
             )
             colored_metric(
-                "Average Accuracy",
-                round(average_accuracy, 2),
-                threshold=accuracy_for_percentile
+                "Teleop Climb Rate",
+                climb_rate,
+                threshold=climb_rate_percentile,
+                value_formatter=pct_formatter
             )
 
-        # Metric for IQR of points contributed (consistency).
-        with iqr_col:
-            points_by_match = self.calculated_stats.points_contributed_by_match(team_number)
-            iqr_of_points_contributed = self.calculated_stats.calculate_iqr(points_by_match)
-            iqr_for_percentile = self.calculated_stats.quantile_stat(
-                0.5, lambda self, team: self.calculate_iqr(self.points_contributed_by_match(team))
+        with auto_climb_col:
+            auto_climb_rate = self.calculated_stats.auto_climb_rate(team_number)
+            auto_climb_percentile = self.calculated_stats.quantile_stat(
+                0.5, lambda self, team: self.auto_climb_rate(team)
             )
             colored_metric(
-                "IQR",
-                round(iqr_of_points_contributed, 2),
-                threshold=iqr_for_percentile,
-                invert_threshold=True
+                "Auto Climb Rate",
+                auto_climb_rate,
+                threshold=auto_climb_percentile,
+                value_formatter=pct_formatter
             )
 
-        # Metric for number of times robot climbed.
-        with climbs_col:
-            times_climbed = self.calculated_stats.cumulative_stat(
-                team_number, Queries.TELEOP_CLIMB, {"L1": 1, "L2": 1, "L3": 1}
-            )
-            times_climbed_for_percentile = self.calculated_stats.quantile_stat(
-                0.5,
-                lambda self, team: self.cumulative_stat(
-                    team, Queries.TELEOP_CLIMB, {"L1": 1, "L2": 1, "L3": 1}
-                )
+        with disabled_col:
+            disabled_rate = self.calculated_stats.disabled_rate(team_number)
+            disabled_percentile = self.calculated_stats.quantile_stat(
+                0.5, lambda self, team: self.disabled_rate(team)
             )
             colored_metric(
-                "# of Times Climbed",
-                times_climbed,
-                threshold=times_climbed_for_percentile,
+                "Disabled Rate",
+                disabled_rate,
+                threshold=disabled_percentile,
+                invert_threshold=True,
+                value_formatter=pct_formatter
             )
 
-        # Metric for number of disables.
-        with disables_col:
-            times_disabled = self.calculated_stats.cumulative_stat(
-                team_number, Queries.DISABLE, Criteria.BOOLEAN_CRITERIA
-            )
-            times_disabled_for_percentile = self.calculated_stats.quantile_stat(
-                0.5, lambda self, team: self.cumulative_stat(team, Queries.DISABLE, Criteria.BOOLEAN_CRITERIA)
+        with shoot_move_col:
+            sotm_rate = self.calculated_stats.shoot_on_the_move_rate(team_number)
+            sotm_percentile = self.calculated_stats.quantile_stat(
+                0.5, lambda self, team: self.shoot_on_the_move_rate(team)
             )
             colored_metric(
-                "# of Times Disabled",
-                times_disabled,
-                threshold=times_disabled_for_percentile,
-                invert_threshold=True
+                "Shoot-on-the-Move Rate",
+                sotm_rate,
+                threshold=sotm_percentile,
+                value_formatter=pct_formatter
+            )
+
+    def generate_quantitative_metrics(self, team_number: int) -> None:
+        """Creates Statbotics EPA metrics for the `Teams` page.
+
+        Displays pre-event EPA estimates from Statbotics alongside the qualitative
+        scouting metrics.  When online the data is fetched and cached locally so
+        the section remains usable offline.
+
+        :param team_number: The team number to display EPA metrics for.
+        """
+        epa = get_team_statbotics(team_number)
+
+        if not epa:
+            st.info("No quantitative EPA data available for this team.")
+            return
+
+        pt_formatter = lambda v: f"{v:.1f}"
+
+        total_col, auto_fuel_col, tele_end_fuel_col, tower_col = st.columns(4)
+
+        with total_col:
+            colored_metric(
+                "Total EPA",
+                epa.get("total_epa", 0),
+                threshold=statbotics_quantile("total_epa"),
+                value_formatter=pt_formatter,
+            )
+
+        with auto_fuel_col:
+            colored_metric(
+                "Auto Fuel",
+                epa.get("auto_fuel", 0),
+                threshold=statbotics_quantile("auto_fuel"),
+                value_formatter=pt_formatter,
+            )
+
+        with tele_end_fuel_col:
+            colored_metric(
+                "Teleop + Endgame Fuel",
+                epa.get("teleop_endgame_fuel", 0),
+                threshold=statbotics_quantile("teleop_endgame_fuel"),
+                value_formatter=pt_formatter,
+            )
+
+        with tower_col:
+            colored_metric(
+                "Tower Points",
+                epa.get("tower_points", 0),
+                threshold=statbotics_quantile("tower_points"),
+                value_formatter=pt_formatter,
             )
 
     def generate_autonomous_graphs(
         self,
         team_number: int,
-        type_of_graph: GraphType
+        type_of_graph: GraphType = GraphType.RATING_CONTRIBUTIONS
     ) -> None:
         """Generates the autonomous graphs for the `Team` page.
 
         :param team_number: The team to generate the graphs for.
-        :param type_of_graph: The type of graph to use for the graphs on said page (fuel scored / point contributions).
-        :return:
+        :param type_of_graph: Unused; kept for API compatibility.
         """
-        points_by_match = self.calculated_stats.points_contributed_by_match(team_number)
+        scouting_data = scouting_data_for_team(team_number)
 
-        plotly_chart(
-            line_graph(
-                range(len(points_by_match)),
-                points_by_match,
-                x_axis_label="Match Index",
-                y_axis_label=(
-                    "Points Contributed"
-                    if type_of_graph == GraphType.POINT_CONTRIBUTIONS
-                    else "Fuel Scored"
-                ),
-                title="Points vs Match Index",
+        auto_climb_col, scoring_side_col = st.columns(2)
+        trench_bump_col, _ = st.columns(2)
+
+        with auto_climb_col:
+            climb_counts = {"Climbed": 0, "Did Not Climb": 0}
+            for val in scouting_data[Queries.AUTO_CLIMB]:
+                if Criteria.BOOLEAN_CRITERIA.get(val, 0):
+                    climb_counts["Climbed"] += 1
+                else:
+                    climb_counts["Did Not Climb"] += 1
+
+            plotly_chart(
+                bar_graph(
+                    list(climb_counts.keys()),
+                    list(climb_counts.values()),
+                    x_axis_label="Result",
+                    y_axis_label="# of Matches",
+                    title="Auto Climb",
+                    color={
+                        "Climbed": GeneralConstants.LIGHT_GREEN,
+                        "Did Not Climb": GeneralConstants.LIGHT_RED,
+                    },
+                    color_indicator="Result"
+                )
             )
-        )
+
+        with scoring_side_col:
+            all_sides = []
+            for sides in scouting_data[Queries.AUTO_SCORING_SIDE]:
+                if isinstance(sides, list):
+                    all_sides.extend(sides)
+                elif isinstance(sides, str) and sides:
+                    all_sides.append(sides)
+
+            side_counts: dict[str, int] = {}
+            for side in all_sides:
+                side_counts[side] = side_counts.get(side, 0) + 1
+
+            if side_counts:
+                sorted_sides = dict(sorted(side_counts.items(), key=lambda x: x[1], reverse=True))
+                plotly_chart(
+                    bar_graph(
+                        list(sorted_sides.keys()),
+                        list(sorted_sides.values()),
+                        x_axis_label="Scoring Side",
+                        y_axis_label="# of Occurrences",
+                        title="Auto Scoring Sides",
+                        color=GeneralConstants.GOLD_GRADIENT[0]
+                    )
+                )
+            else:
+                st.info("No auto scoring side data available.")
+
+        with trench_bump_col:
+            all_paths = []
+            for paths in scouting_data[Queries.AUTO_TRENCH_BUMP]:
+                if isinstance(paths, list):
+                    all_paths.extend(paths)
+                elif isinstance(paths, str) and paths:
+                    all_paths.append(paths)
+
+            path_counts: dict[str, int] = {}
+            for path in all_paths:
+                path_counts[path] = path_counts.get(path, 0) + 1
+
+            if path_counts:
+                sorted_paths = dict(sorted(path_counts.items(), key=lambda x: x[1], reverse=True))
+                plotly_chart(
+                    bar_graph(
+                        list(sorted_paths.keys()),
+                        list(sorted_paths.values()),
+                        x_axis_label="Path",
+                        y_axis_label="# of Occurrences",
+                        title="Auto Trench / Bump Usage",
+                        color=GeneralConstants.BLUE_ALLIANCE_GRADIENT[1]
+                    )
+                )
+            else:
+                st.info("No auto trench/bump path data available.")
 
     def generate_teleop_graphs(
         self,
         team_number: int,
-        type_of_graph: GraphType
+        type_of_graph: GraphType = GraphType.RATING_CONTRIBUTIONS
     ) -> None:
-        """Generates the teleop graphs for the `Team` page.
+        """Generates the teleop + endgame graphs for the `Team` page.
 
         :param team_number: The team to generate the graphs for.
-        :param type_of_graph: The type of graph to use for the graphs on said page (fuel scored / point contributions).
-        :return:
+        :param type_of_graph: Unused; kept for API compatibility.
         """
-        climb_points_by_match = self.calculated_stats.stat_per_match(
-            team_number,
-            Queries.TELEOP_CLIMB,
-            Criteria.CLIMBING_POINTAGE
-        )
+        scouting_data = scouting_data_for_team(team_number)
 
-        plotly_chart(
-            line_graph(
-                range(len(climb_points_by_match)),
-                climb_points_by_match,
-                x_axis_label="Match Index",
-                y_axis_label="Climb Points",
-                title="Climb Pts vs Match Index",
+        climb_level_col, climb_speed_col = st.columns(2)
+        scoring_side_col, trench_bump_col = st.columns(2)
+
+        with climb_level_col:
+            climb_order = ["L3", "L2", "L1", "No climb"]
+            climb_counts = {level: int((scouting_data[Queries.TELEOP_CLIMB] == level).sum()) for level in climb_order}
+            level_colors = dict(zip(climb_order, [
+                GeneralConstants.LEVEL_GRADIENT[2],
+                GeneralConstants.LEVEL_GRADIENT[1],
+                GeneralConstants.LEVEL_GRADIENT[0],
+                GeneralConstants.LIGHT_RED
+            ]))
+            plotly_chart(
+                bar_graph(
+                    list(climb_counts.keys()),
+                    list(climb_counts.values()),
+                    x_axis_label="Climb Level",
+                    y_axis_label="# of Matches",
+                    title="Teleop Climb Level Breakdown",
+                    color=level_colors,
+                    color_indicator="Climb Level"
+                )
             )
-        )
+
+        with climb_speed_col:
+            speed_order = ["<5 seconds", "5-10 seconds", "10-20 seconds", ">20 seconds"]
+            speed_counts = {
+                speed: int((scouting_data[Queries.CLIMB_SPEED] == speed).sum())
+                for speed in speed_order
+            }
+            # Only show non-zero rows
+            speed_counts = {k: v for k, v in speed_counts.items() if v > 0}
+            if speed_counts:
+                plotly_chart(
+                    bar_graph(
+                        list(speed_counts.keys()),
+                        list(speed_counts.values()),
+                        x_axis_label="Climb Speed",
+                        y_axis_label="# of Matches",
+                        title="Climb Speed Breakdown",
+                        color=dict(zip(
+                            speed_counts.keys(),
+                            GeneralConstants.RED_TO_GREEN_GRADIENT[:len(speed_counts)][::-1]
+                        )),
+                        color_indicator="Climb Speed"
+                    )
+                )
+            else:
+                st.info("No climb speed data recorded.")
+
+        with scoring_side_col:
+            all_sides = []
+            for sides in scouting_data[Queries.TELEOP_SCORING_SIDE]:
+                if isinstance(sides, list):
+                    all_sides.extend(sides)
+                elif isinstance(sides, str) and sides:
+                    all_sides.append(sides)
+
+            side_counts: dict[str, int] = {}
+            for side in all_sides:
+                side_counts[side] = side_counts.get(side, 0) + 1
+
+            if side_counts:
+                sorted_sides = dict(sorted(side_counts.items(), key=lambda x: x[1], reverse=True))
+                plotly_chart(
+                    bar_graph(
+                        list(sorted_sides.keys()),
+                        list(sorted_sides.values()),
+                        x_axis_label="Scoring Side",
+                        y_axis_label="# of Occurrences",
+                        title="Teleop Scoring Sides",
+                        color=GeneralConstants.GOLD_GRADIENT[1]
+                    )
+                )
+            else:
+                st.info("No teleop scoring side data available.")
+
+        with trench_bump_col:
+            all_paths = []
+            for paths in scouting_data[Queries.TELEOP_TRENCH_BUMP]:
+                if isinstance(paths, list):
+                    all_paths.extend(paths)
+                elif isinstance(paths, str) and paths:
+                    all_paths.append(paths)
+
+            path_counts: dict[str, int] = {}
+            for path in all_paths:
+                path_counts[path] = path_counts.get(path, 0) + 1
+
+            if path_counts:
+                sorted_paths = dict(sorted(path_counts.items(), key=lambda x: x[1], reverse=True))
+                plotly_chart(
+                    bar_graph(
+                        list(sorted_paths.keys()),
+                        list(sorted_paths.values()),
+                        x_axis_label="Path",
+                        y_axis_label="# of Occurrences",
+                        title="Teleop Trench / Bump Usage",
+                        color=GeneralConstants.BLUE_ALLIANCE_GRADIENT[2]
+                    )
+                )
+            else:
+                st.info("No teleop trench/bump path data available.")
 
     def generate_qualitative_graphs(self, team_number: int) -> None:
         """Generates the qualitative graphs for the `Team` page.
 
         :param team_number: The team to generate the graphs for.
-        :return:
         """
-        # Constants used for the sentiment analysis
         ml_weight = 1
         estimate_weight = 1
 
@@ -343,120 +404,167 @@ class TeamManager(PageManager, ContainsMetrics):
         positivity_scores = []
         scouting_data = scouting_data_for_team(team_number)
 
-        # Split into two tabs
         qualitative_graphs_tab, note_scouting_analysis_tab = st.tabs(
             ["📊 Qualitative Graphs", "✏️ Note Scouting Analysis"]
         )
 
         with qualitative_graphs_tab:
-            driver_rating_col, intake_defense_skill_col = st.columns(2)
-            intake_speed_col, defense_skill_col = st.columns(2)
+            row1_left, row1_right = st.columns(2)
+            row2_left, row2_right = st.columns(2)
+            row3_left, row3_right = st.columns(2)
+            row4_col, _ = st.columns(2)
 
-            with driver_rating_col:
-                driver_rating_types = Criteria.DRIVER_RATING_CRITERIA.keys()
-                driver_rating_by_type = [
-                    self.calculated_stats.cumulative_stat(team_number, Queries.DRIVER_RATING, {driver_rating_type: 1})
-                    for driver_rating_type in driver_rating_types
+            with row1_left:
+                driver_rating_types = list(Criteria.DRIVER_RATING_CRITERIA.keys())
+                driver_counts = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.DRIVER_RATING, {t: 1})
+                    for t in driver_rating_types
                 ]
+                plotly_chart(bar_graph(
+                    driver_rating_types, driver_counts,
+                    x_axis_label="Driver Rating", y_axis_label="# of Matches",
+                    title="Driver Rating Breakdown",
+                    color=dict(zip(driver_rating_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                    color_indicator="Driver Rating"
+                ))
 
-                plotly_chart(
-                    bar_graph(
-                        driver_rating_types,
-                        driver_rating_by_type,
-                        x_axis_label="Driver Rating",
-                        y_axis_label="# of Occurrences",
-                        title="Driver Rating Breakdown",
-                        color=dict(zip(driver_rating_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
-                        color_indicator="Driver Rating"
-                    )
-                )
-
-            with intake_defense_skill_col:
-                intake_defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
-                intake_defense_skill_by_type = [
-                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_DEFENSE_RATING, {intake_defense_skill_type: 1})
-                    for intake_defense_skill_type in intake_defense_skill_types
+            with row1_right:
+                throughput_types = list(Criteria.BASIC_RATING_CRITERIA.keys())
+                throughput_counts = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.THROUGHPUT_SPEED, {t: 1})
+                    for t in throughput_types
                 ]
+                plotly_chart(bar_graph(
+                    throughput_types, throughput_counts,
+                    x_axis_label="Throughput Speed", y_axis_label="# of Matches",
+                    title="Throughput Speed Breakdown",
+                    color=dict(zip(throughput_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                    color_indicator="Throughput Speed"
+                ))
 
-                plotly_chart(
-                    bar_graph(
-                        intake_defense_skill_types,
-                        intake_defense_skill_by_type,
-                        x_axis_label="Counter Defense Skill",
-                        y_axis_label="# of Occurrences",
-                        title="Counter Defense Skill Breakdown",
-                        color=dict(zip(intake_defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
-                        color_indicator="Counter Defense Skill"
-                    )
-                )
-
-            with defense_skill_col:
-                defense_skill_types = Criteria.BASIC_RATING_CRITERIA.keys()
-                defense_skill_by_type = [
-                    self.calculated_stats.cumulative_stat(team_number, Queries.DEFENSE_RATING, {defense_skill_type: 1})
-                    for defense_skill_type in defense_skill_types
+            with row2_left:
+                intake_types = list(Criteria.INTAKE_SPEED_CRITERIA.keys())
+                intake_counts = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_SPEED, {t: 1})
+                    for t in intake_types
                 ]
+                plotly_chart(bar_graph(
+                    intake_types, intake_counts,
+                    x_axis_label="Intake Speed", y_axis_label="# of Matches",
+                    title="Intake Speed Breakdown",
+                    color=dict(zip(intake_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                    color_indicator="Intake Speed"
+                ))
 
-                plotly_chart(
-                    bar_graph(
-                        defense_skill_types,
-                        defense_skill_by_type,
-                        x_axis_label="Defense Skill",
-                        y_axis_label="# of Occurrences",
-                        title="Defense Skill Breakdown",
-                        color=dict(zip(defense_skill_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
-                        color_indicator="Defense Skill"
-                    )
-                )
-
-            with intake_speed_col:
-                intake_speed_types = Criteria.INTAKE_SPEED_CRITERIA.keys()
-                intake_speed_by_type = [
-                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_SPEED, {intake_speed_type: 1})
-                    for intake_speed_type in intake_speed_types
+            with row2_right:
+                defense_types = list(Criteria.BASIC_RATING_CRITERIA.keys())
+                defense_counts = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.DEFENSE_RATING, {t: 1})
+                    for t in defense_types
                 ]
+                plotly_chart(bar_graph(
+                    defense_types, defense_counts,
+                    x_axis_label="Defense Rating", y_axis_label="# of Matches",
+                    title="Defense Rating Breakdown",
+                    color=dict(zip(defense_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                    color_indicator="Defense Rating"
+                ))
 
-                plotly_chart(
-                    bar_graph(
-                        intake_speed_types,
-                        intake_speed_by_type,
-                        x_axis_label="Intake Speed",
-                        y_axis_label="# of Occurrences",
-                        title="Intake Speed Breakdown",
-                        color=dict(zip(intake_speed_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
-                        color_indicator="Intake Speed"
-                    )
-                )
+            with row3_left:
+                intake_defense_types = list(Criteria.BASIC_RATING_CRITERIA.keys())
+                intake_defense_counts = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.INTAKE_DEFENSE_RATING, {t: 1})
+                    for t in intake_defense_types
+                ]
+                plotly_chart(bar_graph(
+                    intake_defense_types, intake_defense_counts,
+                    x_axis_label="Intake Defense Rating", y_axis_label="# of Matches",
+                    title="Intake Defense Rating Breakdown",
+                    color=dict(zip(intake_defense_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                    color_indicator="Intake Defense Rating"
+                ))
+
+            with row3_right:
+                shooter_defense_types = list(Criteria.BASIC_RATING_CRITERIA.keys())
+                shooter_defense_counts = [
+                    self.calculated_stats.cumulative_stat(team_number, Queries.SHOOTER_DEFENSE_RATING, {t: 1})
+                    for t in shooter_defense_types
+                ]
+                plotly_chart(bar_graph(
+                    shooter_defense_types, shooter_defense_counts,
+                    x_axis_label="Shooter Defense Rating", y_axis_label="# of Matches",
+                    title="Shooter Defense Rating Breakdown",
+                    color=dict(zip(shooter_defense_types, GeneralConstants.RED_TO_GREEN_GRADIENT[::-1])),
+                    color_indicator="Shooter Defense Rating"
+                ))
+
+            with row4_col:
+                stability_types = list(Criteria.STABILITY_CRITERIA.keys())
+                stability_counts = [
+                    int((scouting_data[Queries.STABILITY] == t).sum())
+                    for t in stability_types
+                ]
+                stability_colors = {
+                    "Stable": GeneralConstants.LIGHT_GREEN,
+                    "Moderately tippy": GeneralConstants.GOLD_GRADIENT[0],
+                    "Very tippy": GeneralConstants.LIGHT_RED,
+                }
+                plotly_chart(bar_graph(
+                    stability_types, stability_counts,
+                    x_axis_label="Stability", y_axis_label="# of Matches",
+                    title="Stability Rating Breakdown",
+                    color=stability_colors,
+                    color_indicator="Stability"
+                ))
+
+            # Robot style type breakdown (list field — flatten across all matches)
+            st.divider()
+            st.write("##### Robot Style Breakdown")
+            all_styles = []
+            for styles in scouting_data[Queries.ROBOT_STYLE_TYPE]:
+                if isinstance(styles, list):
+                    all_styles.extend(styles)
+                elif isinstance(styles, str) and styles:
+                    all_styles.append(styles)
+            style_counts: dict[str, int] = {}
+            for style in all_styles:
+                style_counts[style] = style_counts.get(style, 0) + 1
+            if style_counts:
+                sorted_styles = dict(sorted(style_counts.items(), key=lambda x: x[1], reverse=True))
+                plotly_chart(bar_graph(
+                    list(sorted_styles.keys()),
+                    list(sorted_styles.values()),
+                    x_axis_label="Robot Style",
+                    y_axis_label="# of Occurrences",
+                    title="Robot Style Type Distribution",
+                    color=GeneralConstants.PRIMARY_COLOR
+                ))
+            else:
+                st.info("No robot style type data available.")
+
         with note_scouting_analysis_tab:
             notes_col, metrics_col = st.columns(2, gap="medium")
             notes_by_match = dict(
                 zip(
                     scouting_data[Queries.MATCH_KEY],
                     (
-                            scouting_data[Queries.AUTO_NOTES].apply(lambda note: (note + " ").lower() if note else "") +
-                            scouting_data[Queries.TELEOP_NOTES].apply(
-                                lambda note: (note + " ").lower() if note else "") +
-                            scouting_data[Queries.ENDGAME_NOTES].apply(
-                                lambda note: (note + " ").lower() if note else "") +
-                            scouting_data[Queries.RATING_NOTES].apply(lambda note: note.lower())
-
+                        scouting_data[Queries.AUTO_NOTES].apply(lambda n: (n + " ").lower() if n else "")
+                        + scouting_data[Queries.TELEOP_NOTES].apply(lambda n: (n + " ").lower() if n else "")
+                        + scouting_data[Queries.RATING_NOTES].apply(lambda n: n.lower() if n else "")
                     )
                 )
             )
 
             with notes_col:
                 st.write("##### Notes")
-                st.markdown("<hr style='margin: 0px'/>",
-                            unsafe_allow_html=True)  # Hacky way to create a divider without whitespace
+                st.markdown("<hr style='margin: 0px'/>", unsafe_allow_html=True)
 
                 for match_key, notes in notes_by_match.items():
-                    if notes.strip().replace("|", ""):
+                    if notes.strip():
                         notes_col.write(f"###### {match_key}")
 
                         text_split_by_words = re.split(r"(\s+)", notes)
                         annotated_words = []
-                        # Used to create a rough estimate of how positive the notes are. Positive terms have a weight of
-                        # one, while negative terms have a weight of negative one and neutral terms have a weight of zero.
                         sentiment_scores = []
 
                         for word in text_split_by_words:
@@ -473,24 +581,17 @@ class TeamManager(PageManager, ContainsMetrics):
                             else:
                                 annotated_words.append(word)
 
-                        # A score given to the notes given that generates a "sentiment score", using
-                        # the English vocabulary to determine how positive a string of text is. The downside of this method
-                        # is that it won't catch negative terms in the context of a robot's performance, which is why
-                        # we weight it with our own estimate of the "sentiment" score.
                         ml_generated_score = sentiment.polarity_scores(notes)["compound"]
                         sentiment_estimate = sum(sentiment_scores) / (len(sentiment_scores) or 1)
                         positivity_scores.append(
                             (ml_generated_score * ml_weight + sentiment_estimate * estimate_weight) / 2
                         )
 
-                        annotated_text(
-                            *annotated_words
-                        )
+                        annotated_text(*annotated_words)
                         st.markdown("<hr style='margin: 0px'/>", unsafe_allow_html=True)
 
             with metrics_col:
                 st.write("##### Metrics")
-
                 colored_metric(
                     "Positivity Score of Notes",
                     round(sum(positivity_scores) / (len(positivity_scores) or 1), 2),

@@ -17,7 +17,7 @@ load_dotenv()
 
 class PicklistManager(PageManager):
     """The page manager for the `Picklist` page."""
-    TRUNCATE_AT_DIGIT = 2  # Round the decimal to two places
+    TRUNCATE_AT_DIGIT = 2
 
     def __init__(self):
         self.calculated_stats = CalculatedStats(
@@ -26,53 +26,38 @@ class PicklistManager(PageManager):
         self.teams = retrieve_team_list()
         self.client = Client(auth=os.getenv("NOTION_TOKEN"))
 
-        # Requested stats is used to define the stats wanted in the picklist generation.
         self.requested_stats = {
-            "Average Points Contributed": self.calculated_stats.average_points_contributed,
-            "# of Times Auto Climbed": partial(
-                self.calculated_stats.cumulative_stat,
-                stat=Queries.AUTO_CLIMB,
-                criteria=Criteria.BOOLEAN_CRITERIA
-            ),
-            "# of Times Teleop Climbed": partial(
-                self.calculated_stats.cumulative_stat,
-                stat=Queries.TELEOP_CLIMB,
-                criteria=Criteria.CLIMBING_CRITERIA
-            ),
-            "# of Disables": partial(
-                self.calculated_stats.cumulative_stat,
-                stat=Queries.DISABLE,
-                criteria=Criteria.BOOLEAN_CRITERIA
-            ),
-            "Average Driver Rating": self.calculated_stats.average_driver_rating,
-            "Average Counter Defense Skill": self.calculated_stats.average_counter_defense_skill,
-            "Average Defense Skill": self.calculated_stats.average_defense_rating,
-            "Average Shooter Defense Skill": self.calculated_stats.average_shooter_defense_skill,
-            "Average Intake Speed": self.calculated_stats.average_intake_speed_rating,
-            "Average Throughput Speed": self.calculated_stats.average_throughput_speed,
+            "Avg. Driver Rating (1–5)": self.calculated_stats.average_driver_rating,
+            "Avg. Throughput Speed (1–5)": self.calculated_stats.average_throughput_speed,
+            "Avg. Intake Speed (1–5)": self.calculated_stats.average_intake_speed_rating,
+            "Avg. Defense Rating (1–5)": self.calculated_stats.average_defense_rating,
+            "Avg. Counter Defense (1–5)": self.calculated_stats.average_counter_defense_skill,
+            "Avg. Shooter Defense (1–5)": self.calculated_stats.average_shooter_defense_skill,
+            "Teleop Climb Rate": self.calculated_stats.teleop_climb_rate,
+            "Auto Climb Rate": self.calculated_stats.auto_climb_rate,
+            "Disabled Rate": self.calculated_stats.disabled_rate,
+            "Shoot-on-the-Move Rate": self.calculated_stats.shoot_on_the_move_rate,
         }
 
-    def generate_input_section(self) -> list[list, list]:
-        """Creates the input section for the `Picklist` page.
+    def generate_input_section(self) -> list[str]:
+        """Creates a multiselect box for choosing picklist fields.
 
-        Creates a multiselect box to choose the different fields for the picklist table.
-
-        :return: Returns a list containing the different fields chosen.
+        :return: The list of chosen stat names.
         """
         return st.multiselect(
             "Picklist Fields",
-            self.requested_stats.keys(),
+            list(self.requested_stats.keys()),
             default=list(self.requested_stats.keys())[0]
         )
 
     def generate_picklist(self, stats_requested: list[str]) -> DataFrame:
-        """Generates the picklist containing the statistics requested and the team number.
+        """Generates the picklist containing the requested statistics per team.
 
-        :param stats_requested: The name of the statistics requested (matches the keys in `self.requested_stats`
+        :param stats_requested: The names of the statistics to include.
         """
         requested_picklist = [
             {
-                "Team Number": f"FRC {team}"  # We make it a string because otherwise Notion won't recognize the value.
+                "Team Number": f"FRC {team}"
             } | {
                 stat_name: round(self.requested_stats[stat_name](team), self.TRUNCATE_AT_DIGIT)
                 for stat_name in stats_requested
@@ -82,12 +67,10 @@ class PicklistManager(PageManager):
         return DataFrame.from_dict(requested_picklist)
 
     def write_to_notion(self, dataframe: DataFrame) -> None:
-        """Writes to a Notion picklist entered by the user in the constants file.
+        """Writes the picklist to a Notion database.
 
         :param dataframe: The dataframe containing all the statistics of each team.
-        :return:
         """
-        # Generate Notion Database first
         properties = {
             "Team Name": {"title": {}}
         } | {
@@ -95,21 +78,19 @@ class PicklistManager(PageManager):
         }
         icon = {"type": "emoji", "emoji": "🗒️"}
         self.client.databases.update(
-            database_id=(db_id := get_id(EventSpecificConstants.PICKLIST_URL)), properties=properties, icon=icon
+            database_id=(db_id := get_id(EventSpecificConstants.PICKLIST_URL)),
+            properties=properties,
+            icon=icon
         )
 
-        # Find percentiles across all teams
         percentile_75 = self.calculated_stats.quantile_stat(
-            0.75,
-            lambda self_, team: self_.average_cycles(team)
+            0.75, lambda self_, team: self_.average_driver_rating(team)
         )
         percentile_50 = self.calculated_stats.quantile_stat(
-            0.5,
-            lambda self_, team: self_.average_cycles(team)
+            0.5, lambda self_, team: self_.average_driver_rating(team)
         )
         percentile_25 = self.calculated_stats.quantile_stat(
-            0.25,
-            lambda self_, team: self_.average_cycles(team)
+            0.25, lambda self_, team: self_.average_driver_rating(team)
         )
 
         for _, row in dataframe.iterrows():
@@ -118,80 +99,35 @@ class PicklistManager(PageManager):
                 database_id=db_id,
                 filter={
                     "property": "Team Name",
-                    "title": {
-                        "contains": team_name,
-                    },
+                    "title": {"contains": team_name}
                 }
             )
-            # Based off of the percentile between all their stats
             team_number = int(team_name.split()[1])
-            team_cycles = self.calculated_stats.average_cycles(team_number)
+            team_driver = self.calculated_stats.average_driver_rating(team_number)
 
-            if team_cycles > percentile_75:
+            if team_driver > percentile_75:
                 emoji = "🔵"
-            elif percentile_50 <= team_cycles < percentile_75:
+            elif percentile_50 <= team_driver < percentile_75:
                 emoji = "🟢"
-            elif percentile_25 <= team_cycles < percentile_50:
+            elif percentile_25 <= team_driver < percentile_50:
                 emoji = "🟠"
             else:
                 emoji = "🔴"
 
-            autonomous_notes = self.calculated_stats.stat_per_match(team_number, Queries.AUTO_NOTES)
-
-            if not autonomous_notes.empty and any(note for note in autonomous_notes):
-                autonomous_block = [
-                    {
-                        "object": "block",
-                        "type": "heading_3",
-                        "heading_3": {
-                            "rich_text": [
-                                {
-                                    "text": {
-                                        "content": "Autonomous Notes",
-                                        "link": None
-                                    }
-                                }
-                            ],
-                            "color": "default",
-                            "is_toggleable": False
-                        }
-                    }
-                ] + [
-                    {
-                        "type": "bulleted_list_item",
-                        "bulleted_list_item": {
-                            "rich_text": [
-                                {
-                                    "type": "text",
-                                    "text": {
-                                        "content": note,
-                                        "link": None
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                    for note in autonomous_notes if note
-                ]
-            else:
-                autonomous_block = []
-
+            auto_notes = self.calculated_stats.stat_per_match(team_number, Queries.AUTO_NOTES)
             teleop_notes = self.calculated_stats.stat_per_match(team_number, Queries.TELEOP_NOTES)
+            rating_notes = self.calculated_stats.stat_per_match(team_number, Queries.RATING_NOTES)
 
-            if not teleop_notes.empty and any(note for note in teleop_notes):
-                teleop_block = [
+            def _notes_block(heading: str, notes_series) -> list:
+                notes_list = [n for n in notes_series if n]
+                if not notes_list:
+                    return []
+                return [
                     {
                         "object": "block",
                         "type": "heading_3",
                         "heading_3": {
-                            "rich_text": [
-                                {
-                                    "text": {
-                                        "content": "Teleop Notes",
-                                        "link": None
-                                    }
-                                }
-                            ],
+                            "rich_text": [{"text": {"content": heading, "link": None}}],
                             "color": "default",
                             "is_toggleable": False
                         }
@@ -200,107 +136,50 @@ class PicklistManager(PageManager):
                     {
                         "type": "bulleted_list_item",
                         "bulleted_list_item": {
-                            "rich_text": [
-                                {
-                                    "type": "text",
-                                    "text": {
-                                        "content": note,
-                                        "link": None
-                                    }
-                                }
-                            ]
+                            "rich_text": [{"type": "text", "text": {"content": note, "link": None}}]
                         }
                     }
-                    for note in teleop_notes if note
+                    for note in notes_list
                 ]
-            else:
-                teleop_block = []
 
-            endgame_notes = self.calculated_stats.stat_per_match(team_number, Queries.ENDGAME_NOTES)
-            if not endgame_notes.empty and any(note for note in endgame_notes):
-                endgame_block = [
-                    {
-                        "object": "block",
-                        "type": "heading_3",
-                        "heading_3": {
-                            "rich_text": [
-                                {
-                                    "text": {
-                                        "content": "Endgame Notes",
-                                        "link": None
-                                    }
-                                }
-                            ],
-                            "color": "default",
-                            "is_toggleable": False
-                        }
+            children = (
+                [{
+                    "object": "block",
+                    "type": "callout",
+                    "callout": {
+                        "rich_text": [{"type": "text", "text": {"content": f"Notes of {team_name}", "link": None}}],
+                        "icon": {"emoji": "📝"},
+                        "color": "default"
                     }
-                ] + [
-                    {
-                        "type": "bulleted_list_item",
-                        "bulleted_list_item": {
-                            "rich_text": [
-                                {
-                                    "type": "text",
-                                    "text": {
-                                        "content": note,
-                                        "link": None
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                    for note in endgame_notes if note
-                ]
-            else:
-                endgame_block = []
+                }]
+                + _notes_block("Autonomous Notes", auto_notes)
+                + _notes_block("Teleop Notes", teleop_notes)
+                + _notes_block("Rating Notes", rating_notes)
+            )
 
-            # No page created yet.
+            page_props = {
+                column: {
+                    "number": data if notna(
+                        data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]
+                    ) else 0
+                }
+                for column in dataframe.columns if column != "Team Number"
+            } | {
+                "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
+            }
+
             if not query_page["results"]:
                 self.client.pages.create(
                     database_id=db_id,
                     icon={"type": "emoji", "emoji": emoji},
                     parent={"type": "database_id", "database_id": db_id},
-                    properties={
-                        column: {
-                            "number": data if notna(data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
-                        } for column in dataframe.columns if column != "Team Number"
-                    } | {
-                        "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
-                    },
-                    children=[
-                        {
-                            "object": "block",
-                            "type": "callout",
-                            "callout": {
-                                "rich_text": [
-                                    {
-                                        "type": "text",
-                                        "text": {
-                                            "content": f"Notes of {team_name}",
-                                            "link": None
-                                        }
-                                    }
-                                ],
-                                "icon": {
-                                    "emoji": "📝"
-                                },
-                                "color": "default"
-                            }
-                        }
-                    ] + autonomous_block + teleop_block + endgame_block
+                    properties=page_props,
+                    children=children
                 )
-            # Page already created
             else:
                 self.client.pages.update(
                     page_id=query_page["results"][0]["id"],
                     icon={"type": "emoji", "emoji": emoji},
                     parent={"type": "database_id", "database_id": db_id},
-                    properties={
-                       column: {
-                           "number": data if notna(data := dataframe[dataframe["Team Number"] == team_name][column].tolist()[0]) else 0
-                       } for column in dataframe.columns if column != "Team Number"
-                    } | {
-                       "Team Name": {"id": "title", "title": [{"text": {"content": team_name}}]},
-                    }
+                    properties=page_props
                 )

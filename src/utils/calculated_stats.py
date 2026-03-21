@@ -14,6 +14,7 @@ from scipy.stats import norm
 from .base_calculated_stats import BaseCalculatedStats
 from .constants import Criteria, Queries
 from .functions import _convert_to_float_from_numpy_type, scouting_data_for_team, retrieve_team_list
+from .statbotics import get_team_statbotics
 
 __all__ = ["CalculatedStats"]
 
@@ -24,154 +25,173 @@ class CalculatedStats(BaseCalculatedStats):
     def __init__(self, data: DataFrame):
         super().__init__(data)
 
-    # Point contribution methods
-    @_convert_to_float_from_numpy_type
-    def average_points_contributed(self, team_number: int) -> float:
-        """Returns the average points contributed by a team.
+    # --- Rating methods ---
 
-        The following custom graphs are supported with this function:
-        - Bar graph
-
-        :param team_number: The team number to calculate the average points contributed for.
-        """
-        return self.points_contributed_by_match(team_number).mean()
-
-    def points_contributed_by_match(self, team_number: int, mode: str = "") -> Series:
-        """Returns the points contributed by match for a team.
-
-        The following custom graphs are supported with this function:
-        - Line graph
-        - Box plot
-        - Multi line graph
-
-        :param team_number: The team number to calculate the points contributed over the matches they played.
-        :param mode: Optional argument defining which mode to return the total points for (Auto/Teleop)
-        :return: A Series containing the points contributed by said team per match.
-        """
-        team_data = scouting_data_for_team(team_number, self.data)
-
-        # Autonomous calculations
-        magazine_size = to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
-        auto_singular_ball_points = team_data[Queries.AUTO_SINGULAR_COUNT]
-        auto_batch_points = team_data[Queries.AUTO_BATCH_COUNT].apply(
-            lambda batches: to_numeric(batches)
-        )
-        auto_batch_points = auto_batch_points * magazine_size
-        auto_climb_points = team_data[Queries.AUTO_CLIMB].apply(lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15)
-
-        total_auto_points = auto_singular_ball_points + auto_batch_points + auto_climb_points
-
-        # Teleop calculations
-        teleop_singular_ball_points = team_data[Queries.TELEOP_SINGULAR_COUNT]
-        teleop_batch_points = team_data[Queries.TELEOP_BATCH_COUNT].apply(
-            lambda batches: to_numeric(batches)
-        )
-        teleop_batch_points = teleop_batch_points * magazine_size
-        total_teleop_points = teleop_singular_ball_points + teleop_batch_points
-
-        # Endgame (stage) calculations
-        climb_points = team_data[Queries.TELEOP_CLIMB].apply(
-            lambda climb: Criteria.CLIMBING_CRITERIA.get(climb, 0) * 10
-        )
-       
-        total_endgame_points = climb_points
-
-        if mode == Queries.AUTO:
-            return total_auto_points
-        elif mode == Queries.TELEOP:
-            return total_teleop_points
-        elif mode == Queries.ENDGAME:
-            return total_endgame_points
-
-        return (
-            total_auto_points
-            + total_teleop_points
-            + total_endgame_points
-        )
-
-    # Rating methods
     @_convert_to_float_from_numpy_type
     def average_driver_rating(self, team_number: int) -> float:
-        """Returns the average driver rating of a team.
+        """Returns the average driver rating (1–5 scale) of a team.
 
         :param team_number: The team to determine the driver rating for.
-        :return: A float representing the average driver rating of said team.
         """
         return scouting_data_for_team(team_number, self.data)[Queries.DRIVER_RATING].apply(
-            lambda driver_rating: Criteria.DRIVER_RATING_CRITERIA.get(driver_rating, float("nan"))
+            lambda v: Criteria.DRIVER_RATING_CRITERIA.get(v, float("nan"))
         ).mean()
 
     @_convert_to_float_from_numpy_type
     def average_intake_speed_rating(self, team_number: int) -> float:
-        """Returns the average intake speed rating of a team.
+        """Returns the average intake speed rating (1–5) of a team.
 
         :param team_number: The team to determine the intake speed rating for.
-        :return: A float representing the average intake speed rating of said team.
         """
         return scouting_data_for_team(team_number, self.data)[Queries.INTAKE_SPEED].apply(
-            lambda intake_speed: Criteria.INTAKE_SPEED_CRITERIA.get(intake_speed, float("nan"))
+            lambda v: Criteria.INTAKE_SPEED_CRITERIA.get(v, float("nan"))
         ).mean()
 
     @_convert_to_float_from_numpy_type
     def average_defense_rating(self, team_number: int) -> float:
-        """Returns a series of data representing the team's defense rating
+        """Returns the average defense rating (1–5) of a team.
 
         :param team_number: The team to find defense data for.
-        :return: A series with the teams defense data.
         """
-
         return scouting_data_for_team(team_number, self.data)[Queries.DEFENSE_RATING].apply(
-            lambda defense_rating: Criteria.BASIC_RATING_CRITERIA.get(defense_rating, float("nan"))
+            lambda v: Criteria.BASIC_RATING_CRITERIA.get(v, float("nan"))
         ).mean()
 
     @_convert_to_float_from_numpy_type
     def average_counter_defense_skill(self, team_number: int) -> float:
-        """Returns the average counter defense skill (ability to swerve past defense) of a team.
+        """Returns the average counter-defense skill (intake defense rating, 1–5) of a team.
 
         :param team_number: The team to determine the counter defense skill for.
-        :return: A float representing the average counter defense skill of said team.
         """
         return scouting_data_for_team(team_number, self.data)[Queries.INTAKE_DEFENSE_RATING].apply(
-            lambda counter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(counter_defense_skill, float("nan"))
+            lambda v: Criteria.BASIC_RATING_CRITERIA.get(v, float("nan"))
         ).mean()
 
     @_convert_to_float_from_numpy_type
     def average_throughput_speed(self, team_number: int) -> float:
-        """Returns the average throughput (fuel shot per second) of a team.
+        """Returns the average throughput speed rating (1–5) of a team.
 
         :param team_number: The team to determine the throughput for.
-        :return: A float representing the average throughput of said team.
         """
         return scouting_data_for_team(team_number, self.data)[Queries.THROUGHPUT_SPEED].apply(
-            lambda throughput_speed: Criteria.BASIC_RATING_CRITERIA.get(throughput_speed, float("nan"))
+            lambda v: Criteria.BASIC_RATING_CRITERIA.get(v, float("nan"))
         ).mean()
 
     @_convert_to_float_from_numpy_type
     def average_shooter_defense_skill(self, team_number: int) -> float:
-        """Returns the average shooter defense skill (ability to shoot while being defended against) of a team.
+        """Returns the average shooter defense skill (1–5) of a team.
 
         :param team_number: The team to determine the shooter defense skill for.
-        :return: A float representing the average shooter defense skill of said team.
         """
         return scouting_data_for_team(team_number, self.data)[Queries.SHOOTER_DEFENSE_RATING].apply(
-            lambda shooter_defense_skill: Criteria.BASIC_RATING_CRITERIA.get(shooter_defense_skill, float("nan"))
+            lambda v: Criteria.BASIC_RATING_CRITERIA.get(v, float("nan"))
         ).mean()
-    
 
-    # Percentile methods
+    # --- Rate/count methods ---
+
+    @_convert_to_float_from_numpy_type
+    def auto_climb_rate(self, team_number: int) -> float:
+        """Returns the fraction of matches in which a team climbed during auto (0–1).
+
+        :param team_number: The team to compute the auto climb rate for.
+        """
+        team_data = scouting_data_for_team(team_number, self.data)
+        if team_data.empty:
+            return 0.0
+        values = team_data[Queries.AUTO_CLIMB].apply(
+            lambda v: Criteria.BOOLEAN_CRITERIA.get(v, 0)
+        )
+        return float(values.mean())
+
+    @_convert_to_float_from_numpy_type
+    def teleop_climb_rate(self, team_number: int) -> float:
+        """Returns the fraction of matches in which a team performed any teleop climb (0–1).
+
+        :param team_number: The team to compute the teleop climb rate for.
+        """
+        team_data = scouting_data_for_team(team_number, self.data)
+        if team_data.empty:
+            return 0.0
+        values = team_data[Queries.TELEOP_CLIMB].apply(
+            lambda v: 0 if v in (None, "No climb") else 1
+        )
+        return float(values.mean())
+
+    @_convert_to_float_from_numpy_type
+    def disabled_rate(self, team_number: int) -> float:
+        """Returns the fraction of matches in which a team was disabled (0–1).
+
+        :param team_number: The team to compute the disabled rate for.
+        """
+        team_data = scouting_data_for_team(team_number, self.data)
+        if team_data.empty:
+            return 0.0
+        values = team_data[Queries.DISABLE].apply(
+            lambda v: Criteria.BOOLEAN_CRITERIA.get(v, 0)
+        )
+        return float(values.mean())
+
+    @_convert_to_float_from_numpy_type
+    def shoot_on_the_move_rate(self, team_number: int) -> float:
+        """Returns the fraction of matches in which a team shot on the move (0–1).
+
+        :param team_number: The team to compute the shoot-on-the-move rate for.
+        """
+        team_data = scouting_data_for_team(team_number, self.data)
+        if team_data.empty:
+            return 0.0
+        values = team_data[Queries.SHOOT_ON_THE_MOVE].apply(
+            lambda v: Criteria.BOOLEAN_CRITERIA.get(v, 0)
+        )
+        return float(values.mean())
+
+    # --- Composite scoring proxy (used for win probability) ---
+
+    def composite_score_by_match(self, team_number: int) -> Series:
+        """Returns a numeric proxy score per match derived from qualitative ratings.
+
+        Combines driver rating, throughput speed, intake speed, and climb level into a
+        single normalised composite that can be used for relative win-probability estimation.
+
+        :param team_number: The team to compute the composite score for.
+        """
+        team_data = scouting_data_for_team(team_number, self.data)
+        if team_data.empty:
+            return Series(dtype=float)
+
+        driver = team_data[Queries.DRIVER_RATING].apply(
+            lambda v: Criteria.DRIVER_RATING_CRITERIA.get(v, 3.0)
+        )
+        throughput = team_data[Queries.THROUGHPUT_SPEED].apply(
+            lambda v: Criteria.BASIC_RATING_CRITERIA.get(v, 3.0)
+        )
+        intake = team_data[Queries.INTAKE_SPEED].apply(
+            lambda v: Criteria.INTAKE_SPEED_CRITERIA.get(v, 3.0)
+        )
+        climb = team_data[Queries.TELEOP_CLIMB].apply(
+            lambda v: Criteria.CLIMBING_CRITERIA.get(v, 0) * 2.0
+        )
+        auto_climb = team_data[Queries.AUTO_CLIMB].apply(
+            lambda v: Criteria.BOOLEAN_CRITERIA.get(v, 0) * 3.0
+        )
+
+        return (driver * 2 + throughput * 3 + intake * 1 + climb + auto_climb).reset_index(drop=True)
+
+    # --- Percentile methods ---
+
     def quantile_stat(self, quantile: float, predicate: Callable) -> float:
         """Calculates a scalar value for a percentile of a dataset.
 
-        Used for comparisons between teams (eg passing in 0.5 will return the median).
+        Used for comparisons between teams (e.g. passing 0.5 returns the median).
 
         :param quantile: Quantile used to find the scalar value at.
-        :param predicate: Predicate called per team in the scouting data to create the dataset (self and team number must be arguments).
-        :return: A float representing the scalar value for a percentile of a dataset.
+        :param predicate: Predicate called per team (self and team number must be arguments).
         """
         dataset = [predicate(self, team) for team in retrieve_team_list()]
         return percentile(dataset, quantile * 100)
 
-    # General methods
+    # --- General stat methods ---
+
     @_convert_to_float_from_numpy_type
     def average_stat(self, team_number: int, stat: str, criteria: dict | None = None) -> float:
         """Calculates the average statistic for a team (wrapper around `stat_per_match`).
@@ -179,7 +199,6 @@ class CalculatedStats(BaseCalculatedStats):
         :param team_number: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
         :param criteria: An optional criteria used to determine what the weightage of the statistic is.
-        :return: A float representing the "average statistic".
         """
         return self.stat_per_match(team_number, stat, criteria).mean()
 
@@ -190,7 +209,6 @@ class CalculatedStats(BaseCalculatedStats):
         :param team_number: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
         :param criteria: An optional criteria used to determine what the weightage of the statistic is.
-        :return: A float representing the "cumulative statistic".
         """
         return self.stat_per_match(team_number, stat, criteria).sum()
 
@@ -200,7 +218,6 @@ class CalculatedStats(BaseCalculatedStats):
         :param team_number: The team number to calculate said statistic for.
         :param stat: The field within the scouting data that corresponds to the desired statistic.
         :param criteria: An optional criteria used to determine what the weightage of the statistic is.
-        :return: A series representing the statistic for the team for each match.
         """
         team_data = scouting_data_for_team(team_number, self.data)
         return team_data[stat].apply(
@@ -208,132 +225,91 @@ class CalculatedStats(BaseCalculatedStats):
         )
 
     def driving_index(self, team_number: int) -> float:
-        """Determines how fast a team is based on multiplying their teleop cycles by their counter defense rating
+        """Returns a composite driving quality index (throughput × counter-defense) for a team.
 
         - Used for custom graphs with three teams.
         - Used for custom graphs with a full event.
 
         :param team_number: The team number to calculate a driving index for.
         """
-        counter_defense_skill = self.average_counter_defense_skill(team_number)
-        return (
-            self.average_cycles(team_number, Queries.TELEOP)
-            * 0 if isna(counter_defense_skill) else counter_defense_skill
-        )
+        throughput = self.average_throughput_speed(team_number)
+        counter_defense = self.average_counter_defense_skill(team_number)
+        if isna(throughput) or isna(counter_defense):
+            return 0.0
+        return float(throughput * counter_defense)
 
-    # Methods for ranking simulation
+    # --- Bonus RP estimation (qualitative proxy) ---
+
     def chance_of_bonuses(self, alliance: list[int]) -> tuple[float, float, float]:
-        """Determines bonus RP chances using all possible alliance scoring permutations.
+        """Estimates bonus RP chances from qualitative data.
+
+        Since the dataset has no quantitative scores, returns simplified estimates:
+        - Scoring RP proxy: average of throughput ratings across alliance / 5
+        - Supercharged RP proxy: 0 (insufficient data to estimate)
+        - Traversal RP proxy: average teleop climb rate across alliance
 
         :param alliance: The three teams on the alliance.
         """
-        points_by_team = [
-            (
-                to_numeric(team_data[Queries.AUTO_SINGULAR_COUNT]).fillna(0)
-                + (
-                    to_numeric(team_data[Queries.AUTO_BATCH_COUNT]).fillna(0)
-                    * to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
-                )
-                + to_numeric(team_data[Queries.TELEOP_SINGULAR_COUNT]).fillna(0)
-                + (
-                    to_numeric(team_data[Queries.TELEOP_BATCH_COUNT]).fillna(0)
-                    * to_numeric(team_data[Queries.MAGAZINE_SIZE]).fillna(0)
-                )
-            ).tolist()
-            for team_data in [scouting_data_for_team(team, self.data) for team in alliance]
-        ]
-        possible_points = self.cartesian_product(*points_by_team, reduce_with_sum=True)
-        chance_of_energized_rp = (
-            len([combo for combo in possible_points if combo >= 100]) / len(possible_points)
-        )
-        chance_of_supercharged_rp = (
-                    len([combo for combo in possible_points if combo >= 360]) / len(possible_points)
-                )
-        # Endgame RP calculations
-        traversal_points_by_team = [
-            (
-                team_data[Queries.AUTO_CLIMB].apply(
-                    lambda climbed: Criteria.BOOLEAN_CRITERIA[climbed] * 15
-                ) + team_data[Queries.TELEOP_CLIMB].apply(
-                    lambda climbed: Criteria.CLIMBING_CRITERIA[climbed] * 10
-                )
-            ).tolist()
-            for team_data in [scouting_data_for_team(team, self.data) for team in alliance]
-        ]
-        possible_traversal_combos = self.cartesian_product(*traversal_points_by_team, reduce_with_sum=True)
-        chance_of_traversal_rp = (
-            len([combo for combo in possible_traversal_combos if combo >= 50]) / len(possible_traversal_combos)
-        )
-        return (
-            chance_of_energized_rp,
-            chance_of_supercharged_rp,
-            chance_of_traversal_rp
+        throughput_rates = [self.average_throughput_speed(team) for team in alliance]
+        avg_throughput = sum(t for t in throughput_rates if not (t != t)) / max(len(throughput_rates), 1)
+        chance_scoring_rp = min(avg_throughput / 5.0, 1.0)
 
-        )
-        
+        climb_rates = [self.teleop_climb_rate(team) for team in alliance]
+        avg_climb_rate = sum(climb_rates) / max(len(climb_rates), 1)
+
+        return (chance_scoring_rp, 0.0, avg_climb_rate)
+
+    # --- Win probability (Statbotics EPA-based) ---
+
     def chance_of_winning(self, alliance_one: list[int], alliance_two: list[int]) -> tuple:
-        """Returns the chance of winning between two alliances using integrals."""
-        alliance_one_points = [
-            self.points_contributed_by_match(team)
-            for team in alliance_one
-        ]
-        alliance_two_points = [
-            self.points_contributed_by_match(team)
-            for team in alliance_two
-        ]
+        """Returns the estimated win probability between two alliances.
 
-        # Calculate mean and standard deviation of the point distribution of the red alliance.
-        alliance_one_std = (
-                sum(
-                    [
-                        np.std(team_distribution) ** 2
-                        for team_distribution in alliance_one_points
-                    ]
-                )
-                ** 0.5
-        )
-        alliance_one_mean = sum(
-            [
-                np.mean(team_distribution)
-                for team_distribution in alliance_one_points
-            ]
-        )
+        Uses Statbotics EPA mean and standard deviation per team to model each
+        alliance's score as a normal distribution, then integrates to find the
+        probability that alliance one outscores alliance two.  Falls back to the
+        qualitative composite proxy when no Statbotics data is available.
 
-        # Calculate mean and standard deviation of the point distribution of the blue alliance.
-        alliance_two_std = (
-                sum(
-                    [
-                        np.std(team_distribution) ** 2
-                        for team_distribution in alliance_two_points
-                    ]
-                )
-                ** 0.5
-        )
-        alliance_two_mean = sum(
-            [
-                np.mean(team_distribution)
-                for team_distribution in alliance_two_points
-            ]
-        )
+        :param alliance_one: Three-team list for alliance one (red).
+        :param alliance_two: Three-team list for alliance two (blue).
+        """
+        def _epa_stats(team: int) -> tuple[float, float]:
+            data = get_team_statbotics(team)
+            mean = float(data.get("total_epa") or 0)
+            sd   = float(data.get("total_epa_sd") or 0)
+            return mean, sd
 
-        # Calculate mean and standard deviation of the point distribution of red alliance - blue alliance
-        compared_std = (alliance_one_std ** 2 + alliance_two_std ** 2) ** 0.5
+        a1_stats = [_epa_stats(t) for t in alliance_one]
+        a2_stats = [_epa_stats(t) for t in alliance_two]
+
+        if all(m == 0 for m, _ in a1_stats + a2_stats):
+            # No Statbotics data — fall back to qualitative composite scores
+            a1_series = [self.composite_score_by_match(t) for t in alliance_one]
+            a2_series = [self.composite_score_by_match(t) for t in alliance_two]
+            alliance_one_mean = sum(float(np.mean(s)) for s in a1_series if len(s))
+            alliance_two_mean = sum(float(np.mean(s)) for s in a2_series if len(s))
+            alliance_one_std  = sum(float(np.std(s)) ** 2 for s in a1_series) ** 0.5
+            alliance_two_std  = sum(float(np.std(s)) ** 2 for s in a2_series) ** 0.5
+        else:
+            alliance_one_mean = sum(m for m, _ in a1_stats)
+            alliance_two_mean = sum(m for m, _ in a2_stats)
+
+            def _sd(mean: float, sd: float) -> float:
+                # If API returned a valid SD use it; otherwise estimate ~15% of mean
+                return sd if sd > 0 else max(abs(mean) * 0.15, 5.0)
+
+            alliance_one_std = sum(_sd(m, s) ** 2 for m, s in a1_stats) ** 0.5
+            alliance_two_std = sum(_sd(m, s) ** 2 for m, s in a2_stats) ** 0.5
+
         compared_mean = alliance_one_mean - alliance_two_mean
+        compared_std  = (alliance_one_std ** 2 + alliance_two_std ** 2) ** 0.5
 
-        # Use sentinel value if there isn't enough of a distribution yet to determine standard deviation.
         if not compared_std and compared_mean:
             compared_std = abs(compared_mean)
         elif not compared_std:
             compared_std = 0.5
 
-        compared_distribution = norm(loc=compared_mean, scale=compared_std)
+        dist = norm(loc=compared_mean, scale=compared_std)
+        odds_of_one_winning = quad(lambda x: dist.pdf(x), 0, np.inf)[0]
+        odds_of_two_winning = quad(lambda x: dist.pdf(x), -np.inf, 0)[0]
 
-        # Calculate odds of red/blue winning using integrals.
-        odds_of_red_winning = quad(
-            lambda x: compared_distribution.pdf(x), 0, np.inf
-        )[0]
-        odds_of_blue_winning = quad(
-            lambda x: compared_distribution.pdf(x), -np.inf, 0
-        )[0]
-
-        return odds_of_red_winning, odds_of_blue_winning, alliance_one_mean, alliance_two_mean
+        return odds_of_one_winning, odds_of_two_winning, alliance_one_mean, alliance_two_mean
